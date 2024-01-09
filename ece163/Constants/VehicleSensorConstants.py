@@ -8,7 +8,8 @@ from ..Constants import VehiclePhysicalConstants as VPC
 
 Pground = 101325.0 				# sea level pressure at ground level
 
-accel_bias = 0.1 * VPC.g0		# 100 millig bias
+# accel_bias = 0.1 * VPC.g0		# 100 millig bias
+accel_bias = 0.0 * VPC.g0		# assume calibrated out
 accel_sigma = 0.025 * VPC.g0	# 25 millig white noise
 
 gyro_bias = math.radians(5.0)			# 5 deg/sec bias limit [rad/s]
@@ -16,10 +17,12 @@ gyro_sigma = math.radians(0.15)			# 0.15 deg/sec white noise [rad/s]
 gyro_tau = 400.0						# Gauss Markov bias drift model [s]
 gyro_eta = math.radians(0.073)	# Gauss Markov driving noise [rad/s]
 
-mag_bias = 500.0				# nT bias on turn-on
+# mag_bias = 500.0				# nT bias on turn-on
+mag_bias = 0.0				    # assume calibrated out
 mag_sigma = 25.0				# nT noise
 
-baro_bias = 0.1 * 1000.0		# offset
+# baro_bias = 0.1 * 1000.0		# offset
+baro_bias = 0.0 * 1000.0		# offset
 baro_sigma = 0.01 * 1000.0		# in N/m^2 (Pascal)
 
 pitot_bias = 0.02 * 1000.0		# offset in N/m^2

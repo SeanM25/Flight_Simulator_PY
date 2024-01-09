@@ -10,6 +10,9 @@ import ece163.Display.SliderWithValue
 import ece163.Simulation.Chapter3Simulate
 import ece163.Display.DataExport
 
+from ece163.Utilities.Joystick import Joystick
+import ece163.Constants.JoystickConstants as JSC
+
 stateNamesofInterest = ['pn', 'pe', 'pd', 'yaw', 'pitch', 'roll', 'u', 'v', 'w', 'p', 'q', 'r']
 systemInputs = [('Fx', -10, 10, 0),
 				('Fy', -10, 10, 0),
@@ -56,7 +59,24 @@ class Chapter3(baseInterface.baseInterface):
 		# self.playButton.setDisabled(True)
 		self.showMaximized()
 
-		return
+		#Initialize controller plus some variables to track control state switching
+		self.joystick = Joystick()
+		self.control_mode = 0
+		self.disable_mode_toggle = 0
+
+
+		####Simulation Update code###
+		# # Updates the simulation when tab is being changed
+		self.outPutTabs.currentChanged.connect(self.newTabClicked)
+		self.outPutTabs.setCurrentIndex(0)
+		self.plotWidgets = [self.stateGrid]
+		# Default for all graphs to be turned off
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		# Overwrite simulationTimedThread function with modified sliderChangeResponse
+		self.simulationTimedThread.timeout.connect(self.UpdateSimulationPlots)
+
+		return 
 
 	def resetSliders(self):
 		for slider in self.inputSliders:
@@ -79,8 +99,41 @@ class Chapter3(baseInterface.baseInterface):
 
 	def runUpdate(self):
 		forceInputs = Inputs.forcesMoments()
-		for control in self.inputSliders:
-			setattr(forceInputs, control.name, control.curValue)
+
+
+		if self.joystick.active:
+			joystick_values = self.joystick.get_joystick_values()
+
+			#Toggle control mode if button is pressed
+			if joystick_values.mode_button and not self.disable_mode_toggle:
+				self.control_mode = not self.control_mode
+				self.disable_mode_toggle = 1
+			#Make sure it doesn't rapidly toggle until button is released
+			elif not joystick_values.mode_button and self.disable_mode_toggle:
+				self.disable_mode_toggle = 0
+			
+
+			#Only update values when trigger is pressed
+			if joystick_values.trigger:
+				if self.control_mode:
+					#Control forces
+					forceInputs.Fx = joystick_values.control_axes.Elevator/JSC.MAX_THROW*JSC.CHAPTER3_MAX_FORCE
+					forceInputs.Fy = joystick_values.control_axes.Aileron/JSC.MAX_THROW*JSC.CHAPTER3_MAX_FORCE
+					forceInputs.Fz = -(joystick_values.control_axes.Throttle*2.0 - 1.0)*JSC.CHAPTER3_MAX_FORCE
+				else:
+					#Control moments
+					forceInputs.Mz = -(joystick_values.control_axes.Throttle*2.0 - 1.0) * JSC.CHAPTER3_MAX_MOMENT
+					forceInputs.My = -(joystick_values.control_axes.Elevator/JSC.MAX_THROW) * JSC.CHAPTER3_MAX_MOMENT
+					forceInputs.Mx = (joystick_values.control_axes.Aileron/JSC.MAX_THROW) * JSC.CHAPTER3_MAX_MOMENT
+
+				for slider in self.inputSliders:
+					slider.setSlider(getattr(forceInputs,slider.name))
+		else:
+			#Use sliders if controller not active
+			for control in self.inputSliders:
+				setattr(forceInputs, control.name, control.curValue)
+
+
 		self.simulateInstance.takeStep(forceInputs)
 
 		return
@@ -88,6 +141,41 @@ class Chapter3(baseInterface.baseInterface):
 	def resetSimulationActions(self):
 		self.simulateInstance.reset()
 		self.stateGrid.clearDataPointsAll()
+
+		#### Simulation Update Code ##########
+
+	# Updates a simulation widget when new tab clicked
+	def UpdateSimulationPlots(self):
+
+		currentWidget = self.outPutTabs.currentWidget()
+		# Ensure that that the timer is only enabled for states, sensors, and control response widgets
+		if (currentWidget in self.plotWidgets):
+			self.runUpdate()
+			self.updatePlotsOn()
+			self.updatePlotsOff()
+		return
+	def newTabClicked(self):
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		return
+
+	# toggles the state grid widget
+	def togglestateGridPlot(self, toggleIn):
+		self.stateGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# Turns on all simulation plots
+	def updatePlotsOn(self):
+		# print("Turning on plot update")
+		self.togglestateGridPlot(True)
+		return
+
+	# Turns off all simulation plots
+	def updatePlotsOff(self):
+		# print("Turning off plot update")
+		self.togglestateGridPlot(False)
+		return
+
 
 sys._excepthook = sys.excepthook
 

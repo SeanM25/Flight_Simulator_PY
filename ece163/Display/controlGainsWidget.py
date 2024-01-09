@@ -33,9 +33,11 @@ gainNames = ['kp_roll', 'kd_roll', 'ki_roll', 'kp_sideslip', 'ki_sideslip', 'kp_
 				'kp_pitch', 'kd_pitch', 'kp_altitude', 'ki_altitude', 'kp_SpeedfromThrottle', 'ki_SpeedfromThrottle',
                 'kp_SpeedfromElevator', 'ki_SpeedfromElevator']
 longitudinalGainNames = []
+estimatorGainNames =['Kp_acc', 'Ki_acc', 'Kp_mag', 'Ki_mag', 'Kp_h', 'Ki_h', 'Kp_h_gps', 'Ki_h_gps', 'lowPassCutoff_h', 'Kp_Va', 'Ki_Va', 'Kp_chi', 'Ki_chi']
 
 defaultTuningParameterFileName = "VehicleTuningParameters_Data.pickle"
 defaultGainsFileName = "VehicleGains_Data.pickle"
+defaultEstimatorGainsFileName = "VehicleEstimatorGains_Data.pickle"
 
 gainTypes = ['Roll', 'SideSlip', 'Course', 'Pitch', 'Altitude', 'Speed']
 rollNames = ['kp_roll', 'kd_roll', 'ki_roll']
@@ -44,6 +46,12 @@ courseNames = ['kp_course', 'ki_course']
 pitchNames = ['kp_pitch', 'kd_pitch']
 altitudeNames = ['kp_altitude', 'ki_altitude']
 speedNames = ['kp_SpeedfromThrottle', 'ki_SpeedfromThrottle', 'kp_SpeedfromElevator', 'ki_SpeedfromElevator']
+
+estimatorGainTypes = ['Attitude', 'Altitude', 'Airspeed', 'Course']
+estimatorAttitudeNames = ['Kp_acc', 'Ki_acc', 'Kp_mag', 'Ki_mag']
+estiamtorAltitudeNames = ['Kp_h', 'Ki_h', 'Kp_h_gps', 'Ki_h_gps', 'lowPassCutoff_h']
+estimatorAirspeedNames = ['Kp_Va', 'Ki_Va']
+estimatorCourseNames = ['Kp_chi', 'Ki_chi']
 
 
 class displayGainsTest(QtWidgets.QDialog):
@@ -55,7 +63,7 @@ class displayGainsTest(QtWidgets.QDialog):
 		self.gainResponse = QtWidgets.QLabel("sls")
 		self.gainResponse.setPixmap(QtGui.QPixmap(imagePath))
 		self.gainResponse.setScaledContents(True)
-		self.gainResponse.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
+		self.gainResponse.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
 		self.setMinimumSize(1280, 960)
 
 		self.usedLayout.addWidget(self.gainResponse)
@@ -69,6 +77,8 @@ class controlGainsWidget(QtWidgets.QWidget):
 		# self.gainsInstance = VehicleControlGains.VehicleControlGains()
 		self.curGains = Controls.controlGains()
 		self.curParameters = Controls.controlTuning()
+		self.curEstimationGains = Controls.VehicleEstimatorGains()
+
 		self.callBackOnSuccesfulGains = callBackOnSuccesfulGains
 		self.usedLayout = QtWidgets.QVBoxLayout()
 		self.setLayout(self.usedLayout)
@@ -85,9 +95,13 @@ class controlGainsWidget(QtWidgets.QWidget):
 		# outputBox.addWidget(QLabel("Calculated Gains"))
 		gainsBox = QtWidgets.QVBoxLayout()
 		gainsBox.addWidget(QtWidgets.QLabel("Gains"))
+		estimatorGainsBox = QtWidgets.QVBoxLayout()
+		estimatorGainsBox.addWidget(QtWidgets.QLabel("Estimator Gains"))
 		topBoxEnclosure.addLayout(tuningBox)
 		topBoxEnclosure.addLayout(controlBox)
 		topBoxEnclosure.addLayout(gainsBox)
+		topBoxEnclosure.addStretch()
+		topBoxEnclosure.addLayout(estimatorGainsBox)
 		topBoxEnclosure.addStretch()
 
 		# self.ParameterTabs = QTabWidget()
@@ -128,10 +142,10 @@ class controlGainsWidget(QtWidgets.QWidget):
 
 		gainFormLayout = QtWidgets.QFormLayout()
 		gainsBox.addLayout(gainFormLayout)
+		gainsBox.addStretch()
 		self.gainValuesDict = dict()
 
 		for boxName, gainNames in zip(gainTypes, [rollNames, sideslipNames, courseNames, pitchNames, altitudeNames, speedNames]):
-			# print(boxName, gainNames)
 			sectionName = QtWidgets.QLabel(boxName)
 			sectionName.setAlignment(QtCore.Qt.AlignLeft)
 			gainFormLayout.addRow(sectionName)
@@ -142,9 +156,26 @@ class controlGainsWidget(QtWidgets.QWidget):
 				newInput.setValidator(newValidator)
 				gainFormLayout.addRow(gainName, newInput)
 				self.gainValuesDict[gainName] = newInput
+		
+		estimatorGainFormLayout = QtWidgets.QFormLayout()
+		estimatorGainsBox.addLayout(estimatorGainFormLayout)
+		estimatorGainsBox.addStretch()
+		self.estimatorGainValuesDict = dict()
+
+		for boxName, estimatorGainNames in zip(estimatorGainTypes, [estimatorAttitudeNames, estiamtorAltitudeNames, estimatorAirspeedNames, estimatorCourseNames]):
+			sectionName = QtWidgets.QLabel(boxName)
+			sectionName.setAlignment(QtCore.Qt.AlignLeft)
+			estimatorGainFormLayout.addRow(sectionName)
+			for estimatorGainName in estimatorGainNames:
+				newInput = QtWidgets.QLineEdit()
+				newValidator = QtGui.QDoubleValidator()
+				newInput.setText(str(0.0))
+				newInput.setValidator(newValidator)
+				estimatorGainFormLayout.addRow(estimatorGainName, newInput)
+				self.estimatorGainValuesDict[estimatorGainName] = newInput
 
 
-		gainsBox.addStretch()
+		
 
 		self.calcGainsButton = QtWidgets.QPushButton("Calculate Gains ->")
 		self.calcGainsButton.clicked.connect(self.calculateGainsResponse)
@@ -176,11 +207,18 @@ class controlGainsWidget(QtWidgets.QWidget):
 		# self.gainsTextBox.setReadOnly(True)
 		# outputBox.addWidget(self.gainsTextBox)
 		# outputBox.addStretch()
-
+		
 		try:
 			with open(os.path.join(sys.path[0], defaultGainsFileName), 'rb') as f:
 				self.curGains = pickle.load(f)
 			self.updateGainsDisplay(self.curGains)
+		except (FileNotFoundError, EOFError):
+			pass
+
+		try:
+			with open(os.path.join(sys.path[0], defaultEstimatorGainsFileName), 'rb') as f:
+				self.curEstimationGains = pickle.load(f)
+			self.updateEstimatorGainsDisplay(self.curEstimationGains)
 		except (FileNotFoundError, EOFError):
 			pass
 		self.usedLayout.addStretch()
@@ -255,6 +293,10 @@ class controlGainsWidget(QtWidgets.QWidget):
 		for name in gainNames:
 			self.gainValuesDict[name].setText(str(getattr(newGains, name)))
 
+	def updateEstimatorGainsDisplay(self, newEstimatorGains):
+		for name in estimatorGainNames:
+			self.estimatorGainValuesDict[name].setText(str(getattr(newEstimatorGains, name)))
+
 	def updateParametersDisplay(self, newParameters):
 		for name in newParameters.__dict__.keys():
 			self.parameterGainValues[name].setText(str(getattr(newParameters, name)))
@@ -262,6 +304,7 @@ class controlGainsWidget(QtWidgets.QWidget):
 
 	def applyGains(self):
 		self.curGains = self.buildCurrentGains()
+		self.curEstimationGains = self.buildCurrentEstimatorGains()
 		if self.callBackOnSuccesfulGains is not None:
 			self.callBackOnSuccesfulGains()
 		return
@@ -272,8 +315,13 @@ class controlGainsWidget(QtWidgets.QWidget):
 		"""
 		with open(os.path.join(sys.path[0], defaultGainsFileName), 'wb') as f:
 			pickle.dump(self.buildCurrentGains(), f)
+
 		with open(os.path.join(sys.path[0], defaultTuningParameterFileName), 'wb') as f:
 			pickle.dump(self.buildCurrentParameters(), f)
+
+		with open(os.path.join(sys.path[0], defaultEstimatorGainsFileName), 'wb') as f:
+			pickle.dump(self.buildCurrentEstimatorGains(), f)
+
 		self.statusText.setText("Parameters and Gains Saved")
 		return
 
@@ -286,6 +334,15 @@ class controlGainsWidget(QtWidgets.QWidget):
 			except ValueError:
 				pass
 		return newGains
+
+	def buildCurrentEstimatorGains(self):
+		newEstimatorGains = Controls.VehicleEstimatorGains()
+		for name in estimatorGainNames:
+			try:
+				setattr(newEstimatorGains, name, float(self.estimatorGainValuesDict[name].text()))
+			except ValueError:
+				pass
+		return newEstimatorGains
 
 	def buildCurrentParameters(self):
 		newGains = Controls.controlTuning()

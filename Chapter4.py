@@ -11,6 +11,10 @@ import ece163.Simulation.Chapter4Simulate
 import ece163.Display.DataExport
 import ece163.Display.WindControl as WindControl
 
+from ece163.Utilities.Joystick import Joystick
+from ece163.Constants import JoystickConstants as JSC
+
+
 stateNamesofInterest = ['pn', 'pe', 'pd', 'yaw', 'pitch', 'roll', 'u', 'v', 'w', 'p', 'q', 'r', 'alpha', 'beta']
 systemInputs = [('Throttle', 0, 1, 0),
 				('Aileron', -0.3, 0.3, 0),
@@ -67,6 +71,25 @@ class Chapter4(baseInterface.baseInterface):
 		# self.playButton.setDisabled(True)
 		self.showMaximized()
 
+		self.joystick = Joystick()
+
+		#For convenience, if a controller is active, go directly to the wind tab
+		if self.joystick.active:
+			self.inputTabs.setCurrentIndex(1)
+
+		####Simulation Update code###
+		# # Updates the simulation when tab is being changed
+		self.outPutTabs.currentChanged.connect(self.newTabClicked)
+		self.outPutTabs.setCurrentIndex(0)
+		self.plotWidgets = [self.stateGrid]
+		# Default for all graphs to be turned off
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		# Overwrite simulationTimedThread function with modified sliderChangeResponse
+		self.simulationTimedThread.timeout.connect(self.UpdateSimulationPlots)
+
+
+
 		return
 
 	def resetSliders(self):
@@ -75,6 +98,7 @@ class Chapter4(baseInterface.baseInterface):
 		return
 
 	def updateStatePlots(self, newState):
+		self.updatePlotsOff()
 		stateList = list()
 		for key in stateNamesofInterest:
 			newVal = getattr(newState, key)
@@ -84,6 +108,7 @@ class Chapter4(baseInterface.baseInterface):
 		stateList.append([newState.Va, math.hypot(newState.u, newState.v, newState.w)])
 
 		self.stateGrid.addNewAllData(stateList, [self.simulateInstance.time]*(len(stateNamesofInterest) + 1))
+		self.updatePlotsOn()
 		return
 
 	def getVehicleState(self):
@@ -91,8 +116,21 @@ class Chapter4(baseInterface.baseInterface):
 
 	def runUpdate(self):
 		inputControls = Inputs.controlInputs()
-		for control in self.inputSliders:
-			setattr(inputControls, control.name, control.curValue)
+		
+		#If a controller was initialized, use the values for input
+		if self.joystick.active:
+			joystick_vals = self.joystick.get_joystick_values().control_axes
+			inputControls.Aileron = joystick_vals.Aileron * JSC.CHAPTER4_MAX_THROW
+			inputControls.Elevator = joystick_vals.Elevator * JSC.CHAPTER4_MAX_THROW
+			inputControls.Rudder = -joystick_vals.Rudder * JSC.CHAPTER4_MAX_THROW
+			inputControls.Throttle = joystick_vals.Throttle
+			for slider in self.inputSliders:
+				slider.setSlider(getattr(inputControls,slider.name))
+		
+		else:
+			for control in self.inputSliders:
+				setattr(inputControls, control.name, control.curValue)
+		
 		self.simulateInstance.takeStep(inputControls)
 
 		return
@@ -111,6 +149,41 @@ class Chapter4(baseInterface.baseInterface):
 		self.simulateInstance.reset()
 		self.stateGrid.clearDataPointsAll()
 		self.vehicleInstance.reset(self.simulateInstance.underlyingModel.getVehicleState())
+		self.outPutTabs.setCurrentIndex(0)
+
+	#### Simulation Update Code ##########
+
+	# Updates a simulation widget when new tab clicked
+	def UpdateSimulationPlots(self):
+
+		currentWidget = self.outPutTabs.currentWidget()
+		# Ensure that that the timer is only enabled for states, sensors, and control response widgets
+		if (currentWidget in self.plotWidgets):
+			#self.runUpdate()
+			self.updatePlotsOn()
+			self.updatePlotsOff()
+		return
+	def newTabClicked(self):
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		return
+
+	# toggles the state grid widget
+	def togglestateGridPlot(self, toggleIn):
+		self.stateGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# Turns on all simulation plots
+	def updatePlotsOn(self):
+		# print("Turning on plot update")
+		self.togglestateGridPlot(True)
+		return
+
+	# Turns off all simulation plots
+	def updatePlotsOff(self):
+		# print("Turning off plot update")
+		self.togglestateGridPlot(False)
+		return
 
 sys._excepthook = sys.excepthook
 

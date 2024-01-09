@@ -6,7 +6,7 @@ import PyQt5.QtWidgets as QtWidgets
 import ece163.Display.baseInterface as baseInterface
 import ece163.Display.GridVariablePlotter
 import ece163.Display.SliderWithValue
-import ece163.Simulation.Chapter7Simulate
+import ece163.Simulation.Chapter8Simulate
 import ece163.Display.DataExport
 import ece163.Display.doubleInputWithLabel
 import ece163.Constants.VehiclePhysicalConstants as VehiclePhysicalConstants
@@ -14,10 +14,6 @@ import ece163.Display.WindControl as WindControl
 from ece163.Display.vehicleTrimWidget import vehicleTrimWidget
 from ece163.Display.controlGainsWidget import controlGainsWidget
 from ece163.Display.ReferenceControlWidget import ReferenceControlWidget
-
-from ece163.Containers.Controls import referenceCommands
-from ece163.Utilities.Joystick import Joystick
-import ece163.Constants.JoystickConstants as JSC
 
 stateNamesofInterest = ['pn', 'pe', 'pd', 'yaw', 'pitch', 'roll', 'u', 'v', 'w', 'p', 'q', 'r', 'alpha', 'beta']
 
@@ -28,9 +24,9 @@ defaultTrimParameters = [('Airspeed', VehiclePhysicalConstants.InitialSpeed), ('
 class Chapter6(baseInterface.baseInterface):
 
 	def __init__(self, parent=None):
-		self.simulateInstance = ece163.Simulation.Chapter7Simulate.Chapter7Simulate()
+		self.simulateInstance = ece163.Simulation.Chapter8Simulate.Chapter8Simulate()
 		super().__init__(parent)
-		self.setWindowTitle("ECE163 Chapter 7")
+		self.setWindowTitle("ECE163 Chapter 8")
 		stateplotElements = [[x] for x in stateNamesofInterest]
 		stateplotElements.append(['Va', 'Vg'])
 		statetitleNames = list(stateNamesofInterest)
@@ -58,10 +54,19 @@ class Chapter6(baseInterface.baseInterface):
 		self.sensorsPlotGrid = ece163.Display.GridVariablePlotter.GridVariablePlotter(4, 4, sensorPlotElements, titles=SensorPlotNames, useLegends=True)
 		self.afterUpdateDefList.append(self.updateSensorPlots)
 
+		EstimatedStatesPlotNames = ["p (deg/s)", "q (deg/s)", "r (deg/s)"]
+		EstimatedStatesPlotNames.extend(["yaw (deg)", "pitch (deg)", "roll (deg)"])
+		EstimatedStatesPlotNames.extend(["alt (m)", "Va (m/s)", "chi (deg)"])
+
+		estimatedStaesPlotElements = [['True', 'Estimated'] for x in EstimatedStatesPlotNames]
+
+		self.estimatedStatesPlotGrid = ece163.Display.GridVariablePlotter.GridVariablePlotter(3, 3, estimatedStaesPlotElements, titles=EstimatedStatesPlotNames, useLegends=True)
+		self.afterUpdateDefList.append(self.updateEstimatedStatesPlots)
+
 		self.outPutTabs.setCurrentIndex(2)
 		self.stateUpdateDefList.append(self.updateStatePlots)
 
-		self.exportWidget = ece163.Display.DataExport.DataExport(self.simulateInstance, 'Chapter7')
+		self.exportWidget = ece163.Display.DataExport.DataExport(self.simulateInstance, 'Chapter8')
 		self.outPutTabs.addTab(self.exportWidget, "Export Data")
 
 
@@ -82,15 +87,8 @@ class Chapter6(baseInterface.baseInterface):
 		self.windControl = WindControl.WindControl(self.simulateInstance.underlyingModel.getVehicleAerodynamicsModel())
 		self.inputTabs.addTab(self.windControl, WindControl.widgetName)
 
-		#Initialize the controller and a structure for its commands
-		self.joystick = Joystick()
-
-		#For convenience, if a controller is active, go directly to the wind tab
-		if self.joystick.active:
-			self.inputTabs.setCurrentIndex(1)
-
-
 		self.simulateInstance.underlyingModel.setControlGains(self.gainCalcWidget.curGains)
+		self.simulateInstance.underlyingModel.getVehicleEstimator().setEstimatorGains(self.gainCalcWidget.curEstimationGains)
 		self.simulateInstance.underlyingModel.setTrimInputs(self.trimCalcWidget.currentTrimControls)
 		# self.playButton.setDisabled(True)
 
@@ -109,6 +107,7 @@ class Chapter6(baseInterface.baseInterface):
 		self.outPutTabs.addTab(stateTab, stateText)
 		self.outPutTabs.addTab(self.sensorsPlotGrid, "Sensors")
 		self.outPutTabs.addTab(self.controlResponseGrid, "Control Response")
+		self.outPutTabs.addTab(self.estimatedStatesPlotGrid, "Estimated States")
 		self.outPutTabs.addTab(exportTab, exportText)
 
 		self.outPutTabs.setCurrentIndex(5)
@@ -127,7 +126,7 @@ class Chapter6(baseInterface.baseInterface):
 		self.simulationTimedThread.timeout.connect(self.UpdateSimulationPlots)
 
 		# Ensuring that only plot widgets get disabled
-		self.plotWidgets = [self.sensorsPlotGrid, self.controlResponseGrid, self.stateGrid]
+		self.plotWidgets = [self.estimatedStatesPlotGrid, self.sensorsPlotGrid, self.controlResponseGrid, self.stateGrid]
 
 		return
 
@@ -149,21 +148,7 @@ class Chapter6(baseInterface.baseInterface):
 		return self.simulateInstance.underlyingModel.getVehicleState()
 
 	def runUpdate(self):
-		#If wanting to use the controller for the reference input, modify here
-		if self.joystick.active:
-			joystick_values = self.joystick.get_joystick_values()
-			
-			inputs = joystick_values.control_axes
-			
-			#Only update if the trigger is being pressed
-			if joystick_values.trigger:
-				#Map the controller inputs to the reference inputs. Some scaling is required
-				self.referenceControl.currentReference = referenceCommands(
-					airspeedCommand=inputs.Throttle * (JSC.CHAPTER6_MAX_AIRSPEED-JSC.CHAPTER6_MIN_AIRSPEED) + JSC.CHAPTER6_MIN_AIRSPEED, 
-					altitudeCommand=(inputs.Elevator/JSC.MAX_THROW/-2.0 + 0.5) * (JSC.CHAPTER6_MAX_ALTITUDE-JSC.CHAPTER6_MIN_ALTITUDE) + JSC.CHAPTER6_MIN_ALTITUDE, 
-					courseCommand=math.radians((inputs.Aileron/JSC.MAX_THROW/2.0 + 1.0) * (JSC.CHAPTER6_MAX_COURSE-JSC.CHAPTER6_MIN_COURSE) + JSC.CHAPTER6_MIN_COURSE) - math.pi
-				)
-				self.referenceControl.setSliders(self.referenceControl.currentReference)
+		# inputControls = Inputs.controlInputs()
 		self.simulateInstance.takeStep(self.referenceControl.currentReference)
 
 		return
@@ -177,6 +162,7 @@ class Chapter6(baseInterface.baseInterface):
 		self.vehicleInstance.removeAllAribtraryLines()
 		self.controlResponseGrid.clearDataPointsAll()
 		self.sensorsPlotGrid.clearDataPointsAll()
+		self.estimatedStatesPlotGrid.clearDataPointsAll()
 		self.outPutTabs.setCurrentIndex(0)
 
 	def trimCalcComplete(self, **kwargs):
@@ -189,8 +175,13 @@ class Chapter6(baseInterface.baseInterface):
 
 	def gainCalcComplete(self):
 		self.simulateInstance.underlyingModel.setControlGains(self.gainCalcWidget.curGains)
+		self.simulateInstance.underlyingModel.getVehicleEstimator().setEstimatorGains(self.gainCalcWidget.curEstimationGains)
 		self.simulateInstance.underlyingModel.setTrimInputs(self.trimCalcWidget.currentTrimControls)
 		print(self.simulateInstance.underlyingModel.getControlGains())
+		print("")
+		print(self.simulateInstance.underlyingModel.getVehicleEstimator().getEstimatorGains())
+		print("\n_________________________________________________________")
+		print("\n")
 
 	def updateControlResponsePlots(self):
 		# ControlPlotNames = ['Course', 'Speed', 'Height', 'Pitch', 'Roll']
@@ -202,9 +193,7 @@ class Chapter6(baseInterface.baseInterface):
 		self.updatePlotsOff()
 		inputToGrid = list()
 
-		#Update the commanded commands appropriately if a controller is active
 		Commanded = self.referenceControl.currentReference
-
 		vehicleState = self.simulateInstance.getVehicleState()
 		inputToGrid.append([math.degrees(Commanded.commandedCourse), math.degrees(vehicleState.chi)])  # Course
 		inputToGrid.append([Commanded.commandedAirspeed, vehicleState.Va])  # Speed
@@ -253,6 +242,28 @@ class Chapter6(baseInterface.baseInterface):
 		self.sensorsPlotGrid.addNewAllData(inputToGrid, [self.simulateInstance.time]*len(inputToGrid))
 		self.updatePlotsOn()
 		return
+	
+	def updateEstimatedStatesPlots(self):
+		self.updatePlotsOff()
+		inputToGrid = list()
+		truState = self.simulateInstance.underlyingModel.getVehicleState()
+		estState = self.simulateInstance.underlyingModel.getVehicleEstimator().getEstimatedState()
+
+		inputToGrid.append([math.degrees(truState.p), math.degrees(estState.p)])
+		inputToGrid.append([math.degrees(truState.q), math.degrees(estState.q)])
+		inputToGrid.append([math.degrees(truState.r), math.degrees(estState.r)])
+
+		inputToGrid.append([math.degrees(truState.yaw), math.degrees(estState.yaw)])
+		inputToGrid.append([math.degrees(truState.pitch), math.degrees(estState.pitch)])
+		inputToGrid.append([math.degrees(truState.roll), math.degrees(estState.roll)])
+
+		inputToGrid.append([-truState.pd, -estState.pd])
+		inputToGrid.append([truState.Va, estState.Va])
+		inputToGrid.append([math.degrees(truState.chi), math.degrees(estState.chi)])
+
+		self.estimatedStatesPlotGrid.addNewAllData(inputToGrid, [self.simulateInstance.time]*len(inputToGrid))
+		self.updatePlotsOn()
+		return
 
 	###########################
 	# Turns all simulation plots for a single instance (only if the widget is a plot widget)
@@ -278,6 +289,11 @@ class Chapter6(baseInterface.baseInterface):
 	def toggleSensorsPlot(self, toggleIn):
 		self.sensorsPlotGrid.setUpdatesEnabled(toggleIn)
 		return
+	
+	# toggles the estimated state plot widget
+	def toggleEstimatedStatePlot(self, toggleIn):
+		self.estimatedStatesPlotGrid.setUpdatesEnabled(toggleIn)
+		return
 
 	# toggles the control response widget
 	def togglecontrolResponsePlot(self, toggleIn):
@@ -292,6 +308,7 @@ class Chapter6(baseInterface.baseInterface):
 	# Turns on all simulation plots
 	def updatePlotsOn(self):
 		# print("Turning on plot update")
+		self.toggleEstimatedStatePlot(True)
 		self.toggleSensorsPlot(True)
 		self.togglecontrolResponsePlot(True)
 		self.togglestateGridPlot(True)
@@ -300,11 +317,12 @@ class Chapter6(baseInterface.baseInterface):
 	# Turns off all simulation plots
 	def updatePlotsOff(self):
 		# print("Turning off plot update")
+		self.toggleEstimatedStatePlot(False)
 		self.toggleSensorsPlot(False)
 		self.togglecontrolResponsePlot(False)
 		self.togglestateGridPlot(False)
 		return
-#######################
+	#######################
 
 sys._excepthook = sys.excepthook
 

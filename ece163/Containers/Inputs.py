@@ -73,10 +73,49 @@ class controlInputs:
 				return True
 		else:
 			return NotImplemented
+		
+class joystickValues:
+	def __init__(self, Throttle=0.0, Aileron=0.0, Elevator=0.0, Rudder=0.0, trigger=0, mode_button=0):
+		"""
+		Defines the control inputs jor the joystick which are composed of throttle, ailerons, elevator, and rudder,
+		and additional inputs of trigger and mode buttons. Note that these values are somewhat inconsistent with the
+		control inputs class above, and are already scaled based on joystick constant values.
+
+		:param Throttle: Throttle input [0 - 1], + Throttle -> + u (aircraft increases speed)
+		:param Aileron: [-MAX_THROW +MAX_THROW], scaled from JoystickConstants
+		:param Elevator: [-MAX_THROW +MAX_THROW], scaled from JoystickConstants
+		:param Rudder: [-MAX_THROW +MAX_THROW], scaled from JoystickConstants
+		:param trigger: 0 or 1 button up or down
+		:param mode_button: 0 or 1 button up or down
+		"""
+
+		self.control_axes = controlInputs(Throttle, Aileron, Elevator, Rudder)
+		self.trigger = trigger
+		self.mode_button = mode_button
+
+        #If more buttons or axes are needed later on, they can be added here to this datatype
+
+	def __repr__(self):
+		return "{0.__name__}(Throttle={1.Throttle}, Aileron={1.Aileron}, Elevator={1.Elevator}, Rudder={1.Rudder}), , Trigger={1.trigger}), , Mode_Button={1.mode_button})".format(type(self), self)
+
+
+	def __eq__(self, other):
+		if isinstance(other, type(self)):
+			if not all(
+				[math.isclose(getattr(self, member), getattr(other, member)) for member in ['Throttle', 'Aileron', 'Elevator', 'Rudder', 'Trigger', 'Mode_Button']]):
+				return False
+			else:
+				return True
+		else:
+			#Can be compared to controlInput() type if passed a controlInput
+			if isinstance(other, type(self.control_axes)):
+				return other.__eq__(self.control_axes)
+			else:
+				return NotImplemented
 
 
 class drydenParameters:
-	def __init__(self, Lu=200.0, Lv=200.0, Lw=50.0, sigmau=1.06, sigmav=2.06, sigmaw=0.7):
+	def __init__(self, Lu=200.0, Lv=200.0, Lw=50.0, sigmau=1.06, sigmav=1.06, sigmaw=0.7):
 		"""
 		Defines the Dryden gust model parameters for use in wind modeling. Defaults are set to the Dryden low altitude
 		light turbulence model.

@@ -15,6 +15,11 @@ from ece163.Display.vehicleTrimWidget import vehicleTrimWidget
 from ece163.Display.controlGainsWidget import controlGainsWidget
 from ece163.Display.ReferenceControlWidget import ReferenceControlWidget
 
+from ece163.Containers.Controls import referenceCommands
+from ece163.Utilities.Joystick import Joystick
+import ece163.Constants.JoystickConstants as JSC
+
+
 stateNamesofInterest = ['pn', 'pe', 'pd', 'yaw', 'pitch', 'roll', 'u', 'v', 'w', 'p', 'q', 'r', 'alpha', 'beta']
 
 positionRange = 200
@@ -69,6 +74,13 @@ class Chapter6(baseInterface.baseInterface):
 		self.windControl = WindControl.WindControl(self.simulateInstance.underlyingModel.getVehicleAerodynamicsModel())
 		self.inputTabs.addTab(self.windControl, WindControl.widgetName)
 
+		#Initialize the controller and a structure for its commands
+		self.joystick = Joystick()
+
+		#For convenience, if a controller is active, go directly to the wind tab
+		if self.joystick.active:
+			self.inputTabs.setCurrentIndex(1)
+
 		self.simulateInstance.underlyingModel.setControlGains(self.gainCalcWidget.curGains)
 		self.simulateInstance.underlyingModel.setTrimInputs(self.trimCalcWidget.currentTrimControls)
 		# self.playButton.setDisabled(True)
@@ -93,9 +105,21 @@ class Chapter6(baseInterface.baseInterface):
 
 		self.showMaximized()
 
+		####Simulation Update code###
+		# # Updates the simulation when tab is being changed
+		self.outPutTabs.currentChanged.connect(self.newTabClicked)
+		self.outPutTabs.setCurrentIndex(0)
+		self.plotWidgets = [self.stateGrid, self.controlResponseGrid]
+		# Default for all graphs to be turned off
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		# Overwrite simulationTimedThread function with modified sliderChangeResponse
+		self.simulationTimedThread.timeout.connect(self.UpdateSimulationPlots)
+
 		return
 
 	def updateStatePlots(self, newState):
+		self.updatePlotsOff()
 		stateList = list()
 		for key in stateNamesofInterest:
 			newVal = getattr(newState, key)
@@ -105,13 +129,28 @@ class Chapter6(baseInterface.baseInterface):
 		stateList.append([newState.Va, math.hypot(newState.u, newState.v, newState.w)])
 
 		self.stateGrid.addNewAllData(stateList, [self.simulateInstance.time]*(len(stateNamesofInterest) + 1))
+		self.updatePlotsOn()
 		return
 
 	def getVehicleState(self):
 		return self.simulateInstance.underlyingModel.getVehicleState()
 
 	def runUpdate(self):
-		# inputControls = Inputs.controlInputs()
+		#If wanting to use the controller for the reference input, modify here
+		if self.joystick.active:
+			joystick_values = self.joystick.get_joystick_values()
+			
+			inputs = joystick_values.control_axes
+			
+			#Only update if the trigger is being pressed
+			if joystick_values.trigger:
+				#Map the controller inputs to the reference inputs. Some scaling is required
+				self.referenceControl.currentReference = referenceCommands(
+					airspeedCommand=inputs.Throttle * (JSC.CHAPTER6_MAX_AIRSPEED-JSC.CHAPTER6_MIN_AIRSPEED) + JSC.CHAPTER6_MIN_AIRSPEED, 
+					altitudeCommand=(inputs.Elevator/JSC.MAX_THROW/-2.0 + 0.5) * (JSC.CHAPTER6_MAX_ALTITUDE-JSC.CHAPTER6_MIN_ALTITUDE) + JSC.CHAPTER6_MIN_ALTITUDE, 
+					courseCommand=math.radians((inputs.Aileron/JSC.MAX_THROW/2.0 + 1.0) * (JSC.CHAPTER6_MAX_COURSE-JSC.CHAPTER6_MIN_COURSE) + JSC.CHAPTER6_MIN_COURSE) - math.pi
+				)
+				self.referenceControl.setSliders(self.referenceControl.currentReference)
 		self.simulateInstance.takeStep(self.referenceControl.currentReference)
 
 		return
@@ -138,9 +177,13 @@ class Chapter6(baseInterface.baseInterface):
 		print(self.simulateInstance.underlyingModel.getControlGains())
 
 	def updateControlResponsePlots(self):
+		self.updatePlotsOff()
 		inputToGrid = list()
 
+		#Update the commanded commands appropriately if a controller is active
 		Commanded = self.referenceControl.currentReference
+
+
 		vehicleState = self.simulateInstance.getVehicleState()
 		inputToGrid.append([math.degrees(Commanded.commandedCourse), math.degrees(vehicleState.chi)])  # Course
 		inputToGrid.append([Commanded.commandedAirspeed, vehicleState.Va])  # Speed
@@ -155,8 +198,46 @@ class Chapter6(baseInterface.baseInterface):
 		inputToGrid.append([math.degrees(x) for x in [trimSettings.Rudder, ActualControl.Rudder]])  # Throttle
 		# print(inputToGrid)
 		self.controlResponseGrid.addNewAllData(inputToGrid, [self.simulateInstance.time]*len(inputToGrid))
+		self.updatePlotsOn()
 
+		return
 
+	def UpdateSimulationPlots(self):
+		currentWidget = self.outPutTabs.currentWidget()
+		# Ensure that that the timer is only enabled for states, sensors, and control response widgets
+		if (currentWidget in self.plotWidgets):
+			# self.runUpdate()
+			self.updatePlotsOn()
+			self.updatePlotsOff()
+		return
+
+	def newTabClicked(self):
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		return
+
+	# toggles the state grid widget
+	def togglestateGridPlot(self, toggleIn):
+		self.stateGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# toggles the control response widget
+	def togglecontrolResponsePlot(self, toggleIn):
+		self.controlResponseGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# Turns on all simulation plots
+	def updatePlotsOn(self):
+		# print("Turning on plot update")
+		self.togglestateGridPlot(True)
+		self.togglecontrolResponsePlot(True)
+		return
+
+	# Turns off all simulation plots
+	def updatePlotsOff(self):
+		# print("Turning off plot update")
+		self.togglestateGridPlot(False)
+		self.togglecontrolResponsePlot(False)
 		return
 
 sys._excepthook = sys.excepthook

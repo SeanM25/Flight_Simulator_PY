@@ -9,7 +9,8 @@ class vehicleState:
         """
         Defines the vehicle states to define the vehicle current position and orientation. Positions are in NED
         coordinates, velocity is ground speed in body coordinates, we carry both the Euler angles and the DCM together,
-        and the rotation rates are in the body frame.
+        and the rotation rates are in the body frame. If DCM is used in initialization then Euler angles are computed from
+        the provided DCM, otherwise the DCM is computed from the Euler Angles (DCM will overwrite Euler Angles).
 
         :param pn: vehicle inertial north position [m]
         :param pe: vehicle inertial east position [m]
@@ -23,6 +24,9 @@ class vehicleState:
         :param p: body roll rate about body-x axis [rad/s]
         :param q: body pitch rate about body-y axis [rad/s]
         :param r: body yaw rate about body-z axis [rad/s]
+        :param dcm: direction cosine matrix (R) which transforms from inertial to body frame
+
+        :return: None
         """
         # positions
         self.pn = pn
@@ -106,9 +110,9 @@ class windState:
         self.Wn = Wn
         self.We = We
         self.Wd = Wd
-        self.Wu = Wu    # Stochastic wing gust in body x-axis
-        self.Wv = Wv    # Stochastic wing gust in body y-axis
-        self.Ww = Ww    # Stochastic wing gust in body z-axis
+        self.Wu = Wu    # Stochastic wing gust in wind x-axis
+        self.Wv = Wv    # Stochastic wing gust in wind y-axis
+        self.Ww = Ww    # Stochastic wing gust in wind z-axis
         return
 
     def __repr__(self):

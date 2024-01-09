@@ -9,8 +9,8 @@ class Chapter7Simulate(Simulate.Simulate):
 	def __init__(self):
 		super().__init__()
 		self.inputNames.extend(['commandedCourse', 'commandedAltitude', 'commandedAirspeed'])
-		self.underlyingModel = VehicleClosedLoopControl.VehicleClosedLoopControl()
-		self.sensorModel = SensorsModel.SensorsModel(self.underlyingModel.getVehicleAerodynamicsModel())
+		self.underlyingModel = VehicleClosedLoopControl.VehicleClosedLoopControl(useSensors=True)
+		self.sensorModel = self.underlyingModel.getSensorsModel()
 
 		# self.variableList.append((self.underlyingModel.getForcesMoments, 'ForceMoments',
 		# 							['Fx', 'Fy', 'Fz', 'Mx', 'My', 'Mz']))
@@ -28,13 +28,11 @@ class Chapter7Simulate(Simulate.Simulate):
 		self.time += VehiclePhysicalConstants.dT
 		if referenceInput is None:
 			referenceInput = self.referenceInput
-		self.underlyingModel.Update(referenceInput)
-		self.sensorModel.update()
+		self.underlyingModel.update(referenceInput)
 		self.recordData([referenceInput.commandedCourse, referenceInput.commandedAltitude, referenceInput.commandedAirspeed])
 		return
 
 	def reset(self):
 		self.time = 0
 		self.underlyingModel.reset()
-		self.sensorModel.reset()
 		self.takenData.clear()

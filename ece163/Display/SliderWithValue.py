@@ -66,3 +66,14 @@ class SliderWithValue(QtWidgets.QWidget):
 		"""
 		self.slider.setValue(int(self.startTick))
 		self.updateValue(self.startTick)
+
+	def setSlider(self, rawValue):
+		"""
+		Sets the slide value and text to the input value
+		"""
+		sliderPosition = (rawValue - self.min)/self.ratio
+		self.slider.setValue(int(sliderPosition))
+		self.valueText.setText("{:0.2f}".format(rawValue))
+		if self.funcPointer is not None:
+			self.funcPointer(rawValue, self.name)
+		return

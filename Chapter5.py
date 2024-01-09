@@ -56,9 +56,21 @@ class Chapter5(baseInterface.baseInterface):
 		# self.playButton.setDisabled(True)
 		self.showMaximized()
 
+		####Simulation Update code###
+		# # Updates the simulation when tab is being changed
+		self.outPutTabs.currentChanged.connect(self.newTabClicked)
+		self.outPutTabs.setCurrentIndex(0)
+		self.plotWidgets = [self.stateGrid]
+		# Default for all graphs to be turned off
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		# Overwrite simulationTimedThread function with modified sliderChangeResponse
+		self.simulationTimedThread.timeout.connect(self.UpdateSimulationPlots)
+
 		return
 
 	def updateStatePlots(self, newState):
+		self.updatePlotsOff()
 		stateList = list()
 		for key in stateNamesofInterest:
 			newVal = getattr(newState, key)
@@ -68,6 +80,7 @@ class Chapter5(baseInterface.baseInterface):
 		stateList.append([newState.Va, math.hypot(newState.u, newState.v, newState.w)])
 
 		self.stateGrid.addNewAllData(stateList, [self.simulateInstance.time]*(len(stateNamesofInterest) + 1))
+		self.updatePlotsOn()
 		return
 
 	def getVehicleState(self):
@@ -85,6 +98,7 @@ class Chapter5(baseInterface.baseInterface):
 		self.vehicleInstance.reset(self.simulateInstance.underlyingModel.getVehicleState())
 		self.updateNumericStateBox(self.simulateInstance.underlyingModel.getVehicleState())
 		self.vehicleInstance.removeAllAribtraryLines()
+		self.outPutTabs.setCurrentIndex(0)
 
 	def trimCalcComplete(self, Vastar, Kappastar, Gammastar,  **kwargs):
 		# self.vehicleInstance.reset()
@@ -103,6 +117,40 @@ class Chapter5(baseInterface.baseInterface):
 		# self.vehicleInstance.clearAribtraryLine()
 		# time.sleep(1)
 
+
+
+		return
+
+	# Updates a simulation widget when new tab clicked
+	def UpdateSimulationPlots(self):
+		currentWidget = self.outPutTabs.currentWidget()
+		# Ensure that that the timer is only enabled for states, sensors, and control response widgets
+		if (currentWidget in self.plotWidgets):
+			# self.runUpdate()
+			self.updatePlotsOn()
+			self.updatePlotsOff()
+		return
+
+	def newTabClicked(self):
+		self.updatePlotsOn()
+		self.updatePlotsOff()
+		return
+
+	# toggles the state grid widget
+	def togglestateGridPlot(self, toggleIn):
+		self.stateGrid.setUpdatesEnabled(toggleIn)
+		return
+
+	# Turns on all simulation plots
+	def updatePlotsOn(self):
+		# print("Turning on plot update")
+		self.togglestateGridPlot(True)
+		return
+
+	# Turns off all simulation plots
+	def updatePlotsOff(self):
+		# print("Turning off plot update")
+		self.togglestateGridPlot(False)
 		return
 
 
