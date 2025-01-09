@@ -161,7 +161,7 @@ class VehicleTrim():
 
 
 		# solve the minimization problem to find the trim states and inputs
-		res = minimize(self.trim_objective_fun, x0, method='SLSQP', args=(Vastar, Kappastar, Gammastar),
+		res = minimize(self.trim_objective_fun, x0.flatten(), method='SLSQP', args=(Vastar, Kappastar, Gammastar),
 					   constraints=cons, options={'ftol': 1e-10, 'disp': False})
 		self.MapArraytoClass(res.x)
 		# replace parts of state with initial values

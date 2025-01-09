@@ -42,6 +42,13 @@ class forcesMoments:
 				return True
 		else:
 			return NotImplemented
+		
+	def __add__(self, other):
+		if not isinstance(other, type(self)):
+			raise NotImplemented
+		return forcesMoments(Fx=self.Fx + other.Fx, Fy=self.Fy + other.Fy, Fz=self.Fz + other.Fz,
+                             Mx=self.Mx + other.Mx, My=self.My + other.My, Mz=self.Mz + other.Mz)
+
 
 
 class controlInputs:

@@ -15,6 +15,10 @@ from ece163.Display.vehicleTrimWidget import vehicleTrimWidget
 from ece163.Display.controlGainsWidget import controlGainsWidget
 from ece163.Display.ReferenceControlWidget import ReferenceControlWidget
 
+from ece163.Containers.Controls import referenceCommands
+from ece163.Utilities.Joystick import Joystick
+import ece163.Constants.JoystickConstants as JSC
+
 stateNamesofInterest = ['pn', 'pe', 'pd', 'yaw', 'pitch', 'roll', 'u', 'v', 'w', 'p', 'q', 'r', 'alpha', 'beta']
 
 positionRange = 200
@@ -87,6 +91,13 @@ class Chapter6(baseInterface.baseInterface):
 		self.windControl = WindControl.WindControl(self.simulateInstance.underlyingModel.getVehicleAerodynamicsModel())
 		self.inputTabs.addTab(self.windControl, WindControl.widgetName)
 
+		#Initialize the controller and a structure for its commands
+		self.joystick = Joystick()
+
+		#For convenience, if a controller is active, go directly to the wind tab
+		if self.joystick.active:
+			self.inputTabs.setCurrentIndex(1)
+
 		self.simulateInstance.underlyingModel.setControlGains(self.gainCalcWidget.curGains)
 		self.simulateInstance.underlyingModel.getVehicleEstimator().setEstimatorGains(self.gainCalcWidget.curEstimationGains)
 		self.simulateInstance.underlyingModel.setTrimInputs(self.trimCalcWidget.currentTrimControls)
@@ -149,6 +160,20 @@ class Chapter6(baseInterface.baseInterface):
 
 	def runUpdate(self):
 		# inputControls = Inputs.controlInputs()
+		if self.joystick.active:
+			joystick_values = self.joystick.get_joystick_values()
+			
+			inputs = joystick_values.control_axes
+			
+			#Only update if the trigger is being pressed
+			if joystick_values.trigger:
+				#Map the controller inputs to the reference inputs. Some scaling is required
+				self.referenceControl.currentReference = referenceCommands(
+					airspeedCommand=inputs.Throttle * (JSC.CHAPTER6_MAX_AIRSPEED-JSC.CHAPTER6_MIN_AIRSPEED) + JSC.CHAPTER6_MIN_AIRSPEED, 
+					altitudeCommand=(inputs.Elevator/JSC.MAX_THROW/-2.0 + 0.5) * (JSC.CHAPTER6_MAX_ALTITUDE-JSC.CHAPTER6_MIN_ALTITUDE) + JSC.CHAPTER6_MIN_ALTITUDE, 
+					courseCommand=math.radians((inputs.Aileron/JSC.MAX_THROW/2.0 + 1.0) * (JSC.CHAPTER6_MAX_COURSE-JSC.CHAPTER6_MIN_COURSE) + JSC.CHAPTER6_MIN_COURSE) - math.pi
+				)
+				self.referenceControl.setSliders(self.referenceControl.currentReference)
 		self.simulateInstance.takeStep(self.referenceControl.currentReference)
 
 		return
