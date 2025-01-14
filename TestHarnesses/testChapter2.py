@@ -139,6 +139,10 @@ evaluateTest(cur_TEST_e2DCM, compareDCM(e2DCM_T3_act,e2DCM_T3_expect))
 
 #%% DCM2euler():
 
+DCM = [[(-math.sqrt(2) / 4), (-math.sqrt(2) / 4), (-math.sqrt(3) / 2)], [((1/2) - (math.sqrt(3) / 4)), ((-1/2) - (math.sqrt(3) / 4)), (-math.sqrt(2) / 4)], [((-1/2) - (math.sqrt(3) / 4)), ((1/2) - (math.sqrt(3) / 4)), (math.sqrt(2) / 4)]]
+
+Rotations.dcm2Euler(DCM)
+
 """
 Students, add more tests here.  
 You aren't required to use the testing framework we've started here, 
