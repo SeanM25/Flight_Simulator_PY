@@ -116,11 +116,28 @@ e2DCM_T1_expect = [[(-math.sqrt(2) / 4), (-math.sqrt(2) / 4), (-math.sqrt(3) / 2
 
 e2DCM_T1_act = Rotations.euler2DCM(-135*(math.pi / 180), 60*(math.pi / 180), 45*(math.pi / 180)) # Given as example in HW 0
 
+e2DCM_T2_expect = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] # Also an example from HW 0
+
+e2DCM_T2_act = Rotations.euler2DCM(0, 0, 0) # Also an example in HW 0
+
+e2DCM_T3_expect = [[0, 1, 0], [-1, 0, 0], [0, 0, 1]]
+
+e2DCM_T3_act = Rotations.euler2DCM(90*(math.pi / 180), 0, 0)
+
 cur_TEST_e2DCM = "Test 1 euler2DCM()"
 
 evaluateTest(cur_TEST_e2DCM, compareDCM(e2DCM_T1_act,e2DCM_T1_expect))
 
 cur_TEST_e2DCM = "Test 2 euler2DCM()"
+
+evaluateTest(cur_TEST_e2DCM, compareDCM(e2DCM_T2_act,e2DCM_T2_expect))
+
+cur_TEST_e2DCM = "Test 3 euler2DCM()"
+
+evaluateTest(cur_TEST_e2DCM, compareDCM(e2DCM_T3_act,e2DCM_T3_expect))
+
+
+#%% DCM2euler():
 
 """
 Students, add more tests here.  
