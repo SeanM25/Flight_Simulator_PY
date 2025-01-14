@@ -36,13 +36,13 @@ def dcm2Euler (DCM):
 
     roll = math.atan2(DCM[1][2], DCM[2][2])
 
-    if pitch >= 1:
+   # if pitch >= 1:
 
-        pitch = 1
+     #   pitch = 1
 
-    elif pitch <= -1:
+   # elif pitch <= -1:
 
-        pitch = 1    
+    #    pitch = 1    
 
     #print(yaw,"\n")
 
