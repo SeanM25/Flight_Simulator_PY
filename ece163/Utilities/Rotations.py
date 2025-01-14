@@ -42,12 +42,12 @@ def dcm2Euler (DCM):
 
     elif pitch <= -1:
 
-        pitch = -1    
+        pitch = 1    
 
-    print(yaw,"\n")
+    #print(yaw,"\n")
 
-    print(pitch,"\n")
+    #print(pitch,"\n")
     
-    print(roll,"\n")
+    #print(roll,"\n")
 
     return yaw, pitch, roll
