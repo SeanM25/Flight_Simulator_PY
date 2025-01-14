@@ -30,11 +30,11 @@ def euler2DCM (yaw, pitch, roll):
 
 def dcm2Euler (DCM):
     
-    yaw = math.atan2(DCM[1][2], DCM[1][1])
+    yaw = math.atan2(DCM[0][1], DCM[0][0])
 
-    pitch = math.atan2(DCM[2][3], DCM[3][3])
+    pitch = math.atan2(DCM[1][2], DCM[2][2])
 
-    roll = math.asin(DCM[1][3])
+    roll = math.asin(DCM[0][2])
 
     if roll >= 1:
 
