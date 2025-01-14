@@ -13,7 +13,7 @@ def ned2enu(points):
 
     return NED2ENU_FINAL
 
-def euler2dcm (yaw, pitch, roll):
+def euler2DCM (yaw, pitch, roll):
 
 
     return 0
