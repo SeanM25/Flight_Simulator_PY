@@ -12,3 +12,9 @@ def ned2enu(points):
     NED2ENU_FINAL = MatrixMath.transpose(NED2ENU_FINAL)
 
     return NED2ENU_FINAL
+
+def euler2dcm (yaw, pitch, roll):
+
+
+    return 0
+
