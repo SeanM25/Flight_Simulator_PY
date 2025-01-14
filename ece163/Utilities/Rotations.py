@@ -28,7 +28,7 @@ def euler2DCM (yaw, pitch, roll):
     return DCM
 
 
-def dcm2Euler (DCM)
+def dcm2Euler (DCM):
     
     yaw = math.atan2(DCM[1][2], DCM[1][1])
 
