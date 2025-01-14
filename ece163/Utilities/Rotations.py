@@ -32,7 +32,7 @@ def dcm2Euler (DCM):
     
     yaw = math.atan2(DCM[0][1], DCM[0][0])
 
-    pitch = math.asin(DCM[0][2])
+    pitch = -1 * math.asin(DCM[0][2])
 
     roll = math.atan2(DCM[1][2], DCM[2][2])
 
