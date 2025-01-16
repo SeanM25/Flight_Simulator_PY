@@ -139,12 +139,11 @@ class VehicleGeometry():
 
 		Scaling_MTRX = [[x, 0, 0], [0, y, 0], [0, 0 , z]]
 
-		coords_rotated = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices)) 
+		coords_rotated = MatrixMath.multiply(self.vertices, DCM)
 
 		re_rotate = MatrixMath.transpose(coords_rotated)
 
 		scaled = MatrixMath.multiply(re_rotate, Scaling_MTRX)
-
 
 		ENU_MTRX = Rotations.ned2enu(scaled)
 
