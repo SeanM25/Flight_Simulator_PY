@@ -145,7 +145,7 @@ class VehicleGeometry():
 
 		scaled_NED = MatrixMath.multiply(coords_rotated_fixed, Scaling_MTRX)
 
-		z = scaled_NED
+		z = Rotations.ned2enu(scaled_NED)
 		
 
 		newPoints = z
