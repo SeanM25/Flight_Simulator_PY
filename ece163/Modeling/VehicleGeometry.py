@@ -145,12 +145,14 @@ class VehicleGeometry():
 
 		coords_rotated_fixed = MatrixMath.transpose(coords_rotated)
 
+		Z = MatrixMath.multiply(coords_rotated_fixed, Scaling_MTRX)
+
 		
 
 		
 		
 
-		newPoints = coords_rotated_fixed
+		newPoints = Z
 
 
 
