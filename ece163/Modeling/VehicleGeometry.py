@@ -141,7 +141,7 @@ class VehicleGeometry():
 
 		A = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices))
 
-		B = MatrixMath.multiply(A, NED_DISP)
+		B = MatrixMath.multiply(MatrixMath.transpose(A), NED_DISP)
 
 		newPoints = B
 
