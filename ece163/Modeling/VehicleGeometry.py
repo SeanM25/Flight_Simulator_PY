@@ -143,14 +143,16 @@ class VehicleGeometry():
 
 		re_rotate = MatrixMath.transpose(coords_rotated)
 
-		for row in len(self.vertices):
+		for row in len(re_rotate):
 
-			re_rotate[row][0] = x + re_rotate[row][0]
+			re_rotate[row,0] += x
 
-			re_rotate[row][1] = y + re_rotate[row][1]
+			re_rotate[row,1] += y
 
-			re_rotate[row][2] = z + re_rotate[row][0]
+			re_rotate[row,2] += z
 
+		
+		
 		ENU_MTRX = Rotations.ned2enu(re_rotate)
 
 		newPoints = ENU_MTRX
