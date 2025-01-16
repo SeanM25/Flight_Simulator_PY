@@ -137,7 +137,7 @@ class VehicleGeometry():
 
 		DCM = Rotations.euler2DCM(yaw, pitch, roll)
 
-		Scaling_MTRX = [[x, 0, 0], [0, y, 0], [0, 0 , z]]
+		Scaling_MTRX = [[x], [y], [z]]
 
 		coords_rotated = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices)) 
 
