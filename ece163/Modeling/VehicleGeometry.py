@@ -139,9 +139,7 @@ class VehicleGeometry():
 
 		NED_DISP = [[x, y, z]]
 
-		rotated_points_NED = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices))
-
-		newPoints = MatrixMath.multiply(rotated_points_NED, NED_DISP)
+		newPoints = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices))
 
 		
 
