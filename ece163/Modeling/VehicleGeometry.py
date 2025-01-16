@@ -147,7 +147,7 @@ class VehicleGeometry():
 
 		
 		
-		newPoints = coords_rotated
+		newPoints = Rotations.ned2enu(coords_rotated)
 
 
 
