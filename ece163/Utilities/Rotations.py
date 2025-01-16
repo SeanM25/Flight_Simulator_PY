@@ -43,11 +43,5 @@ def dcm2Euler (DCM):
     pitch = -1 * math.asin(DCM[0][2])
 
     roll = math.atan2(DCM[1][2], DCM[2][2])  
-
-    #print(yaw,"\n") 
-
-   # print(pitch,"\n")
     
-   # print(roll,"\n")
-
     return yaw, pitch, roll

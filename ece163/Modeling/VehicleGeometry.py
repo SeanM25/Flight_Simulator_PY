@@ -134,5 +134,11 @@ class VehicleGeometry():
 		newPoints = self.vertices
 		
 		# student code goes here
+
+		DCM = Rotations.euler2DCM(yaw, pitch, roll)
+
+		NED_COORD = [[x, y, z]]
+
+		newPoints = MatrixMath.dotProduct(DCM, MatrixMath.transpose(NED_COORD))
 		
 		return newPoints
