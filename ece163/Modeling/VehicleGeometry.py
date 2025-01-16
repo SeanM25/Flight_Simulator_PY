@@ -137,9 +137,9 @@ class VehicleGeometry():
 
 		DCM = Rotations.euler2DCM(yaw, pitch, roll)
 
-		NED_COORD = [[x, y, z]]
+		NED_DISP = [[x, y, z]]
 
-		newPoints = MatrixMath.transpose(MatrixMath.multiply(DCM, MatrixMath.transpose(NED_COORD)))
+		newPoints = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices))
 
 		
 		return newPoints
