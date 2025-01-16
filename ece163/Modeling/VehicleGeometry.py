@@ -137,11 +137,11 @@ class VehicleGeometry():
 
 		#Scaling_MTRX = [[x, 0, 0], [0, y, 0], [0, 0 , z]]
 
-		coords_rotated = MatrixMath.multiply(rmatrix, MatrixMath.transpose(self.vertices)) 
+		coords_rotated = MatrixMath.multiply(newPoints,newPoints) 
 
-		re_rotate = MatrixMath.transpose(coords_rotated)
+		#re_rotate = MatrixMath.transpose(coords_rotated)
 
-		for row in re_rotate:
+		for row in coords_rotated:
 
 			row[0] += x
 
@@ -151,7 +151,7 @@ class VehicleGeometry():
 
 		
 		
-		newPoints = Rotations.ned2enu(re_rotate)
+		newPoints = Rotations.ned2enu(coords_rotated)
 
 
 
