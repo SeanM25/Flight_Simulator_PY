@@ -137,7 +137,7 @@ class VehicleGeometry():
 
 		DCM = Rotations.euler2DCM(yaw, pitch, roll)
 
-		MTRX_TO_ENU = [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
+		#Scaling_MTRX = [[x, 0, 0], [0, y, 0], [0, 0 , z]]
 
 		coords_rotated = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices)) 
 
@@ -153,9 +153,8 @@ class VehicleGeometry():
 
 		
 		
-		ENU_MTRX = MatrixMath.multiply(MatrixMath.transpose(re_rotate), MTRX_TO_ENU)
+		newPoints = Rotations.ned2enu(re_rotate)
 
-		newPoints = ENU_MTRX
 
 
 
