@@ -153,7 +153,7 @@ class VehicleGeometry():
 
 		
 		
-		ENU_MTRX = Rotations.ned2enu(re_rotate)
+		ENU_MTRX = re_rotate
 
 		newPoints = ENU_MTRX
 
