@@ -141,9 +141,9 @@ class VehicleGeometry():
 
 		rotated_points_NED = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices))
 
-		ned_scaled = MatrixMath.multiply(rotated_points_NED, MatrixMath.transpose(NED_DISP))
+		newPoints = MatrixMath.multiply(rotated_points_NED, NED_DISP)
 
-		newPoints = Rotations.ned2enu(ned_scaled)
+		
 
 
 
