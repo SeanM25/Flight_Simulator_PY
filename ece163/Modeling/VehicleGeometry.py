@@ -143,9 +143,9 @@ class VehicleGeometry():
 
 		re_rotate = MatrixMath.transpose(coords_rotated)
 
-		#scaled = MatrixMath.multiply(re_rotate, Scaling_MTRX)
+		scaled = MatrixMath.multiply(re_rotate, Scaling_MTRX)
 
-		ENU_MTRX = Rotations.ned2enu(re_rotate)
+		ENU_MTRX = Rotations.ned2enu(scaled)
 
 		newPoints = ENU_MTRX
 
