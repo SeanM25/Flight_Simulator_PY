@@ -143,13 +143,13 @@ class VehicleGeometry():
 
 		re_rotate = MatrixMath.transpose(coords_rotated)
 
-		for row in len(re_rotate):
+		for row in re_rotate:
 
-			re_rotate[row,0] += x
+			row[0] += x
 
-			re_rotate[row,1] += y
+			row[1] += y
 
-			re_rotate[row,2] += z
+			row[2] += z
 
 		
 		
