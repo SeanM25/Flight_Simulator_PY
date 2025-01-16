@@ -145,7 +145,10 @@ class VehicleGeometry():
 
 		scaled = MatrixMath.multiply(re_rotate, Scaling_MTRX)
 
-		newPoints = scaled
+
+		ENU_MTRX = Rotations.ned2enu(scaled)
+
+		newPoints = ENU_MTRX
 
 
 
