@@ -143,10 +143,10 @@ class VehicleGeometry():
 
 		coords_rotated_fixed = MatrixMath.transpose(coords_rotated)
 
-		z = MatrixMath.multiply(coords_rotated_fixed,MatrixMath.transpose(NED_DISP))
+		z = Rotations.ned2enu(coords_rotated_fixed)
 		
 
-		newPoints = coords_rotated_fixed
+		newPoints = z
 
 
 
