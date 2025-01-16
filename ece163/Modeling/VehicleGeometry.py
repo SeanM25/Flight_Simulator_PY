@@ -139,9 +139,9 @@ class VehicleGeometry():
 
 		displacements = [x,y,z]
 
-		for row in range(0,len(coords_rotated[0])):
+		for row in range(len(coords_rotated[0])):
 
-			for col in range((0,len(coords_rotated))):
+			for col in range((len(coords_rotated))):
 
 				coords_rotated[col][row] += displacements[row]
 
