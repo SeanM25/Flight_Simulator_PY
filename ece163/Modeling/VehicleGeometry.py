@@ -139,6 +139,6 @@ class VehicleGeometry():
 
 		NED_COORD = [[x, y, z]]
 
-		newPoints = MatrixMath.dotProduct(DCM, MatrixMath.transpose(NED_COORD))
+		newPoints = MatrixMath.dotProduct(MatrixMath.transpose(NED_COORD), DCM)
 		
 		return newPoints
