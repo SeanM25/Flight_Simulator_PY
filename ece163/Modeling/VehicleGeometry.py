@@ -141,7 +141,7 @@ class VehicleGeometry():
 
 		coords_rotated = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices)) 
 
-		newPoints = coords_rotated
+		newPoints = MatrixMath.transpose(coords_rotated)
 
 
 
