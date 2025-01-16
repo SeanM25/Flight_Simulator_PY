@@ -132,14 +132,12 @@ class VehicleGeometry():
 		:return: Points in inertial EAST-NORTH-UP frame (for plotting)
 		"""
 		newPoints = self.vertices
-		
-		# student code goes here
 
-		DCM = Rotations.euler2DCM(yaw, pitch, roll)
+		rmatrix = Rotations.euler2DCM(yaw, pitch, roll)
 
 		#Scaling_MTRX = [[x, 0, 0], [0, y, 0], [0, 0 , z]]
 
-		coords_rotated = MatrixMath.multiply(DCM, MatrixMath.transpose(self.vertices)) 
+		coords_rotated = MatrixMath.multiply(rmatrix, MatrixMath.transpose(self.vertices)) 
 
 		re_rotate = MatrixMath.transpose(coords_rotated)
 
