@@ -137,13 +137,13 @@ class VehicleGeometry():
 
 		coords_rotated = MatrixMath.multiply(newPoints,MatrixMath.transpose(rmatrix)) 
 
-		for i in len(coords_rotated):
+		displacements = [x,y,z]
 
-			coords_rotated[i][0] += x
+		for row in range(0,len(coords_rotated[0])):
 
-			coords_rotated[i][1] += y
+			for col in range((0,len(coords_rotated))):
 
-			coords_rotated[i][2] += z
+				coords_rotated[col][row] += displacements[row]
 
 		
 		
