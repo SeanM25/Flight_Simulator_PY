@@ -135,7 +135,7 @@ class VehicleGeometry():
 
 		rmatrix = Rotations.euler2DCM(yaw, pitch, roll)
 
-		coords_rotated = MatrixMath.multiply(newPoints,MatrixMath.transpose(rmatrix)) 
+		coords_rotated = MatrixMath.multiply(rmatrix,MatrixMath.transpose(newPoints)) 
 
 		displacements = [x,y,z]
 
