@@ -143,7 +143,7 @@ class VehicleGeometry():
 
 			for col in range((len(coords_rotated))):
 
-				coords_rotated[col][row] -= displacements[row]
+				coords_rotated[col][row] = (displacements[row] - coords_rotated[col][row])
 
 		
 		
