@@ -139,15 +139,20 @@ class VehicleGeometry():
 
 		displacements = [x,y,z]
 
+		MTRX_TO_ENU = [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
+
 		for row in range(len(coords_rotated[0])):
 
 			for col in range((len(coords_rotated))):
 
-				coords_rotated[col][row] = (displacements[row] - coords_rotated[col][row])
+				coords_rotated[col][row] += displacements[row]
+
+
+		Z = MatrixMath.multiply(coords_rotated, MTRX_TO_ENU)
 
 		
 		
-		newPoints = Rotations.ned2enu(coords_rotated)
+		newPoints = Z
 
 
 
