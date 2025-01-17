@@ -133,30 +133,18 @@ class VehicleGeometry():
 		"""
 		newPoints = self.vertices
 
-		rmatrix = Rotations.euler2DCM(yaw, pitch, roll)
+		rmatrix = Rotations.euler2DCM(yaw, pitch, roll) # Get the rotation matrix from the euler angles using euler2dcm()
 
-		coords_rotated = MatrixMath.multiply(newPoints,rmatrix) 
+		coords_rotated = MatrixMath.multiply(newPoints,rmatrix) # multiply aircraft points by the rotation matrix to apply the appropriate rotation in NED
 
-		displacements = [x,y,z]
+		displacements = [x,y,z] # Given x, y, z NED displacements
 
-		#MTRX_TO_ENU = [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
+		for row in range(len(coords_rotated[0])): # Go through the rows of the vehicle points matrix
 
-		for row in range(len(coords_rotated[0])):
+			for col in range((len(coords_rotated))): # Go through the cols of the vehicle points matrix
 
-			for col in range((len(coords_rotated))):
-
-				coords_rotated[col][row] += displacements[row]
-
-
+				coords_rotated[col][row] += displacements[row] # Add the x displacement to col 1, y to 2, and z to 3 for each row in nx3
 		
+		newPoints = Rotations.ned2enu(coords_rotated) # Convert dispalced NED matrix to ENU coords
 
-
-		
-		
-		newPoints = Rotations.ned2enu(coords_rotated)
-
-
-
-
-		
-		return newPoints
+		return newPoints # Return new ENU matrix of vehicle points
