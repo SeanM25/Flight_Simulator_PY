@@ -135,11 +135,11 @@ class VehicleGeometry():
 
 		rmatrix = Rotations.euler2DCM(yaw, pitch, roll)
 
-		coords_rotated = MatrixMath.multiply(rmatrix,MatrixMath.transpose(newPoints)) 
+		coords_rotated = MatrixMath.multiply(newPoints,rmatrix) 
 
 		displacements = [x,y,z]
 
-		MTRX_TO_ENU = [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
+		#MTRX_TO_ENU = [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
 
 		for row in range(len(coords_rotated[0])):
 
@@ -148,11 +148,12 @@ class VehicleGeometry():
 				coords_rotated[col][row] += displacements[row]
 
 
-		Z = MatrixMath.multiply(coords_rotated, MTRX_TO_ENU)
+		
+
 
 		
 		
-		newPoints = Z
+		newPoints = coords_rotated
 
 
 
