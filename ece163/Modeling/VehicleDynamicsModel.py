@@ -22,6 +22,15 @@ class VehicleDynamicsModel:
         return
 
 
+    def getVehicleDerivative(self):
+
+        '''Getter method to read the vehicle state time derivative'''
+
+        return self.dot # Return dot (time state derivative of vehicle)
+    
+    
+    
+    
 
 
 
