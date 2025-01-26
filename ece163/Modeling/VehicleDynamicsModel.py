@@ -191,7 +191,7 @@ class VehicleDynamicsModel:
 
         R_dot = mm.scalarMultiply(-1, (mm.multiply(omega_cross, state.R)))
 
-        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, pitch_dot, roll_dot, yaw_dot, p_dot, q_dot, r_dot, R_dot)
+        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, 1, 1, 1, p_dot, q_dot, r_dot, R_dot)
 
         return dot
     
