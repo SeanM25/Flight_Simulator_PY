@@ -89,7 +89,7 @@ class VehicleDynamicsModel:
 
         I_matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] # Standard identity matrix for finding R exp
 
-        if mag_W <= 0.02: # If ||W|| is between 0 - 0.2 we use the approximations
+        if mag_W <= 0.2: # If ||W|| is between 0 - 0.2 we use the approximations
 
             exp_SIN_term = (dT) - (((dT ** 3) * (mag_W ** 2)) / (6)) + (((dT ** 5) * (mag_W ** 4)) / (120)) # Equation 27 from Attitutde cheat sheet
 
@@ -153,9 +153,9 @@ class VehicleDynamicsModel:
 
         yaw_pitch_roll = [[state.p], [state.q], [state.r]] # Given values of roll, pitch, and yaw
 
-        YPR_dir_mtrx = [[1, math.sin(state.roll) * math.tan(state.pitch), math.cos(state.roll) * math.tan(state.pitch)],
+        YPR_dir_mtrx = [[1, (math.sin(state.roll) * math.tan(state.pitch)), (math.cos(state.roll) * math.tan(state.pitch))],
                         [0, math.cos(state.roll), -1 * math.sin(state.roll)],
-                        [0, math.sin(state.roll) / math.cos(state.pitch), math.cos(state.roll) / math.cos(state.pitch)]] # Given matrix from lecture
+                        [0, (math.sin(state.roll) / math.cos(state.pitch)), (math.cos(state.roll) / math.cos(state.pitch))]] # Given matrix from lecture
         
         dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
 
