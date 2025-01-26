@@ -161,13 +161,13 @@ class VehicleDynamicsModel:
         
         dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
 
-        roll_dot = dot_YPR [2][0] # Get roll dot
+        roll_dot = dot_YPR [0][0] # Get roll dot
 
         pitch_dot = dot_YPR [1][0] # Get pitch dot
         
-        yaw_dot = dot_YPR [0][0] # get yaw dot
+        yaw_dot = dot_YPR [2][0] # get yaw dot
 
-        # Derivitive of UVW
+        # Derivitive of UVW (Check HEre!!!)
 
         m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]]
         
@@ -175,13 +175,11 @@ class VehicleDynamicsModel:
 
         pqr = [[state.p], [state.q], [state.r]]
 
-        neg_J_inv = mm.scalarMultiply(-1, VPC.JinvBody)
-
         left_term = mm.multiply(VPC.JinvBody, m_xyz)
 
-        right_term = mm.multiply(mm.multiply(neg_J_inv, omega_cross), mm.multiply(VPC.Jbody, pqr))
+        right_term = mm.multiply(mm.multiply(VPC.JinvBody, omega_cross), mm.multiply(VPC.Jbody, pqr))
 
-        dot_pqr = mm.add(left_term, right_term)
+        dot_pqr = mm.subtract(left_term, right_term)
 
         p_dot = dot_pqr[0][0]
 
