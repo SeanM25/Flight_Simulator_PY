@@ -107,7 +107,7 @@ class VehicleDynamicsModel:
 
         square_skew = mm.multiply(skew_sym_mtrx, skew_sym_mtrx) # Square the skew symmetric matrix
     
-        sin_times_w = mm.scalarMultiply(skew_sym_mtrx, exp_SIN_term) # Multiplies Sin term by the skew symmentric
+        sin_times_w = mm.scalarMultiply(exp_SIN_term,skew_sym_mtrx) # Multiplies Sin term by the skew symmentric
 
         I_minus_Sin = mm.subtract(I_matrix, sin_times_w) # Subtracts the identity matrix from the Sin term multiplied by the skew symmetric
 
