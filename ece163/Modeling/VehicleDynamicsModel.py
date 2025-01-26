@@ -249,7 +249,7 @@ class VehicleDynamicsModel:
 
         return newState
 
-    def ForwardEuler(self, dT, state, dot)
+    def ForwardEuler(self, dT, state, dot):
 
         newState = state + dot * dT
 
