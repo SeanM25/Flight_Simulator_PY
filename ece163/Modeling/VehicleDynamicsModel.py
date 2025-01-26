@@ -160,11 +160,11 @@ class VehicleDynamicsModel:
                         [0, math.cos(state.roll), -1 * math.sin(state.roll)],
                         [0, (math.sin(state.roll) / math.cos(state.pitch)), (math.cos(state.roll) / math.cos(state.pitch))]] # Given matrix from lecture
         
-        dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
+        dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll 
+        
+        pitch_dot = dot_YPR[0][0] # Get pitch dot
 
         roll_dot = dot_YPR[1][0] # Get roll dot
-
-        pitch_dot = dot_YPR[0][0] # Get pitch dot
         
         yaw_dot = dot_YPR[2][0] # get yaw dot
 
@@ -196,9 +196,9 @@ class VehicleDynamicsModel:
 
         dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, roll_dot, pitch_dot, p_dot, q_dot, r_dot)
 
-        dot.R = R_dot
+        dot.R = R_dot # return derivative of the DCM R
 
-        return dot
+        return dot # return all of the state derivatives
     
     def IntegrateState (self, dT, state, dot):
 
