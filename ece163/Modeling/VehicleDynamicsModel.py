@@ -74,7 +74,7 @@ class VehicleDynamicsModel:
 
         mtrx_prq_deriv = [[dot.p], [dot.q] , [dot.r]] # pqr dot (angular rates derivative) matrix
 
-        omega_B_I_new = mm.add(mtrx_pqr, mm.scalarMultiply(mtrx_prq_deriv, (dT / 2))) # This should correspond to equation (38) in the Attitude Cheat Sheet Also in lecture gets new [[p], [q], [r]]
+        omega_B_I_new = mm.add(mtrx_pqr, mm.scalarMultiply((dT / 2), mtrx_prq_deriv)) # This should correspond to equation (38) in the Attitude Cheat Sheet Also in lecture gets new [[p], [q], [r]]
 
         p_cur = omega_B_I_new[0][0] # Get present value of p (change in yaw)
 
@@ -87,7 +87,7 @@ class VehicleDynamicsModel:
         mag_W = math.hypot(p_cur, q_cur, r_cur) # Gets the magnitude ||W|| from the skew symmetric matrix
 
 
-        I_matrix = [[1,0,0], [0, 1, 0], [0, 0, 1]] # Standard identity matrix for finding R exp
+        I_matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] # Standard identity matrix for finding R exp
 
         if mag_W <= 0.2: # If ||W|| is between 0 - 0.2 we use the approximations
 
