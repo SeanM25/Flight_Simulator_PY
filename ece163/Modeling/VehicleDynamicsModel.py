@@ -181,11 +181,11 @@ class VehicleDynamicsModel:
 
         dot_pqr = mm.add(left_term, right_term)
 
-        p_dot = 5
+        p_dot = dot_pqr[0][0]
 
-        q_dot = 5
+        q_dot = dot_pqr[1][0]
 
-        r_dot = 5
+        r_dot = dot_pqr[2][0]
 
         # Derivative of R
 
