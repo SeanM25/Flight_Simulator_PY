@@ -168,10 +168,6 @@ class VehicleDynamicsModel:
         
         yaw_dot = dot_YPR[2][0] # get yaw dot
 
-
-
-
-
         # Derivitive of UVW
 
         m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]] # Get current moments vector
@@ -198,7 +194,9 @@ class VehicleDynamicsModel:
 
         R_dot = mm.scalarMultiply(-1, (mm.multiply(omega_cross, state.R)))
 
-        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, roll_dot, pitch_dot, p_dot, q_dot, r_dot, R_dot)
+        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, roll_dot, pitch_dot, p_dot, q_dot, r_dot)
+
+        dot.R = R_dot
 
         return dot
     
