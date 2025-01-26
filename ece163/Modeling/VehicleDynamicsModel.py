@@ -191,7 +191,7 @@ class VehicleDynamicsModel:
 
         R_dot = mm.scalarMultiply(-1, (mm.multiply(omega_cross, state.R)))
 
-        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, pitch_dot, roll_dot, p_dot, q_dot, r_dot, R_dot)
+        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, pitch_dot, roll_dot, yaw_dot, p_dot, q_dot, r_dot, R_dot)
 
         return dot
     
@@ -235,7 +235,7 @@ class VehicleDynamicsModel:
 
         yaw_int, pitch_int, roll_int = Rotations.dcm2Euler(R_int)
 
-        newState = States.vehicleState(pn_int, pe_int, pd_int, u_int, v_int, w_int, roll_int, pitch_int, yaw_int, p_int, q_int, r_int, R_int)
+        newState = States.vehicleState(pn_int, pe_int, pd_int, u_int, v_int, w_int, yaw_int, pitch_int, roll_int, p_int, q_int, r_int, R_int)
 
         newState.Va = state.Va
 
