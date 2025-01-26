@@ -89,7 +89,7 @@ class VehicleDynamicsModel:
 
         I_matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] # Standard identity matrix for finding R exp
 
-        if mag_W <= 0.2: # If ||W|| is between 0 - 0.2 we use the approximations
+        if mag_W <= 0.02: # If ||W|| is between 0 - 0.2 we use the approximations
 
             exp_SIN_term = (dT) - (((dT ** 3) * (mag_W ** 2)) / (6)) + (((dT ** 5) * (mag_W ** 4)) / (120)) # Equation 27 from Attitutde cheat sheet
 
