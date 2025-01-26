@@ -4,7 +4,9 @@ from ..Utilities import MatrixMath
 from ..Utilities import Rotations
 from ..Constants import VehiclePhysicalConstants as VPC
 
+# Author: Sean M. Manger (smanger@ucsc.edu)
 
+# Assignment: Lab 1: Vehicle Dynamics Module
 
 class VehicleDynamicsModel:
 
@@ -48,7 +50,21 @@ class VehicleDynamicsModel:
 
         return # Return nothing
 
-    
+    def setVehicleDerivative(self, dot):
+
+        '''Setter method to write the vehicle state time derivative'''
+
+        self.dot = dot # set current time derivative to given time derivative
+
+        return # return nothing
+
+    def setVehicleState(self, state):
+
+        '''Setter method to write the vehicle state'''
+
+        self.state = state # set vehicle state to the given state
+
+        return # return nothing
 
 
 
