@@ -157,7 +157,7 @@ class VehicleDynamicsModel:
                         [0, math.cos(state.roll), -1 * math.sin(state.roll)],
                         [0, (math.sin(state.roll) / math.cos(state.pitch)), (math.cos(state.roll) / math.cos(state.pitch))]] # Given matrix from lecture
         
-        dot_YPR = mm.multiply(yaw_pitch_roll , YPR_dir_mtrx) # get yaw pitch and roll derivatives
+        dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
 
         roll_dot = dot_YPR[0][0] # Get roll dot
 
