@@ -172,7 +172,7 @@ class VehicleDynamicsModel:
 '''
 
 
-
+'''
         # Derivitive of UVW (Check Here!!!)
 
         m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]]
@@ -194,6 +194,8 @@ class VehicleDynamicsModel:
         q_dot = dot_pqr[1][0]
 
         r_dot = dot_pqr[2][0]
+
+        '''
 
         # Derivative of R
 
