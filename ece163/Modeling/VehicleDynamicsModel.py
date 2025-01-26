@@ -167,25 +167,24 @@ class VehicleDynamicsModel:
 
         # Derivitive of UVW (Check HEre!!!)
 
-        m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]]
+        left_term = [[(VPC.Jzz/VPC.Jdet * forcesMoments.Mx) + (VPC.Jxz / VPC.Jdet * forcesMoments.Mz)],
+                     [forcesMoments.My / VPC.Jyy],
+                     [(VPC.Jxz / VPC.Jdet * forcesMoments.Mx) + (VPC.Jxx / VPC.Jdet * forcesMoments.Mz)]]
+
+
+        right_term = [
+            [((VPC.Jxx - VPC.Jyy + VPC.Jzz)* VPC.JinvBody[0][2] * state.p * state.q) - ((VPC.Jzz * (VPC.Jzz - VPC.Jyy) + VPC.Jxz ** 2) / VPC.Jdet * state.q * state.r)],
+            [((VPC.Jzz - VPC.Jxx) / VPC.Jyy * state.p * state.r) - (VPC.Jxz / VPC.Jyy * (state.p ** 2 - state.r ** 2))],
+            [((VPC.Jxx * (VPC.Jxx - VPC.Jyy) + VPC.Jxz ** 2) / VPC.Jdet * state.p * state.q) - ((VPC.Jxx - VPC.Jyy + VPC.Jzz)* VPC.JinvBody[0][2] * state.q * state.r)]]
         
-        omega_cross = mm.skew(state.p, state.q, state.r) # skew symmetric
 
-        pqr = [[state.p], [state.q], [state.r]]
+        dot_UVW = mm.add(left_term, right_term)
 
-        neg_J_inv = mm.scalarMultiply(-1, VPC.JinvBody)
+        p_dot = dot_UVW[0][0]
 
-        left_term = mm.multiply(VPC.JinvBody, m_xyz)
+        q_dot = dot_UVW[1][0]
 
-        right_term = mm.multiply(mm.multiply(neg_J_inv, omega_cross), mm.multiply(VPC.Jbody, pqr))
-
-        dot_pqr = mm.add(left_term, right_term)
-
-        p_dot = dot_pqr[0][0]
-
-        q_dot = dot_pqr[1][0]
-
-        r_dot = dot_pqr[2][0]
+        r_dot = dot_UVW[2][0]
 
         # Derivative of R
 
