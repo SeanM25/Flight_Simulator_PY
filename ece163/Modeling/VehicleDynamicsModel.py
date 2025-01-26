@@ -237,27 +237,27 @@ class VehicleDynamicsModel:
 
         newState = States.vehicleState(pn_int, pe_int, pd_int, u_int, v_int, w_int, yaw_int, pitch_int, roll_int, p_int, q_int, r_int, R_int)
 
-        newState.Va = state.Va
+        newState.Va = state.Va # Copy Va
 
-        newState.alpha = state.alpha
+        newState.alpha = state.alpha # Copy alpha
 
-        newState.beta = state.beta
+        newState.beta = state.beta # Copy beta
 
-        newState.chi = math.atan2(dot.pe, dot.pn)
+        newState.chi = math.atan2(dot.pe, dot.pn) # Get chi using the formula
 
         return newState
 
     def ForwardEuler(self, dT, state, dot):
 
-        newState = VehicleDynamicsModel.IntegrateState(self, dT, state, dot)
+        newState = VehicleDynamicsModel.IntegrateState(self, dT, state, dot) # Do the integration
 
-        return newState
+        return newState # return the new state
     
     def Update(self, forcesMoments):
 
-        self.dot = self.derivative(self.state, forcesMoments)
+        self.dot = self.derivative(self.state, forcesMoments) # Get derivative of the state
        
-        self.state = self.IntegrateState(self.dT, self.state, self.dot)
+        self.state = self.IntegrateState(self.dT, self.state, self.dot) # Then integrate the state
 
         return
 
