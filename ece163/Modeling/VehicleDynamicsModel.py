@@ -191,12 +191,69 @@ class VehicleDynamicsModel:
 
         # Derivative of R
 
-        R_dot = mm.scalarMultiply(-1, mm.multiply(omega_cross, state.R))
+        R_dot = mm.scalarMultiply(-1, (mm.multiply(omega_cross, state.R)))
 
         dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, pitch_dot, roll_dot, p_dot, q_dot, r_dot, R_dot)
 
         return dot
+    
+    def IntegrateState (self, dT, state, dot):
+
+
+        # Integrate Pn, Pe, Pd
+
+        pn_int = state.pn + (dot.pn * dT)
+
+        pe_int = state.pe + (dot.pe * dT)
+
+        pd_int = state.pd + (dot.pd * dT)
+
         
+        # Integrate u, v, w
+
+        u_int = state.u + (dot.u * dT)
+
+        
+        v_int = state.v + (dot.v * dT)
+
+        
+        w_int = state.w + (dot.w * dT)
+
+        # Integrate p, q, r
+
+        p_int = state.p + (dot.p * dT)
+
+        q_int = state.q + (dot.q * dT)
+
+        r_int = state.r + (dot.r * dT)
+
+        # Integrate R
+
+        Rexp = VehicleDynamicsModel.Rexp(self, dT, state, dot)
+
+        R_int = mm.multiply(Rexp, state.R)
+
+        # Integrate yaw, pitch, roll
+
+        yaw_int, pitch_int, roll_int = Rotations.dcm2Euler(R_int)
+
+        newState = States.vehicleState(pn_int, pe_int, pd_int, u_int, v_int, w_int, yaw_int, pitch_int, roll_int, p_int, q_int, r_int, R_int)
+
+        newState.Va = state.Va
+
+        newState.alpha = state.alpha
+
+        newState.beta = state.beta
+
+        newState.chi = state.chi
+
+        return newState
+
+    def ForwardEuler(self, dT, state, dot)
+
+        newState = state + dot * dT
+
+        return newState
 
 
 
