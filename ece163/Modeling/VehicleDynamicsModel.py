@@ -235,7 +235,7 @@ class VehicleDynamicsModel:
 
         yaw_int, pitch_int, roll_int = Rotations.dcm2Euler(R_int)
 
-        newState = States.vehicleState(pn_int, pe_int, pd_int, u_int, v_int, w_int, yaw_int, pitch_int, roll_int, p_int, q_int, r_int, R_int)
+        newState = States.vehicleState(pn_int, pe_int, pd_int, u_int, v_int, w_int, roll_int, pitch_int, yaw_int, p_int, q_int, r_int, R_int)
 
         newState.Va = state.Va
 
