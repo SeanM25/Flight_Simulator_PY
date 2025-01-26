@@ -153,11 +153,9 @@ class VehicleDynamicsModel:
 
         yaw_pitch_roll = [[state.p], [state.q], [state.r]] # Given values of roll, pitch, and yaw
 
-        YPR_dir_mtrx = [[1, (math.sin(state.roll) * math.tan(state.pitch)), (math.cos(state.roll) * math.tan(state.pitch))], 
-                        
-                        [0, (math.cos(state.roll)), -1 * (math.sin(state.roll))],
-                        
-                        [0, (math.sin(state.roll) / math.cos(state.pitch)), (math.cos(state.roll) / math.cos(state.pitch))]] # Given matrix from lecture
+        YPR_dir_mtrx = [[1, math.sin(state.roll) * math.tan(state.pitch), math.cos(state.roll) * math.tan(state.pitch)],
+                        [0, math.cos(state.roll), -1 * math.sin(state.roll)],
+                        [0, math.sin(state.roll) / math.cos(state.pitch), math.cos(state.roll) / math.cos(state.pitch)]] # Given matrix from lecture
         
         dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
 
