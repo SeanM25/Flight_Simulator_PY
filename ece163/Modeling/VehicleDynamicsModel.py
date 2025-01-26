@@ -19,7 +19,7 @@ class VehicleDynamicsModel:
 
         self.dot = States.vehicleState() # Instantiates dot (time derivative) as an instance of States.vehicleState()
 
-        return
+        return # Return nothing
 
 
     def getVehicleDerivative(self):
@@ -28,10 +28,27 @@ class VehicleDynamicsModel:
 
         return self.dot # Return dot (time state derivative of vehicle)
     
-    
-    
-    
 
+    
+    def getVehicleState(self):
+
+        '''Getter method to read the vehicle state'''
+
+        return self.state # Return state of aircraft
+
+    def reset(self):
+
+        '''Reset the Vehicle state to initial conditions'''
+
+        self.state = States.vehicleState() # Reset vehicle state to initial
+
+        self.dot = States.vehicleState() # Reset state derivative as well I presume?
+
+        # dT doesn't change so no need to reset it
+
+        return # Return nothing
+
+    
 
 
 
