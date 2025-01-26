@@ -245,7 +245,7 @@ class VehicleDynamicsModel:
 
         newState.beta = state.beta
 
-        newState.chi = state.chi
+        newState.chi = math.atan2(dot.pe, dot.pn)
 
         return newState
 
