@@ -170,9 +170,9 @@ class VehicleDynamicsModel:
 
 
 
-        
 
-        # Derivitive of UVW (Check Here!!!)
+
+        # Derivitive of UVW
 
         m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]] # Get current moments vector
         
