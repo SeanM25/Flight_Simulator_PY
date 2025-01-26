@@ -159,11 +159,11 @@ class VehicleDynamicsModel:
         
         dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
 
-        roll_dot = dot_YPR [0][0] # Get roll dot
+        roll_dot = 1 # Get roll dot
 
-        pitch_dot = dot_YPR [1][0] # Get pitch dot
+        pitch_dot = 1 # Get pitch dot
         
-        yaw_dot = dot_YPR [2][0] # get yaw dot
+        yaw_dot = 1 # get yaw dot
 
         # Derivitive of UVW (Check HEre!!!)
 
