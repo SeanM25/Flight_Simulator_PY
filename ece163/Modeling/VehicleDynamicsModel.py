@@ -254,6 +254,14 @@ class VehicleDynamicsModel:
         newState = VehicleDynamicsModel.IntegrateState(self, dT, state, dot)
 
         return newState
+    
+    def Update(self, forcesMoments):
+
+        self.dot = self.derivative(self.state, forcesMoments)
+       
+        self.state = self.IntegrateState(self.dT, self.state, self.dot)
+
+        return
 
 
 
