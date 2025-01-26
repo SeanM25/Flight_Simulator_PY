@@ -70,9 +70,9 @@ class VehicleDynamicsModel:
 
         '''Calculates the matrix exponential exp(-dT*[omega x]), which can be used in the closed form solution for the DCM integration from body-fixed rates.'''
 
-        mtrx_pqr = [[self.state.p], [self.state.q] , [self.state.r]] # pqr (angular rates) matrix
+        mtrx_pqr = [[state.p], [self.state.q] , [self.state.r]] # pqr (angular rates) matrix
 
-        mtrx_prq_deriv = [[self.dot.p], [self.dot.q] , [self.dot.r]] # pqr dot (angular rates derivative) matrix
+        mtrx_prq_deriv = [[dot.p], [dot.q] , [dot.r]] # pqr dot (angular rates derivative) matrix
 
         omega_B_I_new = mm.add(mtrx_pqr, mm.scalarMultiply(mtrx_prq_deriv, (dT / 2))) # This should correspond to equation (38) in the Attitude Cheat Sheet Also in lecture gets new [[p], [q], [r]]
 
@@ -116,6 +116,94 @@ class VehicleDynamicsModel:
         Rexp = mm.add(I_matrix, cos_times_w_square) # Add the results to get Rexp
 
         return Rexp # Return Rexp
+    
+    def derivative(self, state, forcesMoments):
+
+        '''Function to compute the time-derivative of the state given body frame forces and moments'''
+
+        # Derivatives NED (Pn, Pe, Pd)
+
+        velocity_vector = [[state.u], [state.v], [state.w]] # Get u, v, w matrix
+
+        R_transp = mm.transpose(state.R) # Transpose R inertial to body
+
+        dot_pos_vector = mm.multiply(R_transp, velocity_vector) # multiply R trans by u,v,w to get the position derivative
+
+        pn_dot = dot_pos_vector [0][0] # Get Pn dot
+
+        pe_dot = dot_pos_vector [1][0] # Get Pe dot
+
+        pd_dot = dot_pos_vector [2][0] # Get Pd dot
+
+        # Derivatives of velocities (u, v, w)
+
+        minus_wx_times_uvw = [[(state.r * state.v) - (state.q * state.w)], [(state.p * state.w) - (state.r * state.u)], [(state.q * state.u) - (state.p * state.v)]] # Given expanded matrix from lecture
+
+        F_over_m = [[(forcesMoments.Fx) / (VPC.mass)] , [(forcesMoments.Fy) / (VPC.mass)], [(forcesMoments.Fz) / (VPC.mass)]] # Forces vector scaled by 1/m
+
+        dot_UVW = mm.add(F_over_m, minus_wx_times_uvw) # derivative of the velocities vector
+
+        u_dot = dot_UVW[0][0] # u dot
+    
+        v_dot = dot_UVW[1][0] # v dot
+
+        w_dot = dot_UVW[2][0] # w dot
+
+        # derivatives of yaw, pitch, roll
+
+        yaw_pitch_roll = [[state.p], [state.q], [state.r]] # Given values of roll, pitch, and yaw
+
+        YPR_dir_mtrx = [[1, (math.sin(state.roll) * math.tan(state.pitch)), (math.cos(state.roll) * math.tan(state.pitch))], 
+                        
+                        [0, (math.cos(state.roll)), -1 * (math.sin(state.roll))],
+                        
+                        [0, (math.sin(state.roll) / math.cos(state.pitch)), (math.cos(state.roll) / math.cos(state.pitch))]] # Given matrix from lecture
+        
+        dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
+
+        roll_dot = dot_YPR [0][0] # Get roll dot
+
+        pitch_dot = dot_YPR [1][0] # Get pitch dot
+        
+        yaw_dot = dot_YPR [2][0] # get yaw dot
+
+        # Derivitive of UVW
+
+        term_right = [[((VPC.Jzz / VPC.Jdet) * forcesMoments.Mx) + ((VPC.Jxz / VPC.Jdet) * forcesMoments.Mz)], 
+                  
+                  [(forcesMoments.My / VPC.Jyy)], 
+                  
+                  [((VPC.Jxz / VPC.Jdet) * forcesMoments.Mx) + ((VPC.Jxx / VPC.Jdet) * forcesMoments.Mz)]] # J invers * moments
+        
+        
+        
+        omega_cross = mm.skew(state.p, state.q, state.r) # skew symmetric
+
+        pqr = [[state.p], [state.q], [state.r]]
+
+
+        j_inv_times_WX = mm.multiply(VPC.JinvBody, omega_cross)
+
+        neg_j_inv_times_WX = mm.scalarMultiply(-1,j_inv_times_WX)
+
+        J_times_pqr = mm.multiply(VPC.Jbody, pqr)
+
+        dot_pqr = mm.multiply(neg_j_inv_times_WX, J_times_pqr)
+
+        p_dot = dot_pqr[0][0]
+
+        q_dot = dot_pqr[1][0]
+
+        r_dot = dot_pqr[2][0]
+
+        # Derivative of R
+
+        R_dot = mm.scalarMultiply(-1, mm.multiply(omega_cross, state.R))
+
+        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, pitch_dot, roll_dot, p_dot, q_dot, r_dot, R_dot)
+
+        return dot
+        
 
 
 
