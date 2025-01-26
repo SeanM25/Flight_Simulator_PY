@@ -149,9 +149,6 @@ class VehicleDynamicsModel:
 
         w_dot = dot_UVW[2][0] # w dot
 
-
-        '''
-
         # derivatives of yaw, pitch, roll
 
         yaw_pitch_roll = [[state.p], [state.q], [state.r]] # Given values of roll, pitch, and yaw
@@ -162,53 +159,46 @@ class VehicleDynamicsModel:
         
         dot_YPR = mm.multiply(YPR_dir_mtrx, yaw_pitch_roll) # get yaw pitch and roll derivatives
 
-        roll_dot = 1 # Get roll dot
+        roll_dot = dot_YPR[0][0] # Get roll dot
 
-        pitch_dot = 1 # Get pitch dot
+        pitch_dot = dot_YPR[1][0] # Get pitch dot
         
-        yaw_dot = 1 # get yaw dot
+        yaw_dot = dot_YPR[2][0] # get yaw dot
 
-
-'''
-
-
-'''
         # Derivitive of UVW (Check Here!!!)
 
-        m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]]
+        m_xyz = [[forcesMoments.Mx], [forcesMoments.My], [forcesMoments.Mz]] # Get current moments vector
         
         omega_cross = mm.skew(state.p, state.q, state.r) # skew symmetric
 
-        pqr = [[state.p], [state.q], [state.r]]
+        pqr = [[state.p], [state.q], [state.r]] # get current pqr
 
-        neg_J_inv = mm.scalarMultiply(-1, VPC.JinvBody)
+        neg_J_inv = mm.scalarMultiply(-1, VPC.JinvBody) # Get -J^-1
 
-        left_term = mm.multiply(VPC.JinvBody, m_xyz)
+        left_term = mm.multiply(VPC.JinvBody, m_xyz) # Multiply J times moments vector
 
-        right_term = mm.multiply(mm.multiply(neg_J_inv, omega_cross), mm.multiply(VPC.Jbody, pqr))
+        right_term = mm.multiply(mm.multiply(neg_J_inv, omega_cross), mm.multiply(VPC.Jbody, pqr)) # Multiply the other 4 terms together
 
-        dot_pqr = mm.add(left_term, right_term)
+        dot_pqr = mm.add(left_term, right_term) # Add them together
 
-        p_dot = dot_pqr[0][0]
+        p_dot = dot_pqr[0][0] # Get p dot
 
-        q_dot = dot_pqr[1][0]
+        q_dot = dot_pqr[1][0] # get q dot
 
-        r_dot = dot_pqr[2][0]
-
-        '''
+        r_dot = dot_pqr[2][0] # get r dot
 
         # Derivative of R
 
         R_dot = mm.scalarMultiply(-1, (mm.multiply(omega_cross, state.R)))
 
-        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, 1, 1, 1, p_dot, q_dot, r_dot, R_dot)
+        dot = States.vehicleState(pn_dot, pe_dot, pd_dot, u_dot, v_dot, w_dot, yaw_dot, roll_dot, pitch_dot, p_dot, q_dot, r_dot, R_dot)
 
         return dot
     
     def IntegrateState (self, dT, state, dot):
 
 
-        # Integrate Pn, Pe, Pd
+        # Integrate Pn, Pe, Pd using the forward integration formula x_{k+1} = x_{k} + dx/dt * dT
 
         pn_int = state.pn + (dot.pn * dT)
 
@@ -217,7 +207,7 @@ class VehicleDynamicsModel:
         pd_int = state.pd + (dot.pd * dT)
 
         
-        # Integrate u, v, w
+        # Integrate u, v, w using the forward integration formula x_{k+1} = x_{k} + dx/dt * dT
 
         u_int = state.u + (dot.u * dT)
 
@@ -227,7 +217,7 @@ class VehicleDynamicsModel:
         
         w_int = state.w + (dot.w * dT)
 
-        # Integrate p, q, r
+        # Integrate p, q, r using the forward integration formula x_{k+1} = x_{k} + dx/dt * dT
 
         p_int = state.p + (dot.p * dT)
 
@@ -235,13 +225,13 @@ class VehicleDynamicsModel:
 
         r_int = state.r + (dot.r * dT)
 
-        # Integrate R
+        # Integrate R using matrix exponetial
 
         Rexp = VehicleDynamicsModel.Rexp(self, dT, state, dot)
 
         R_int = mm.multiply(Rexp, state.R)
 
-        # Integrate yaw, pitch, roll
+        # Integrate yaw, pitch, roll using R_{k+1}
 
         yaw_int, pitch_int, roll_int = Rotations.dcm2Euler(R_int)
 
