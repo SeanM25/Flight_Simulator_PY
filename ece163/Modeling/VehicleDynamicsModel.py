@@ -251,7 +251,7 @@ class VehicleDynamicsModel:
 
     def ForwardEuler(self, dT, state, dot):
 
-        newState = state + dot * dT
+        newState = VehicleDynamicsModel.IntegrateState(self, dT, state, dot)
 
         return newState
 
