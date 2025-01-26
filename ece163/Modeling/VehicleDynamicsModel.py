@@ -181,11 +181,11 @@ class VehicleDynamicsModel:
 
         pqr = [[state.p], [state.q], [state.r]]
 
-        left_term = mm.multiply(mm.multiply(VPC.JinvBody, omega_cross), mm.multiply(VPC.Jbody, pqr))
+        left_term = mm.multiply(mm.multiply(mm.scalarMultiply(-1, VPC.JinvBody), omega_cross), mm.multiply(VPC.Jbody, pqr))
 
-        neg_left_term = mm.scalarMultiply(-1, left_term)
+        #neg_left_term = mm.scalarMultiply(-1, left_term)
 
-        dot_pqr = mm.add(term_right, neg_left_term)
+        dot_pqr = mm.add(term_right, left_term)
 
         p_dot = dot_pqr[0][0]
 
