@@ -113,7 +113,7 @@ class VehicleDynamicsModel:
 
         cos_times_w_square = mm.scalarMultiply(exp_COS_term, square_skew) # multiplies the cos term by the skew symmetric matrix squared
 
-        Rexp = mm.add(I_matrix, cos_times_w_square) # Add the results to get Rexp
+        Rexp = mm.add(I_minus_Sin, cos_times_w_square) # Add the results to get Rexp
 
         return Rexp # Return Rexp
     
