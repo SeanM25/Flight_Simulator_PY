@@ -149,6 +149,9 @@ class VehicleDynamicsModel:
 
         w_dot = dot_UVW[2][0] # w dot
 
+
+        '''
+
         # derivatives of yaw, pitch, roll
 
         yaw_pitch_roll = [[state.p], [state.q], [state.r]] # Given values of roll, pitch, and yaw
@@ -164,6 +167,11 @@ class VehicleDynamicsModel:
         pitch_dot = 1 # Get pitch dot
         
         yaw_dot = 1 # get yaw dot
+
+
+'''
+
+
 
         # Derivitive of UVW (Check Here!!!)
 
