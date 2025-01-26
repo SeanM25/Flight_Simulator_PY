@@ -70,7 +70,7 @@ class VehicleDynamicsModel:
 
         '''Calculates the matrix exponential exp(-dT*[omega x]), which can be used in the closed form solution for the DCM integration from body-fixed rates.'''
 
-        mtrx_pqr = [[state.p], [self.state.q] , [self.state.r]] # pqr (angular rates) matrix
+        mtrx_pqr = [[state.p], [state.q] , [state.r]] # pqr (angular rates) matrix
 
         mtrx_prq_deriv = [[dot.p], [dot.q] , [dot.r]] # pqr dot (angular rates derivative) matrix
 
