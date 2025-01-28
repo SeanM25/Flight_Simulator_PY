@@ -14,13 +14,17 @@ class VehicleAerodynamicsModel:
 
         '''Initialization of the internal classes which are used to track the vehicle aerodynamics and dynamics.'''
 
-        self.Vdynam = VDM.VehicleDynamicsModel() # Assign self all the parameters of the vehicle state from prev Lab 1
+        # Check This For Typo?
 
-        self.Vdynam.state.u = initialSpeed # Velocity in x-dir equals the inital speed this assumes the plane is flying straight and level
+        self.VState = States.vehicleState() # Assign self all the parameters of the vehicle state from prev Lab 1
 
-        self.Vdynam.state.pd = initialHeight # the initial down position is the intial height
+        self.VState.u= initialSpeed # Velocity in x-dir equals the inital speed this assumes the plane is flying straight and level
+
+        self.VState.pd = initialHeight # the initial down position is the intial height
 
         return # Return nothing
+    
+
 
     
     def CalculateCoeff_alpha(self, alpha):
@@ -60,6 +64,8 @@ class VehicleAerodynamicsModel:
 
 
         return CL_tot, CD_tot, CM_tot # Return coefficents of Lift, Drag & Moment
+    
+
 
 
     def CalculatePropForces(self, Va, Throttle):
@@ -114,8 +120,15 @@ class VehicleAerodynamicsModel:
 
         Mx = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 5) * (CQ)) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
 
-        return Fx, Mx
+        return Fx, Mx # Return Prop Force and Moment
 
+
+
+    def setVehicleState(self, state):
+
+        self.VState = state # Set Vehicle State to current state
+
+        return # Return nothing
 
 
 
