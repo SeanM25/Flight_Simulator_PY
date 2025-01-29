@@ -16,11 +16,11 @@ class VehicleAerodynamicsModel:
 
         # Check This For Typo?
 
-        self.VState = States.vehicleState() # Assign self all the parameters of the vehicle state from prev Lab 1
+        self.VDynamics = VDM.VehicleDynamicsModel() # Assign self all the parameters of the vehicle state
 
-        self.VState.u= initialSpeed # Velocity in x-dir equals the inital speed this assumes the plane is flying straight and level
+        self.VDynamics.state.u = initialSpeed # Velocity in x-dir equals the inital speed this assumes the plane is flying straight and level
 
-        self.VState.pd = initialHeight # the initial down position is the intial height
+        self.VDynamics.state.pd = initialHeight # the initial down position is the intial height
 
         return # Return nothing
     
@@ -126,13 +126,39 @@ class VehicleAerodynamicsModel:
 
     def setVehicleState(self, state):
 
-        self.VState = state # Set Vehicle State to current state
+        '''Wrapper function to set the vehicle state from outside module'''
+
+        self.VDynamics.state = state # Set Vehicle State to current state
 
         return # Return nothing
 
 
 
+    def getVehicleState(self):
 
+        '''Wrapper function to return vehicle state from module'''
+
+        return self.VDynamics.state # Return current Vehicle state
+
+
+    def getVehicleDynamicsModel(self):
+
+
+        '''Wrapper function to return the vehicle dynamics model handle'''
+
+        return self.VDynamics # Return vehicle dynamics model which is set to the Vehicle Dynamics Module class
+
+    def reset(self):
+
+        '''Resets module to its original state so it can run again'''
+
+        # Basically Just Copy what was in init since were resetting
+
+        self.VDynamics = VDM.VehicleDynamicsModel() # Reset to vanilla vehicle dynamics model
+
+        self.VDynamics.state.u = VPC.InitialSpeed # Reset intial Speed to default
+
+        self.VDynamics.state.pd = VPC.InitialDownPosition # Reset height to default
 
 
 
