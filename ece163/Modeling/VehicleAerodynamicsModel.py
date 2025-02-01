@@ -249,8 +249,21 @@ class VehicleAerodynamicsModel:
         tot_gravity = Inputs.forcesMoments(G_x, G_y, G_z) # Gravity is a forces moments class
 
         return tot_gravity # return gravity
+    
+
+# Control Forces Here 
+
+    def updateForces(self, state, controls, wind = None):
+
+        '''Function to update all of the aerodynamic, propulsive, and gravity forces and moments. All calculations required to update the forces are included. 
+           state is updated with new values for airspeed, angle of attack, and sideslip angles (see class definition for members)'''
 
 
 
+        gravF = VehicleAerodynamicsModel.gravityForces(self, state) # Get gravity forces
+
+        aeroF = VehicleAerodynamicsModel.aeroForces(self, state) # Get aero forces
+
+        #controlF = V
 
 
