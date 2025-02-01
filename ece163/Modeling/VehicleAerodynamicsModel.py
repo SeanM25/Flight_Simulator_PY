@@ -233,7 +233,22 @@ class VehicleAerodynamicsModel:
             # Return Aeroforces
 
             return aeroForces
+        
+    def gravityForces(self, state):
 
+        grav_vect = [[0], [0], [VPC.mass * VPC.g0]] # 0, 0, mg gravity vector
+
+        F_grav = mm.multiply(state.R, grav_vect) # Multiply rotation matrix by grav vector to get F grav according to lecture
+
+        G_x = F_grav[0][0] # Gravity in the x should be 0 ?
+
+        G_y = F_grav[1][0] # Gravity in the y should be 0 ?
+
+        G_z = F_grav[2][0] # Gravity in the z 
+
+        tot_gravity = Inputs.forcesMoments(G_x, G_y, G_z) # Gravity is a forces moments class
+
+        return tot_gravity # return gravity
 
 
 
