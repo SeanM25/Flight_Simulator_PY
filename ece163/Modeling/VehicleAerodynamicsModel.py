@@ -242,13 +242,13 @@ class VehicleAerodynamicsModel:
 
         F_grav = mm.multiply(state.R, grav_vect) # Multiply rotation matrix by grav vector to get F grav according to lecture
 
-        G_x = F_grav[0][0] # Gravity in the x should be 0
+        Fx = F_grav[0][0] # Gravity in the x should be 0
 
-        G_y = F_grav[1][0] # Gravity in the y should be 0
+        Fy = F_grav[1][0] # Gravity in the y should be 0
 
-        G_z = F_grav[2][0] # Gravity in the z 
+        Fz = F_grav[2][0] # Gravity in the z 
 
-        tot_gravity = Inputs.forcesMoments(G_x, G_y, G_z) # Gravity is a forces moments class
+        tot_gravity = Inputs.forcesMoments(Fx, Fy, Fz) # Gravity is a forces moments class
 
         return tot_gravity # return gravity
 
