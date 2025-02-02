@@ -174,7 +174,7 @@ class VehicleAerodynamicsModel:
 
         if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
 
-            Fx = 0 # No X force
+            Fx = 0.0 # No X force
 
             Fy = 0 # No Y force
 
