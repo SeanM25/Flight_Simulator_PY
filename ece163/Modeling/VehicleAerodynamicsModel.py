@@ -240,6 +240,18 @@ class VehicleAerodynamicsModel:
 
 
 
+        Va = math.sqrt ((state.u ** 2) + (state.v ** 2) + (state.w ** 2))
+
+        alpha = math.atan2(state.w, state.u)
+
+        beta = math.asin((state.v) / (Va))
+
+        state.Va = Va
+
+        state.alpha = alpha
+
+        state.beta = beta
+        
         gravF = VehicleAerodynamicsModel.gravityForces(self, state) # Get gravity forces
 
         aeroF = VehicleAerodynamicsModel.aeroForces(self, state) # Get aero forces
