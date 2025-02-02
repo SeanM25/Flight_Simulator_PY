@@ -280,7 +280,7 @@ class VehicleAerodynamicsModel:
         return # return nothing
     
 
-    def aeroForces(state):
+    def aeroForces(self, state):
 
         '''Function to calculate the Aerodynamic Forces and Moments using the linearized simplified force model
         and the stability derivatives in VehiclePhysicalConstants.py file. 
