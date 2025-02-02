@@ -161,11 +161,6 @@ class VehicleAerodynamicsModel:
         self.VDynamics.state.pd = VPC.InitialDownPosition # Reset height to default
 
         return # return nothing
-    
-    def aeroForces(self, state):
-
-
-        return
         
     def gravityForces(self, state):
 
