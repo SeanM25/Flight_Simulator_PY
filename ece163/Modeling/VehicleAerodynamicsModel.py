@@ -97,7 +97,7 @@ class VehicleAerodynamicsModel:
 
         # Check for Imaginary omega
 
-        if ((b ** 2) < (4 * a * c)): # For the quadratic formula if b^2 < 4ac then omega must be an imaginary num that is omega = (- b +/- j / 2a )
+        if ((b ** 2) < (4 * a * c) | (b ** 2) == (4 * a * c)): # For the quadratic formula if b^2 < 4ac then omega must be an imaginary num that is omega = (- b +/- j / 2a )
 
             omega = 100 # If imaginary make omega 100
 
