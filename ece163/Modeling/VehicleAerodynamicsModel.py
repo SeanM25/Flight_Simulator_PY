@@ -191,7 +191,7 @@ class VehicleAerodynamicsModel:
         # F_Drag & F_Lift equations no control surface deflection. Get Fx, Fz
 
         
-            CL_alpha, CD_alpha, CM_alpha = VehicleAerodynamicsModel.CalculateCoeff_alpha(self, state.alpha)
+            CL_alpha, CD_alpha, CM_alpha = VehicleAerodynamicsModel.CalculateCoeff_alpha(self, state.alpha) # Get Coefficents of Lift and Drag to do the calculations
             
             force_const = (1 / 2) * VPC.rho * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
 
@@ -337,6 +337,19 @@ class VehicleAerodynamicsModel:
 
         updatedForce = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz) # All forces updated
 
-        return updatedForce
+        return updatedForce # Return updated forces
+    
+    def Update(self, controls):
 
+
+        '''Function that uses the current state (internal), wind (internal), and controls (inputs) to calculate the forces, and then do the integration of the full 6-DOF non-linear equations of motion.
+          Wraps the VehicleDynamicsModel class as well as the windState internally. The Wind and the vehicleState are maintained internally.'''
+        
+        state = VehicleAerodynamicsModel.getVehicleState(self) # Get present vehicle state
+
+        updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind=None) # Get current forces on plane
+
+        self.VDynamics.Update(updated_forces) # upadate the forces on our model
+
+        return # return nothing
 
