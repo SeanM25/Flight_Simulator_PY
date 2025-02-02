@@ -174,24 +174,24 @@ class VehicleAerodynamicsModel:
 
         if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
 
-            aeroForces.Fx = 0 # No X force
+            Fx = 0 # No X force
 
-            aeroForces.Fy = 0 # No Y force
+            Fy = 0 # No Y force
 
-            aeroForces.Fz = 0 # No Z force
+            Fz = 0 # No Z force
 
-            aeroForces.Mx = 0 # No X moment
+            Mx = 0 # No X moment
 
-            aeroForces.My = 0 # No Y moment
+            My = 0 # No Y moment
 
-            aeroForces.Mz = 0 # No Z moment
+            Mz = 0 # No Z moment
 
         else: # Do all the calculations and get the forces and moments
         
         # F_Drag & F_Lift equations no control surface deflection. Get Fx, Fz
 
         
-            force_const = (1 / 2) * (VPC.rho) * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
+            force_const = ((1 / 2) * (VPC.rho) * (state.Va ** 2) * VPC.S) # constant term that exists in Force of Lift, Drag, etc equations
 
             q_term = ((VPC.c * state.q ) / (2 * state.Va)) # Constant term within Flift and drag we multiply by q
 
@@ -220,11 +220,11 @@ class VehicleAerodynamicsModel:
 
             # Get The Moments Mx, My, Mz
 
-            Mx = (force_const * VPC.b) * (VPC.Cl0 + (VPC.Clbeta * state.beta) + (VPC.Clp * p_term) + (VPC.Clr * r_term)) # Eq 4.15 Beard Roll Moment
+            Mx = ((force_const * VPC.b) * (VPC.Cl0 + (VPC.Clbeta * state.beta) + (VPC.Clp * p_term) + (VPC.Clr * r_term))) # Eq 4.15 Beard Roll Moment
 
-            My = (force_const * VPC.c) * (VPC.CM0 + (VPC.CMalpha * state.alpha) + (VPC.CMq * q_term)) # Eq 4.5 Beard Pitch Moment
+            My = ((force_const * VPC.c) * (VPC.CM0 + (VPC.CMalpha * state.alpha) + (VPC.CMq * q_term))) # Eq 4.5 Beard Pitch Moment
 
-            Mz = (force_const * VPC.b) * (VPC.Cn0 + (VPC.Cnbeta * state.beta) + (VPC.Cnp * p_term) + (VPC.Cnr * r_term)) # Eq 4.16 Beard Yaw Moment
+            Mz = ((force_const * VPC.b) * (VPC.Cn0 + (VPC.Cnbeta * state.beta) + (VPC.Cnp * p_term) + (VPC.Cnr * r_term))) # Eq 4.16 Beard Yaw Moment
         
             # Gather all aeroforces
 
