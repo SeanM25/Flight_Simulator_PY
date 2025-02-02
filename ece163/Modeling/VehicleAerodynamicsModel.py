@@ -249,9 +249,63 @@ class VehicleAerodynamicsModel:
         tot_gravity = Inputs.forcesMoments(G_x, G_y, G_z) # Gravity is a forces moments class
 
         return tot_gravity # return gravity
-    
 
-# Control Forces Here 
+
+
+    def controlForces(self, state, controls):
+
+
+        '''Function to calculate aerodynamic forces from control surface deflections (including throttle) using the linearized aerodynamics and simplified thrust model.
+           Requires airspeed (Va) in [m/s] and angle of attack (alpha) in [rad] both from state.Va and state.alpha respectively.'''
+
+        force_const = (1 / 2) * (VPC.rho) * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
+
+        R_Fx_Fz_cont = [[math.cos(state.alpha), -1 * math.sin(state.alpha)],  # Given matrix needed to get Fx, Fz this time with control defkections
+                        [math.sin(state.alpha), math.cos(state.alpha)]]
+
+        F_drag_cont = force_const * (VPC.CDdeltaE * controls.Elevator) # Beards drag equation but only for control surfaces
+
+        F_lift_cont = force_const * (VPC.CLdeltaE * controls.Elevator) # Beards lift equation but only for control surfaces
+
+        Drag_Lift_Vec = [[-1 * F_drag_cont], [-1 * F_lift_cont]] # Same vector as before but this time exculsively for control surfaces
+
+        DL_cont = mm.multiply(R_Fx_Fz_cont, Drag_Lift_Vec) # Multiply R by lift drag to get Fx, Fz for control surfaces
+
+        Fx_cont = DL_cont[0][0] # Assign Fx for controls
+
+        Fy_cont = force_const * ((VPC.CYdeltaA * controls.Aileron) + (VPC.CYdeltaR * controls.Rudder)) # Beard's Fy for control surfaces
+
+        Fz_cont = DL_cont[1][0] # Assign Fz for controls
+
+        Mx_cont = force_const * VPC.b * ((VPC.CldeltaA * controls.Aileron) + (VPC.CldeltaR * controls.Rudder)) # Roll Moment due to control input
+
+        My_cont = force_const * VPC.c * (VPC.CMdeltaE * controls.Elevator) # Pitch Moment due to control input
+
+        Mz_cont = force_const * VPC.b * ((VPC.CndeltaA * controls.Aileron) + (VPC.CndeltaR * controls.Rudder)) # Yaw Moment due to control input
+
+        # Need propellor forces since were also asked to use throttle this effects the Forces in x only
+
+
+        force_prop, moments_prop = VehicleAerodynamicsModel.CalculatePropForces(self, state.Va, controls.Throttle)
+
+        Fx = Fx_cont + force_prop # Total amount of forces in X for controls is due to both prop and control surfaces
+
+        Fy = Fy_cont # Amount in Y for controls is just due to control surfaces
+
+        Fz = Fz_cont # Fz equal to forces of control surfaces in Z
+
+        Mx = Mx_cont + moments_prop # Moments from Propellor and the control surface deflections
+
+        My = My_cont # Moments in Y for control surface deflections
+
+        Mz = Mz_cont # Moments in Z for control surface deflections
+
+        control_forces = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz) # Assign control surfaces
+
+        return control_forces # Return control surfaces
+
+
+
 
     def updateForces(self, state, controls, wind = None):
 
