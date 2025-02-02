@@ -79,9 +79,7 @@ class VehicleAerodynamicsModel:
 
         # Need KT and KV to find omega via the quadratic formula specified in the prop cheat sheet
 
-        KT = (60 / (2 *  math.pi * VPC.KV)) # KT equals the equation directly below (6) in the Prop cheat sheet
-
-        KE = KT # KE = KT according the equation
+        KT = KE = 60 / (2 *  math.pi * VPC.KV) # KT equals the equation directly below (6) in the Prop cheat sheet
 
         # Need Vin as well Vin = Vmax * throttle value according to blurb in the prop cheat sheet
 
@@ -89,11 +87,11 @@ class VehicleAerodynamicsModel:
 
         # Assemble the quadratic equation values a, b, c
 
-        a = ((VPC.rho) * (VPC.D_prop ** 5) * (VPC.C_Q0)) / (4 * math.pi ** 2) # Given a
+        a = (VPC.rho * (VPC.D_prop ** 5) * VPC.C_Q0) / (4 * (math.pi ** 2)) # Given a
 
-        b = (((VPC.rho) * (VPC.D_prop ** 4) * (Va) * (VPC.C_Q1)) / (2 * math.pi)) + ((KT * KE) / (VPC.R_motor)) # Given b
+        b = ((VPC.rho * (VPC.D_prop ** 4) * Va * VPC.C_Q1) / (2 * math.pi)) + ((KT * KE) / (VPC.R_motor)) # Given b
 
-        c = ((VPC.rho) * (VPC.D_prop ** 3) * (Va ** 2) * (VPC.C_Q2)) - (KT * (Vin/VPC.R_motor)) + (KT * VPC.i0) # Given c
+        c = (VPC.rho * (VPC.D_prop ** 3) * (Va ** 2) * VPC.C_Q2) - (KT * ((Vin) / VPC.R_motor)) + (KT * VPC.i0) # Given c
 
         # Check for Imaginary omega
 
@@ -103,11 +101,11 @@ class VehicleAerodynamicsModel:
 
         else:
 
-            omega = ((-1 * b) + math.sqrt((b ** 2) - (4 * a * c)) / (2 * a)) # Otherwise calculate omega using the quadratic formula normally
+            omega = ((-1 * b) + math.sqrt((b ** 2) - (4 * a * c))) / (2 * a) # Otherwise calculate omega using the quadratic formula normally
 
         # Get J to find CT & CQ
 
-        J = ((2 * math.pi * Va) / (omega * VPC.D_prop))
+        J = (2 * math.pi * Va) / (omega * VPC.D_prop)
 
         # Get CQ & CT for final calculation
 
@@ -116,9 +114,9 @@ class VehicleAerodynamicsModel:
         CQ = VPC.C_Q0 + (VPC.C_Q1 * J) + (VPC.C_Q2 * (J ** 2)) # Equation (4)
 
         
-        Fx_propel = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 4) * (CT)) / (4 * (math.pi ** 2))) # Equation (1) Force of Prop
+        Fx_propel = (VPC.rho * (omega ** 2) * (VPC.D_prop ** 4) * CT) / (4 * (math.pi ** 2)) # Equation (1) Force of Prop
 
-        Mx_propel = -1 * (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 5) * (CQ)) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
+        Mx_propel = (-1) * ((VPC.rho * (omega ** 2) * (VPC.D_prop ** 5) * CQ) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
 
         return Fx_propel, Mx_propel # Return Prop Force and Moment
 
