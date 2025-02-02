@@ -10,7 +10,7 @@ from ..Constants import VehiclePhysicalConstants as VPC
 
 class VehicleAerodynamicsModel:
 
-    def __init__ (self, initialSpeed = VPC.InitialSpeed, initialHeight = VPC.InitialDownPosition):
+    def __init__(self, initialSpeed = VPC.InitialSpeed, initialHeight = VPC.InitialDownPosition):
 
         '''Initialization of the internal classes which are used to track the vehicle aerodynamics and dynamics.'''
 
@@ -234,7 +234,7 @@ class VehicleAerodynamicsModel:
 
             # Return Aeroforces
 
-        return aeroForces
+            return aeroForces
         
     def gravityForces(self, state):
 
