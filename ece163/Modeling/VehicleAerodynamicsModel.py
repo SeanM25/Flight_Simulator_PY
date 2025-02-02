@@ -191,13 +191,13 @@ class VehicleAerodynamicsModel:
         # F_Drag & F_Lift equations no control surface deflection. Get Fx, Fz
 
         
-            force_const = ((1 / 2) * (VPC.rho) * (state.Va ** 2) * VPC.S) # constant term that exists in Force of Lift, Drag, etc equations
+            force_const = (1 / 2) * VPC.rho * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
 
-            q_term = ((VPC.c * state.q ) / (2 * state.Va)) # Constant term within Flift and drag we multiply by q
+            q_term = (VPC.c * state.q) / (2 * state.Va) # Constant term within Flift and drag we multiply by q
 
-            p_term = ((VPC.b * state.p ) / (2 * state.Va)) # Constant term within moments we multiply by p
+            p_term = (VPC.b * state.p) / (2 * state.Va) # Constant term within moments we multiply by p
 
-            r_term = ((VPC.b * state.r ) / (2 * state.Va)) # Constant term within moments we multiply by r
+            r_term = (VPC.b * state.r ) / (2 * state.Va) # Constant term within moments we multiply by r
 
             R_Fx_Fz = [[math.cos(state.alpha), -1 * math.sin(state.alpha)],  # Given matrix needed to get Fx, Fz
                        [math.sin(state.alpha), math.cos(state.alpha)]]
