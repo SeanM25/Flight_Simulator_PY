@@ -99,7 +99,7 @@ class VehicleAerodynamicsModel:
 
         if ((b ** 2) < (4 * a * c)): # For the quadratic formula if b^2 < 4ac then omega must be an imaginary num that is omega = (- b +/- j / 2a )
 
-            omega = 100.0 # If imaginary make omega 100
+            omega = 100 # If imaginary make omega 100
 
         else:
 
@@ -116,11 +116,11 @@ class VehicleAerodynamicsModel:
         CQ = VPC.C_Q0 + (VPC.C_Q1 * J) + (VPC.C_Q2 * (J ** 2)) # Equation (4)
 
         
-        Fx = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 4) * (CT)) / (4 * (math.pi ** 2))) # Equation (1) Force of Prop
+        Fx_prop = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 4) * (CT)) / (4 * (math.pi ** 2))) # Equation (1) Force of Prop
 
-        Mx = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 5) * (CQ)) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
+        Mx_prop = -1 * (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 5) * (CQ)) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
 
-        return Fx, Mx # Return Prop Force and Moment
+        return Fx_prop, Mx_prop # Return Prop Force and Moment
 
 
 
@@ -354,7 +354,7 @@ class VehicleAerodynamicsModel:
 
         AForce = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz)
 
-            # Return Aeroforces
+        # Return Aeroforces
 
         return AForce
 
