@@ -242,9 +242,9 @@ class VehicleAerodynamicsModel:
 
         F_grav = mm.multiply(state.R, grav_vect) # Multiply rotation matrix by grav vector to get F grav according to lecture
 
-        G_x = F_grav[0][0] # Gravity in the x should be 0 ?
+        G_x = F_grav[0][0] # Gravity in the x should be 0
 
-        G_y = F_grav[1][0] # Gravity in the y should be 0 ?
+        G_y = F_grav[1][0] # Gravity in the y should be 0
 
         G_z = F_grav[2][0] # Gravity in the z 
 
@@ -288,15 +288,15 @@ class VehicleAerodynamicsModel:
         # Need propellor forces since were also asked to use throttle this effects the Forces in x only
 
 
-        force_prop, moments_prop = VehicleAerodynamicsModel.CalculatePropForces(self, state.Va, controls.Throttle)
+        force_from_prop, moments_from_prop = VehicleAerodynamicsModel.CalculatePropForces(self, state.Va, controls.Throttle)
 
-        Fx = Fx_cont + force_prop # Total amount of forces in X for controls is due to both prop and control surfaces
+        Fx = Fx_cont + force_from_prop # Total amount of forces in X for controls is due to both prop and control surfaces
 
         Fy = Fy_cont # Amount in Y for controls is just due to control surfaces
 
         Fz = Fz_cont # Fz equal to forces of control surfaces in Z
 
-        Mx = Mx_cont + moments_prop # Moments from Propellor and the control surface deflections
+        Mx = Mx_cont + moments_from_prop # Moments from Propellor and the control surface deflections
 
         My = My_cont # Moments in Y for control surface deflections
 
@@ -320,6 +320,23 @@ class VehicleAerodynamicsModel:
 
         aeroF = VehicleAerodynamicsModel.aeroForces(self, state) # Get aero forces
 
-        #controlF = V
+        controlF = VehicleAerodynamicsModel.controlForces(self, state, controls) # Get forces due to control deflection
+
+        Fx = gravF.Fx + aeroF.Fx + controlF.Fx # Sum of all forces in X due to gravity, aeroforces, and control forces
+
+        Fy = gravF.Fy + aeroF.Fy + controlF.Fy # Sum of all forces in Y due to gravity, aeroforces, and control forces
+
+        Fz = gravF.Fz + aeroF.Fz + controlF.Fz # Sum of all forces in Z due to gravity, aeroforces, and control forces
+
+
+        Mx = gravF.Mx + aeroF.Mx + controlF.Mx # Sum of all moments in X due to gravity, aeroforces, and control forces
+
+        My = gravF.My + aeroF.My + controlF.My # Sum of all forces in Y due to gravity, aeroforces, and control forces
+
+        Mz = gravF.Mz + aeroF.Mz + controlF.Mz # Sum of all forces in Z due to gravity, aeroforces, and control forces
+
+        updatedForce = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz) # All forces updated
+
+        return updatedForce
 
 
