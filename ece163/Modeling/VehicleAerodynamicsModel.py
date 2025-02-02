@@ -14,8 +14,6 @@ class VehicleAerodynamicsModel:
 
         '''Initialization of the internal classes which are used to track the vehicle aerodynamics and dynamics.'''
 
-        # Check This For Typo?
-
         self.VDynamics = VDM.VehicleDynamicsModel() # Assign self all the parameters of the vehicle state
 
         self.VDynamics.state.u = initialSpeed # Velocity in x-dir equals the inital speed this assumes the plane is flying straight and level
@@ -24,7 +22,6 @@ class VehicleAerodynamicsModel:
 
         return # Return nothing
     
-
 
     
     def CalculateCoeff_alpha(self, alpha):
@@ -240,22 +237,22 @@ class VehicleAerodynamicsModel:
 
 
 
-        Va = math.hypot(state.u, state.v, state.w)
+        Va = math.hypot(state.u, state.v, state.w) # Va equation with no wind from lecture
 
-        alpha = math.atan2(state.w, state.u)
+        alpha = math.atan2(state.w, state.u) # Given equation for angle of attack no wind cond
 
-        if (math.isclose(Va, 0.0)):
+        if (math.isclose(Va, 0.0)): # If Va is near zero
 
-            beta = 0
+            beta = 0 # Make it zero
         else:
 
-            beta = math.asin((state.v) / (Va))
+            beta = math.asin((state.v) / (Va)) # Otherwise calculate it using no wind ocndition
 
-        state.Va = Va
+        state.Va = Va # Assign Va
 
-        state.alpha = alpha
+        state.alpha = alpha # Assign alpha
 
-        state.beta = beta
+        state.beta = beta # Assign Beta
         
         gravF = VehicleAerodynamicsModel.gravityForces(self, state) # Get gravity forces
 
