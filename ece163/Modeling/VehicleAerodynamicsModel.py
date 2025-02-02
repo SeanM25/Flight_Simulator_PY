@@ -174,17 +174,17 @@ class VehicleAerodynamicsModel:
 
         if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
 
-            Fx = 0 # No X force
+            aeroForces.Fx = 0 # No X force
 
-            Fy = 0 # No Y force
+            aeroForces.Fy = 0 # No Y force
 
-            Fz = 0 # No Z force
+            aeroForces.Fz = 0 # No Z force
 
-            Mx = 0 # No X moment
+            aeroForces.Mx = 0 # No X moment
 
-            My = 0 # No Y moment
+            aeroForces.My = 0 # No Y moment
 
-            Mz = 0 # No Z moment
+            aeroForces.Mz = 0 # No Z moment
 
         else: # Do all the calculations and get the forces and moments
         
