@@ -287,21 +287,25 @@ class VehicleAerodynamicsModel:
         Specifically does not include forces due to control surface deflection.
         Requires airspeed (Va) in [m/s], angle of attack (alpha) in [rad] and sideslip angle (beta) in [rad] from the state.'''
 
+        
+
         # Need Fx, Fy, Fz, Mx, My, Mz to get all aero forces and moments
+
+        AForce= Inputs.forcesMoments()
 
         if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
 
-            Fx = 0.0 # No X force aaa
+            AForce.Fx = 0.0 # No X force aaa
 
-            Fy = 0 # No Y force
+            AForce.Fy = 0.0 # No Y force
 
-            Fz = 0 # No Z force
+            AForce.Fz = 0.0 # No Z force
 
-            Mx = 0 # No X moment
+            AForce.Mx = 0.0 # No X moment
 
-            My = 0 # No Y moment
+            AForce.My = 0.0 # No Y moment
 
-            Mz = 0 # No Z moment
+            AForce.Mz = 0.0 # No Z moment
 
         else: # Do all the calculations and get the forces and moments
         
