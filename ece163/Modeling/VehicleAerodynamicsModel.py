@@ -278,4 +278,11 @@ class VehicleAerodynamicsModel:
         self.VDynamics.Update(updated_forces) # upadate the forces on our model
 
         return # return nothing
+    
+
+    def aeroForces(self, state):
+
+
+
+        return
 
