@@ -191,6 +191,8 @@ class VehicleAerodynamicsModel:
         # F_Drag & F_Lift equations no control surface deflection. Get Fx, Fz
 
         
+            CL_alpha, CD_alpha, CM_alpha = VehicleAerodynamicsModel.CalculateCoeff_alpha(self, state.alpha)
+            
             force_const = (1 / 2) * VPC.rho * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
 
             q_term = (VPC.c * state.q) / (2 * state.Va) # Constant term within Flift and drag we multiply by q
@@ -202,9 +204,9 @@ class VehicleAerodynamicsModel:
             R_Fx_Fz = [[math.cos(state.alpha), -1 * math.sin(state.alpha)],  # Given matrix needed to get Fx, Fz
                        [math.sin(state.alpha), math.cos(state.alpha)]]
         
-            F_drag = (force_const * (VPC.CD0 + (VPC.CDalpha * state.alpha) + (VPC.CDq * q_term))) # Given Drag eq
+            F_drag = (force_const * (CD_alpha + (VPC.CDq * q_term))) # Given Drag eq
 
-            F_lift = (force_const * (VPC.CL0 + (VPC.CLalpha * state.alpha) + (VPC.CLq * q_term))) # Given lift eq
+            F_lift = (force_const * (CL_alpha + (VPC.CLq * q_term))) # Given lift eq
 
             vec_lift_drag = [[-1 * F_drag], [-1 * F_lift]]  # R times this vector gives us Fx, Fz
 
