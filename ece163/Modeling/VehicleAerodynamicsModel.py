@@ -347,7 +347,7 @@ class VehicleAerodynamicsModel:
         
         state = VehicleAerodynamicsModel.getVehicleState(self) # Get present vehicle state
 
-        updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind=None) # Get current forces on plane
+        updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind = None) # Get current forces on plane
 
         self.VDynamics.Update(updated_forces) # upadate the forces on our model
 
