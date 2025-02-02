@@ -240,11 +240,16 @@ class VehicleAerodynamicsModel:
 
 
 
-        Va = math.sqrt ((state.u ** 2) + (state.v ** 2) + (state.w ** 2))
+        Va = math.hypot(state.u, state.v, state.w)
 
         alpha = math.atan2(state.w, state.u)
 
-        beta = math.asin((state.v) / (Va))
+        if (math.isclose(Va, 0.0)):
+
+            beta = 0
+        else:
+
+            beta = math.asin((state.v) / (Va))
 
         state.Va = Va
 
