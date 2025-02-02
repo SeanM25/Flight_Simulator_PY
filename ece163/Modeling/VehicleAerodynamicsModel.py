@@ -202,9 +202,9 @@ class VehicleAerodynamicsModel:
             R_Fx_Fz = [[math.cos(state.alpha), -1 * math.sin(state.alpha)],  # Given matrix needed to get Fx, Fz
                        [math.sin(state.alpha), math.cos(state.alpha)]]
         
-            F_drag = force_const * (VPC.CD0 + (VPC.CDalpha * state.alpha) + (VPC.CDq * q_term)) # Given Drag eq
+            F_drag = (force_const * (VPC.CD0 + (VPC.CDalpha * state.alpha) + (VPC.CDq * q_term))) # Given Drag eq
 
-            F_lift = force_const * (VPC.CL0 + (VPC.CLalpha * state.alpha) + (VPC.CLq * q_term)) # Given lift eq
+            F_lift = (force_const * (VPC.CL0 + (VPC.CLalpha * state.alpha) + (VPC.CLq * q_term))) # Given lift eq
 
             vec_lift_drag = [[-1 * F_drag], [-1 * F_lift]]  # R times this vector gives us Fx, Fz
 
@@ -212,7 +212,7 @@ class VehicleAerodynamicsModel:
 
             # Get Fy using Eq 4.14 from our pal Beard
 
-            Fy = force_const * (VPC.CY0 + (VPC.CYbeta * state.beta) + (VPC.CYp * p_term) + (VPC.CYr * r_term)) # Assign Fy
+            Fy = (force_const * (VPC.CY0 + (VPC.CYbeta * state.beta) + (VPC.CYp * p_term) + (VPC.CYr * r_term))) # Assign Fy
 
             Fx = vec_Fx_Fz[0][0] # assign Fx
 
