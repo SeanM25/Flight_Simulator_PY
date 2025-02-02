@@ -291,21 +291,21 @@ class VehicleAerodynamicsModel:
 
         # Need Fx, Fy, Fz, Mx, My, Mz to get all aero forces and moments
 
-        AForce= Inputs.forcesMoments()
+        
 
         if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
 
-            AForce.Fx = 0.0 # No X force aaa
+            Fx = 0.0 # No X force aaa
 
-            AForce.Fy = 0.0 # No Y force
+            Fy = 0.0 # No Y force
 
-            AForce.Fz = 0.0 # No Z force
+            Fz = 0.0 # No Z force
 
-            AForce.Mx = 0.0 # No X moment
+            Mx = 0.0 # No X moment
 
-            AForce.My = 0.0 # No Y moment
+            My = 0.0 # No Y moment
 
-            AForce.Mz = 0.0 # No Z moment
+            Mz = 0.0 # No Z moment
 
         else: # Do all the calculations and get the forces and moments
         
@@ -349,11 +349,12 @@ class VehicleAerodynamicsModel:
 
             Mz = ((force_const * VPC.b) * (VPC.Cn0 + (VPC.Cnbeta * state.beta) + (VPC.Cnp * p_term) + (VPC.Cnr * r_term))) # Eq 4.16 Beard Yaw Moment
         
-            # Gather all aeroforces
+    
+     # Gather all aeroforces
 
-            AForce = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz)
+        AForce = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz)
 
             # Return Aeroforces
 
-            return AForce
+        return AForce
 
