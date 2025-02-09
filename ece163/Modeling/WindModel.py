@@ -84,7 +84,8 @@ class WindModel:
     # Check Windless Condition
 
 
-    # Proceed Normally and 
+    # Proceed Normally and a
+    
 
 
 
