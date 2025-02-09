@@ -28,11 +28,11 @@ class WindModel:
 
     # Set Initial States for Discrete Time sampling x-
 
-    x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
+    self.x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
 
-    x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
+    self.x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
 
-    x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
+    self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
 
     
     # Intialize u, v, w matrices and set to zero intially since nothing has yet been sampled 
@@ -113,6 +113,22 @@ class WindModel:
      return # return nothing
    
    def reset(self):
+     
+     '''Wrapper function that resets the wind model code (but does not reset the model parameters). 
+     This will reset both steady and gust winds to zero, and re-set the internal states of the stochastic Dyden wind model to zero.
+       To change the model transfer functions you need to use CreateDrydenTranferFns().'''
+     
+     # Reset model states
+
+     self.x_u_prev = [[0]] # Reset previous state x_u to zero given in lecture
+
+     self.x_v_prev = [[0], [0]] # Reset previous state x_v to zero given in lecture
+
+     self.x_w_prev = [[0], [0]] # Reset previous state x_w to zero given in lecture
+
+     # Rest Wind Model but not parameters
+
+     self.wind = States.windState() # Rest wind Model but parameters remain at present value
      
      return # Return nothing
    
