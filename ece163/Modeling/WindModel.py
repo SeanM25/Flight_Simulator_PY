@@ -98,6 +98,21 @@ class WindModel:
     return # Return nothing
    
 
+   def Update(self, uu=None, uv=None, uw=None):
+     
+
+
+
+     return # Return nothing
+   
+
+
+
+
+
+
+   
+
    def getWind(self):
      
     '''Wrapper function to return the wind state from the module '''

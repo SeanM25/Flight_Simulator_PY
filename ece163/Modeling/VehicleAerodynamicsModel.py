@@ -381,4 +381,23 @@ class VehicleAerodynamicsModel:
         # Return Aeroforces
 
         return AForce
+    
+
+    def getWindModel(self):
+
+        '''Wrapper function to return the windModel'''
+
+        return self.WindModel # Return current wind model
+    
+    def setWindModel(self, windModel):
+
+        '''Wrapper function to set the windModel'''
+
+
+        self.WindModel = windModel # set wind model to given wind model
+
+        return # return nothing
+
+
+
 
