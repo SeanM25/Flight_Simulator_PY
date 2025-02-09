@@ -10,11 +10,9 @@ from ..Constants import VehiclePhysicalConstants as VPC
 
 class VehicleAerodynamicsModel:
 
-    def __init__ (self, initialSpeed = VPC.InitialSpeed, initialHeight = VPC.InitialDownPosition):
+    def __init__(self, initialSpeed = VPC.InitialSpeed, initialHeight = VPC.InitialDownPosition):
 
         '''Initialization of the internal classes which are used to track the vehicle aerodynamics and dynamics.'''
-
-        # Check This For Typo?
 
         self.VDynamics = VDM.VehicleDynamicsModel() # Assign self all the parameters of the vehicle state
 
@@ -29,7 +27,6 @@ class VehicleAerodynamicsModel:
 
         return # Return nothing
     
-
 
     
     def CalculateCoeff_alpha(self, alpha):
@@ -84,9 +81,7 @@ class VehicleAerodynamicsModel:
 
         # Need KT and KV to find omega via the quadratic formula specified in the prop cheat sheet
 
-        KT = (60 / (2 *  math.pi * VPC.KV)) # KT equals the equation directly below (6) in the Prop cheat sheet
-
-        KE = KT # KE = KT according the equation
+        KT = KE = 60 / (2 *  math.pi * VPC.KV) # KT equals the equation directly below (6) in the Prop cheat sheet
 
         # Need Vin as well Vin = Vmax * throttle value according to blurb in the prop cheat sheet
 
@@ -94,25 +89,25 @@ class VehicleAerodynamicsModel:
 
         # Assemble the quadratic equation values a, b, c
 
-        a = ((VPC.rho) * (VPC.D_prop ** 5) * (VPC.C_Q0)) / (4 * math.pi ** 2) # Given a
+        a = (VPC.rho * (VPC.D_prop ** 5) * VPC.C_Q0) / (4 * (math.pi ** 2)) # Given a
 
-        b = (((VPC.rho) * (VPC.D_prop ** 4) * (Va) * (VPC.C_Q1)) / (2 * math.pi)) + ((KT * KE) / (VPC.R_motor)) # Given b
+        b = ((VPC.rho * (VPC.D_prop ** 4) * Va * VPC.C_Q1) / (2 * math.pi)) + ((KT * KE) / (VPC.R_motor)) # Given b
 
-        c = ((VPC.rho) * (VPC.D_prop ** 3) * (Va ** 2) * (VPC.C_Q2)) - (KT * (Vin/VPC.R_motor)) + (KT * VPC.i0) # Given c
+        c = (VPC.rho * (VPC.D_prop ** 3) * (Va ** 2) * VPC.C_Q2) - (KT * ((Vin) / VPC.R_motor)) + (KT * VPC.i0) # Given c
 
         # Check for Imaginary omega
 
-        if ((b ** 2) < (4 * a * c)): # For the quadratic formula if b^2 < 4ac then omega must be an imaginary num that is omega = (- b +/- j / 2a )
+        if ((b ** 2) < (4 * a * c) or (b ** 2) == (4 * a * c)): # For the quadratic formula if b^2 < 4ac then omega must be an imaginary num that is omega = (- b +/- j / 2a )
 
-            omega = 100.0 # If imaginary make omega 100
+            omega = 100 # If imaginary make omega 100
 
         else:
 
-            omega = ((-1 * b) + math.sqrt((b ** 2) - (4 * a * c)) / (2 * a)) # Otherwise calculate omega using the quadratic formula normally
+            omega = ((-1 * b) + math.sqrt((b ** 2) - (4 * a * c))) / (2 * a) # Otherwise calculate omega using the quadratic formula normally
 
         # Get J to find CT & CQ
 
-        J = ((2 * math.pi * Va) / (omega * VPC.D_prop))
+        J = (2 * math.pi * Va) / (omega * VPC.D_prop)
 
         # Get CQ & CT for final calculation
 
@@ -121,11 +116,11 @@ class VehicleAerodynamicsModel:
         CQ = VPC.C_Q0 + (VPC.C_Q1 * J) + (VPC.C_Q2 * (J ** 2)) # Equation (4)
 
         
-        Fx = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 4) * (CT)) / (4 * (math.pi ** 2))) # Equation (1) Force of Prop
+        Fx_propel = (VPC.rho * (omega ** 2) * (VPC.D_prop ** 4) * CT) / (4 * (math.pi ** 2)) # Equation (1) Force of Prop
 
-        Mx = (((VPC.rho) * (omega ** 2) * (VPC.D_prop ** 5) * (CQ)) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
+        Mx_propel = (-1) * ((VPC.rho * (omega ** 2) * (VPC.D_prop ** 5) * CQ) / (4 * (math.pi ** 2))) # Equation (2) Moment of prop
 
-        return Fx, Mx # Return Prop Force and Moment
+        return Fx_propel, Mx_propel # Return Prop Force and Moment
 
 
 
@@ -171,80 +166,6 @@ class VehicleAerodynamicsModel:
         self.WindModel = WM.WindModel() # Reset Wind Model conditions
 
         return # return nothing
-    
-    def aeroForces(self, state):
-
-
-        '''Function to calculate the Aerodynamic Forces and Moments using the linearized simplified force model
-        and the stability derivatives in VehiclePhysicalConstants.py file. 
-        Specifically does not include forces due to control surface deflection.
-        Requires airspeed (Va) in [m/s], angle of attack (alpha) in [rad] and sideslip angle (beta) in [rad] from the state.'''
-
-        # Need Fx, Fy, Fz, Mx, My, Mz to get all aero forces and moments
-
-        if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
-
-            Fx = 0 # No X force
-
-            Fy = 0 # No Y force
-
-            Fz = 0 # No Z force
-
-            Mx = 0 # No X moment
-
-            My = 0 # No Y moment
-
-            Mz = 0 # No Z moment
-
-        else: # Do all the calculations and get the forces and moments
-        
-        # F_Drag & F_Lift equations no control surface deflection. Get Fx, Fz
-
-        
-            CL_alpha, CD_alpha, CM_alpha = VehicleAerodynamicsModel.CalculateCoeff_alpha(self, state.alpha) # Get Coefficents of Lift and Drag to do the calculations
-            
-            force_const = (1 / 2) * VPC.rho * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
-
-            q_term = (VPC.c * state.q) / (2 * state.Va) # Constant term within Flift and drag we multiply by q
-
-            p_term = (VPC.b * state.p) / (2 * state.Va) # Constant term within moments we multiply by p
-
-            r_term = (VPC.b * state.r ) / (2 * state.Va) # Constant term within moments we multiply by r
-
-            R_Fx_Fz = [[math.cos(state.alpha), -1 * math.sin(state.alpha)],  # Given matrix needed to get Fx, Fz
-                       [math.sin(state.alpha), math.cos(state.alpha)]]
-        
-            F_drag = (force_const * (CD_alpha + (VPC.CDq * q_term))) # Given Drag eq
-
-            F_lift = (force_const * (CL_alpha + (VPC.CLq * q_term))) # Given lift eq
-
-            vec_lift_drag = [[-1 * F_drag], [-1 * F_lift]]  # R times this vector gives us Fx, Fz
-
-            vec_Fx_Fz = mm.multiply(R_Fx_Fz, vec_lift_drag) # Get Fx, Fz vector
-
-            # Get Fy using Eq 4.14 from our pal Beard
-
-            Fy = (force_const * (VPC.CY0 + (VPC.CYbeta * state.beta) + (VPC.CYp * p_term) + (VPC.CYr * r_term))) # Assign Fy
-
-            Fx = vec_Fx_Fz[0][0] # assign Fx
-
-            Fz = vec_Fx_Fz[1][0] # assign Fz
-
-            # Get The Moments Mx, My, Mz
-
-            Mx = ((force_const * VPC.b) * (VPC.Cl0 + (VPC.Clbeta * state.beta) + (VPC.Clp * p_term) + (VPC.Clr * r_term))) # Eq 4.15 Beard Roll Moment
-
-            My = ((force_const * VPC.c) * (VPC.CM0 + (VPC.CMalpha * state.alpha) + (VPC.CMq * q_term))) # Eq 4.5 Beard Pitch Moment
-
-            Mz = ((force_const * VPC.b) * (VPC.Cn0 + (VPC.Cnbeta * state.beta) + (VPC.Cnp * p_term) + (VPC.Cnr * r_term))) # Eq 4.16 Beard Yaw Moment
-        
-            # Gather all aeroforces
-
-            aeroForces = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz)
-
-            # Return Aeroforces
-
-        return aeroForces
         
     def gravityForces(self, state):
 
@@ -326,6 +247,23 @@ class VehicleAerodynamicsModel:
 
 
 
+        Va = math.hypot(state.u, state.v, state.w) # Va equation with no wind from lecture
+
+        alpha = math.atan2(state.w, state.u) # Given equation for angle of attack no wind cond
+
+        if (math.isclose(Va, 0.0)): # If Va is near zero
+
+            beta = 0 # Make it zero
+        else:
+
+            beta = math.asin((state.v) / (Va)) # Otherwise calculate it using no wind ocndition
+
+        state.Va = Va # Assign Va
+
+        state.alpha = alpha # Assign alpha
+
+        state.beta = beta # Assign Beta
+        
         gravF = VehicleAerodynamicsModel.gravityForces(self, state) # Get gravity forces
 
         aeroF = VehicleAerodynamicsModel.aeroForces(self, state) # Get aero forces
@@ -366,7 +304,81 @@ class VehicleAerodynamicsModel:
         return # return nothing
     
 
-   # def getWindModel(self):
+    def aeroForces(self, state):
 
-       # self.WindModel = WM.WindModel() #
+        '''Function to calculate the Aerodynamic Forces and Moments using the linearized simplified force model
+        and the stability derivatives in VehiclePhysicalConstants.py file. 
+        Specifically does not include forces due to control surface deflection.
+        Requires airspeed (Va) in [m/s], angle of attack (alpha) in [rad] and sideslip angle (beta) in [rad] from the state.'''
+
+        
+
+        # Need Fx, Fy, Fz, Mx, My, Mz to get all aero forces and moments
+
+        
+
+        if(state.Va == 0): # If there is no airspeed the aircraft is not flying and there are no forces acting upon it
+
+            Fx = 0 # No X force aaa
+
+            Fy = 0 # No Y force
+
+            Fz = 0 # No Z force
+
+            Mx = 0 # No X moment
+
+            My = 0 # No Y moment
+
+            Mz = 0 # No Z moment
+
+        else: # Do all the calculations and get the forces and moments
+        
+        # F_Drag & F_Lift equations no control surface deflection. Get Fx, Fz
+
+        
+            CL_alpha, CD_alpha, CM_alpha = VehicleAerodynamicsModel.CalculateCoeff_alpha(self, state.alpha) # Get Coefficents of Lift and Drag to do the calculations
+            
+            force_const = (1 / 2) * VPC.rho * (state.Va ** 2) * VPC.S # constant term that exists in Force of Lift, Drag, etc equations
+
+            q_term = (VPC.c * state.q) / (2 * state.Va) # Constant term within Flift and drag we multiply by q
+
+            p_term = (VPC.b * state.p) / (2 * state.Va) # Constant term within moments we multiply by p
+
+            r_term = (VPC.b * state.r ) / (2 * state.Va) # Constant term within moments we multiply by r
+
+            R_Fx_Fz = [[math.cos(state.alpha), -1 * math.sin(state.alpha)],  # Given matrix needed to get Fx, Fz
+                       [math.sin(state.alpha), math.cos(state.alpha)]]
+        
+            F_drag = (force_const * (CD_alpha + (VPC.CDq * q_term))) # Given Drag eq
+
+            F_lift = (force_const * (CL_alpha + (VPC.CLq * q_term))) # Given lift eq
+
+            vec_lift_drag = [[-1 * F_drag], [-1 * F_lift]]  # R times this vector gives us Fx, Fz
+
+            vec_Fx_Fz = mm.multiply(R_Fx_Fz, vec_lift_drag) # Get Fx, Fz vector
+
+            # Get Fy using Eq 4.14 from our pal Beard
+
+            Fy = (force_const * (VPC.CY0 + (VPC.CYbeta * state.beta) + (VPC.CYp * p_term) + (VPC.CYr * r_term))) # Assign Fy
+
+            Fx = vec_Fx_Fz[0][0] # assign Fx
+
+            Fz = vec_Fx_Fz[1][0] # assign Fz
+
+            # Get The Moments Mx, My, Mz
+
+            Mx = ((force_const * VPC.b) * (VPC.Cl0 + (VPC.Clbeta * state.beta) + (VPC.Clp * p_term) + (VPC.Clr * r_term))) # Eq 4.15 Beard Roll Moment
+
+            My = ((force_const * VPC.c) * (VPC.CM0 + (VPC.CMalpha * state.alpha) + (VPC.CMq * q_term))) # Eq 4.5 Beard Pitch Moment
+
+            Mz = ((force_const * VPC.b) * (VPC.Cn0 + (VPC.Cnbeta * state.beta) + (VPC.Cnp * p_term) + (VPC.Cnr * r_term))) # Eq 4.16 Beard Yaw Moment
+        
+    
+     # Gather all aeroforces
+
+        AForce = Inputs.forcesMoments(Fx, Fy, Fz, Mx, My, Mz)
+
+        # Return Aeroforces
+
+        return AForce
 
