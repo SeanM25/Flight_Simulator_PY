@@ -102,4 +102,17 @@ class WindModel:
 
     return self.wind # Return present wind state
    
+   def setWind(self, windState):
+     
+     '''Wrapper function that allows for injecting constant wind and gust values into the class :param windState:
+       class from vehicleStates with inertial constant wind and wind frame gusts'''
+     
+     self.wind = windState # Inject wind and gusts values into the present wind state
+     
+
+     return # return nothing
+   
+   def reset(self):
+     
+     return # Return nothing
    
