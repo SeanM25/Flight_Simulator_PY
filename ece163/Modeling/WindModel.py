@@ -54,11 +54,11 @@ class WindModel:
 
     # Intialize w matrices which are the same as v
 
-    self.Phi_w = [[0, 0], [0, 0]] # Intialize Phi_v matrix to zero as seen in Dryden handout
+    self.Phi_w = [[0, 0], [0, 0]] # Intialize Phi_w matrix to zero as seen in Dryden handout
 
-    self.Gamma_w = [[0], [0]] # Intialize Gamma_v matrix to zero as seen in Dryden handout
+    self.Gamma_w = [[0], [0]] # Intialize Gamma_ wmatrix to zero as seen in Dryden handout
 
-    self.H_w = [[0, 0]] # Intialize H_v matrix to zero as seen in Dryden handout
+    self.H_w = [[0, 0]] # Intialize H_w matrix to zero as seen in Dryden handout
 
     # Create Transfer Functions
 
@@ -77,17 +77,15 @@ class WindModel:
 
     if(Va <= 0): # If the airspeed is zero or negative we throw an error
       
-      raise ArithmeticError("Va is Undefined!!! Try Again") # Throw a warning message to the user
+      raise ArithmeticError("Va is Undefined!!! Va must be neither negative nor Zero") # Throw a warning message to the user
     
-
 
     # Check Windless Condition
 
 
-    # Proceed Normally and a
+    # Proceed Normally and and gather the matrices. Note: We just gather the matrices in this function and do the actual sampling and updating states later.
+
     
-
-
 
 
 
@@ -96,3 +94,12 @@ class WindModel:
 
 
     return # Return nothing
+   
+
+   def getWind(self):
+     
+    '''Wrapper function to return the wind state from the module '''
+
+    return self.wind # Return present wind state
+   
+   
