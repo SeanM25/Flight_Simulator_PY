@@ -2,7 +2,7 @@ import math
 from ..Containers import States
 from ..Containers import Inputs
 from ..Modeling import VehicleDynamicsModel as VDM
-from ..Modeling import WindModel
+from ..Modeling import WindModel as WM
 from ..Utilities import MatrixMath as mm
 from ..Utilities import Rotations
 from ..Constants import VehiclePhysicalConstants as VPC
@@ -21,6 +21,11 @@ class VehicleAerodynamicsModel:
         self.VDynamics.state.u = initialSpeed # Velocity in x-dir equals the inital speed this assumes the plane is flying straight and level
 
         self.VDynamics.state.pd = initialHeight # the initial down position is the intial height
+
+       
+        # New Intializations 4 Wind Model (Don't Want Wind? comment out):
+
+       # self.WindModel = WM.WindModel() # Initialize Wind Model Params
 
         return # Return nothing
     
@@ -159,6 +164,11 @@ class VehicleAerodynamicsModel:
         self.VDynamics.state.u = VPC.InitialSpeed # Reset intial Speed to default
 
         self.VDynamics.state.pd = VPC.InitialDownPosition # Reset height to default
+
+
+        # Wind Model Reset
+
+        self.WindModel = WM.WindModel() # Reset Wind Model conditions
 
         return # return nothing
     
@@ -347,9 +357,16 @@ class VehicleAerodynamicsModel:
         
         state = VehicleAerodynamicsModel.getVehicleState(self) # Get present vehicle state
 
+       # wind = 
+
         updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind = None) # Get current forces on plane
 
         self.VDynamics.Update(updated_forces) # upadate the forces on our model
 
         return # return nothing
+    
+
+   # def getWindModel(self):
+
+       # self.WindModel = WM.WindModel() #
 
