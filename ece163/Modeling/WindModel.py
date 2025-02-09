@@ -116,3 +116,19 @@ class WindModel:
      
      return # Return nothing
    
+
+   def setWindModelParameters(self, Wn=0.0, We=0.0, Wd=0.0, drydenParameters=VPC.DrydenNoWind):
+
+    '''Wrapper function that will inject parameters into the wind model. 
+       This class models wind according to the Dryden Wind Model, where winds are a static component plus stocahstically derived gusts.'''
+     
+    self.wind.Wn = Wn # Inject new inertial northern wind value
+
+    self.wind.We = We # Inject new inertial eastern wind value
+
+    self.wind.Wd = Wd # Inject new inertial downwards wind value
+
+    self.drydenParameters = drydenParameters # inject new dryden parameters
+
+    return # return nothing
+   
