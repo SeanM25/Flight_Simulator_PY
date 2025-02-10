@@ -34,32 +34,6 @@ class WindModel:
 
     self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
 
-    
-    # Intialize u, v, w matrices and set to zero intially since nothing has yet been sampled 
-
-    #self.Phi_u = [[0]] # Intialize Phi_u matrix to zero as seen in Dryden handout
-
-    #self.Gamma_u = [[0]] # Intialize Gamma_u matrix to zero as seen in Dryden handout
-
-    #self.H_u = [[0]] # Intialize H_u matrix to zero as seen in Dryden handout
-
-    # Intialize v matrices
-
-    #self.Phi_v = [[0, 0], [0, 0]] # Intialize Phi_v matrix to zero as seen in Dryden handout
-
-    #self.Gamma_v = [[0], [0]] # Intialize Gamma_v matrix to zero as seen in Dryden handout
-
-   # self.H_v = [[0, 0]] # Intialize H_v matrix to zero as seen in Dryden handout
-
-
-    # Intialize w matrices which are the same as v
-
-    #self.Phi_w = [[0, 0], [0, 0]] # Intialize Phi_w matrix to zero as seen in Dryden handout
-
-    #self.Gamma_w = [[0], [0]] # Intialize Gamma_ wmatrix to zero as seen in Dryden handout
-
-    #self.H_w = [[0, 0]] # Intialize H_w matrix to zero as seen in Dryden handout
-
     # Create Transfer Functions
 
     WindModel.CreateDrydenTransferFns(self, dT, Va, drydenParameters) # Call function and create the Dryden Trans Functions
@@ -255,7 +229,7 @@ class WindModel:
 
     Wv_update = mm.multiply(self.H_v, new_Xv_state) # Equation 3 from Dryden Handout
 
-    self.wind.Wv = Wv_update[0][0] # Update current Wv wind parameter
+    self.wind.Wv = Wv_update[1][0] # Update current Wv wind parameter
 
     self.x_v_prev = new_Xv_state # Set old v state to new v state
 
