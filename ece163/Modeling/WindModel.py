@@ -251,6 +251,35 @@ class WindModel:
     '''Wrapper function to return the wind state from the module '''
 
     return self.wind # Return present wind state
+   
+   def setWind(self, windState):
+     
+     '''Wrapper function that allows for injecting constant wind and gust values into the class :param windState:
+       class from vehicleStates with inertial constant wind and wind frame gusts'''
+     
+     self.wind = windState # Inject wind and gusts values into the present wind state
+     
+
+     return # return nothing
+   
+   def reset(self):
+     
+     '''Wrapper function that resets the wind model code (but does not reset the model parameters). 
+     This will reset both steady and gust winds to zero, and re-set the internal states of the stochastic Dyden wind model to zero.
+       To change the model transfer functions you need to use CreateDrydenTranferFns().'''
+     
+     # Reset model states
+
+     self.x_u_prev = [[0]] # Reset previous state x_u to zero given in lecture
+
+     self.x_v_prev = [[0], [0]] # Reset previous state x_v to zero given in lecture
+
+     self.x_w_prev = [[0], [0]] # Reset previous state x_w to zero given in lecture
+
+     # Rest Wind Model but not parameters
+
+     self.wind = States.windState() # Rest wind Model but parameters remain at present value
+     
     
       
       
