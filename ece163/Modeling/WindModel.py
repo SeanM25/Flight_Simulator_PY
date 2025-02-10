@@ -65,10 +65,8 @@ class WindModel:
     WindModel.CreateDrydenTransferFns(self, dT, Va, drydenParameters) # Call function and create the Dryden Trans Functions
 
     return # Return nothing
-   
-
-
-def CreateDrydenTransferFns(self, dT, Va, drydenParameters):
+  
+  def CreateDrydenTransferFns(self, dT, Va, drydenParameters):
      
     '''Function creates the Dryden transfer functions in discrete form. 
     These are used in generating the gust models for wind gusts (in wind frame). 
@@ -182,5 +180,4 @@ def CreateDrydenTransferFns(self, dT, Va, drydenParameters):
         self.H_w = mm.scalarMultiply(sigma_times_sqrt_w, mtrx_H_w) # Calculate H_w
 
         return # return nothing
-    
     
