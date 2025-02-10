@@ -88,7 +88,7 @@ class WindModel:
 
         self.Phi_u = [[1]] # Set Phi_u matrix to identity as there is no wind
 
-        self.Gamma_u = [[0]] # Set Gamma_u matrix to zero as there is no wind
+        #self.Gamma_u = [[0]] # Set Gamma_u matrix to zero as there is no wind
 
         self.H_u = [[1]] # Set H_u matrix to col of 1s as there is no wind
 
@@ -96,7 +96,7 @@ class WindModel:
 
         self.Phi_v = [[1, 0], [0, 1]] # Set Phi_v matrix to identity as there is no wind
 
-        self.Gamma_v = [[0], [0]] # Set Gamma_v matrix to identity as there is no wind
+        #self.Gamma_v = [[0], [0]] # Set Gamma_v matrix to identity as there is no wind
 
         self.H_v = [[1, 1]] # Set H_v matrix to col of 1s as there is no wind
 
@@ -104,7 +104,7 @@ class WindModel:
 
         self.Phi_w = [[1, 0], [0, 1]] # Set Phi_w matrix to identity as there is no wind
 
-        self.Gamma_w = [[0], [0]] # Set Gamma_w matrix to identity as there is no wind
+        #self.Gamma_w = [[0], [0]] # Set Gamma_w matrix to identity as there is no wind
 
         self.H_w = [[1, 1]] # Set H_w matrix to col of 1s as there is no wind
 
