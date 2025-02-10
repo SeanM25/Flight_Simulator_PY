@@ -193,15 +193,15 @@ class WindModel:
 
     if(uu is None):
       
-      uu = random.gauss(0, 1) # Generate Random noise for mu in u
+      uu = random.gauss(0.0, 1.0) # Generate Random noise for mu in u
 
     if(uv is None):
       
-      uv = random.gauss(0, 1) # Generate Random noise for mu in v
+      uv = random.gauss(0.0, 1.0) # Generate Random noise for mu in v
 
     if(uw is None):
       
-      uw = random.gauss(0, 1) # Generate Random noise for mu in w
+      uw = random.gauss(0.0, 1.0) # Generate Random noise for mu in w
 
     # Get previous states
 
@@ -239,7 +239,7 @@ class WindModel:
 
     Ww_update = mm.multiply(self.H_w, new_Xw_state) # Equation 3 from Dryden Handout
 
-    self.wind.Ww = Ww_update[0][1] # Update current Ww wind parameter
+    self.wind.Ww = Ww_update[0][0] # Update current Ww wind parameter
 
     self.x_w_prev = new_Xw_state # Set old w state to new w state
 
