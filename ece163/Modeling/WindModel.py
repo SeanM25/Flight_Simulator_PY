@@ -181,13 +181,12 @@ class WindModel:
 
         return # return nothing
     
-    def getDrydenTransferFns(self):
-     
-      '''Wrapper function to return the internals of the Dryden Transfer function in order to be able to test the code without requiring consistent internal names.
+  def getDrydenTransferFns(self):
+    
+    '''Wrapper function to return the internals of the Dryden Transfer function in order to be able to test the code without requiring consistent internal names.
       Returns the discretized version of the Drydem gust model as outlined in the ECE163_DrydenWindModel handout (Phi_u, Gamma_u, H_u, Phi_v, Gamma_v, H_v, Phi_w, Gamma_w, H_w).'''
     
-      return self.Phi_u, self.Phi_v, self.Phi_w, self.Gamma_u, self.Gamma_v, self.Gamma_w, self.H_u, self.H_v, self.H_w
+    return self.Phi_u, self.Phi_v, self.Phi_w, self.Gamma_u, self.Gamma_v, self.Gamma_w, self.H_u, self.H_v, self.H_w
    
    # Return all Phi's, Gamma's, and H's from the transfer functions
-
     
