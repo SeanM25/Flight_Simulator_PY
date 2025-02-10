@@ -201,7 +201,7 @@ class WindModel:
 
     if(uw is None):
       
-      uw = random.gauss(0.0, 1.0) # Generate Random noise for mu in w
+      uw = random.random(0.0, 1.0) # Generate Random noise for mu in w
 
     # Get previous states
 
