@@ -397,6 +397,104 @@ class VehicleAerodynamicsModel:
         self.WindModel = windModel # set wind model to given wind model
 
         return # return nothing
+    
+    def CalculateAirspeed(self,state, wind):
+
+
+        '''
+        Calculates the total airspeed, as well as angle of attack and side-slip angles from the wind and current state. 
+        Needed for further aerodynamic force calculations.
+        Va, wind speed [m/s], alpha, angle of attack [rad], and beta, side-slip angle [rad] are returned from the function. 
+        The state must be updated outside this function.
+
+        Note: when total wind speed (math.hypot(wind.Wn, wind.We, wind.Wd)) is zero,
+        set gamma wind to 0 (otherwise it is undefined because arcsin is greater than 1.),
+        Also, check is the total airspeed (Va) is zero before calculating the sideslip angle beta, if so, set beta to 0.0
+        
+        '''
+
+        # This function will follow what was outlined in the Wind Model slides from lecture
+
+        # Va = Vg - Vw where wind speed must be determined
+
+        # Get current inertial wind Speed
+
+        W_steady = math.hypot(wind.Wn, wind.We, wind.Wd) # Calculate steady state wind speed
+
+        # Calculate course angle
+
+        X_w = math.atan2(wind.We, wind.Wn) # Course angle calculation
+
+        # Calculate Gamma
+
+        if(W_steady == 0):
+
+            Gamma_w = 0 # If total wind speed is 0 gamma is also zero
+
+        else:
+
+            Gamma_w = -1 * math.asin(wind.Wd / W_steady) # Otherwise use the equation from lecture
+
+        # Assemble R Azimuth Elevation
+
+        R_AZEV = [[math.cos(X_w) * math.cos(Gamma_w), math.sin(X_w) * math.cos(Gamma_w), -1 * math.sin(Gamma_w)], 
+                  [-1 * math.sin(X_w), math.cos(X_w), 0],
+                  [math.cos(X_w) * math.sin(Gamma_w), math.sin(X_w) * math.sin(Gamma_w), math.cos(Gamma_w)]] # Result of multiplying the Azimuth and Elev matrices from lect
+        
+
+        # Get necessary Wind vectors for inertial, velocity frames, and ground speed
+
+        Vg = [[state.u], [state.v], [state.w]] # Get current ground speed
+
+        W_iner = [[wind.Wn], [wind.We], [wind.Wd]] # Get wind in inertial frame
+
+        W_vel = [[wind.Wu], [wind.Wv], [wind.Ww]] # Get wind gusts in velocity frame
+
+        # Get Wind Speed
+
+        W_gusts_inertial = mm.multiply(mm.transpose(R_AZEV), W_vel) # Get wind gusts in inertial frame
+
+        WS_tot_iner = mm.add(W_iner, W_gusts_inertial) # Get total Wind speed in inertial frame
+
+        Ws_tot_bod = mm.multiply(state.R, WS_tot_iner) # Get total wind speed in the body frame [u_w, v_w, w_w]
+
+        # Get airspeed vector
+
+        Va_vector = mm.subtract(Vg, Ws_tot_bod) # Get airspeed vector we take the magnitude to get Va
+
+        Ur = Va_vector[0][0] # Get U component
+
+        Vr = Va_vector[1][0] # Get V component
+
+        Wr = Va_vector[2][0] # Get W component
+
+        # Calculate Va
+
+        Va = math.hypot(Ur, Vr, Wr) # Calculate the airspeed
+
+        # Get angle of attack
+
+        alpha = math.atan2(Wr, Ur) # Beard Pg 57
+
+        # Get Beta and check for 0
+
+        if (math.isclose(Va, 0)): # If airspeed is close to zero
+
+            beta = 0 # beta is 0
+        else:
+
+            beta = math.asin(Vr / Va) # Otherwise use equation from Beard pg 57
+
+
+        return Va, alpha, beta # Return airspeed, angle of attack, and sideslip angle
+
+
+        
+
+
+
+
+
 
 
 
