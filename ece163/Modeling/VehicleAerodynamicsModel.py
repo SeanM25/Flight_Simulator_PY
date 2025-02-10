@@ -21,9 +21,9 @@ class VehicleAerodynamicsModel:
         self.VDynamics.state.pd = initialHeight # the initial down position is the intial height
 
        
-        # New Intializations 4 Wind Model (Don't Want Wind? comment out):
+    # New Intializations 4 Wind Model (Don't Want Wind? comment out):
 
-       # self.WindModel = WM.WindModel() # Initialize Wind Model Params
+        self.WindModel = WM.WindModel() # Initialize Wind Model Params
 
         return # Return nothing
     
