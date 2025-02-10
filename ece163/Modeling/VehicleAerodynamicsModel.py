@@ -251,6 +251,8 @@ class VehicleAerodynamicsModel:
 
         '''
 
+        Prev No Wind Code:
+
         Va = math.hypot(state.u, state.v, state.w) # Va equation with no wind from lecture
 
         alpha = math.atan2(state.w, state.u) # Given equation for angle of attack no wind cond
