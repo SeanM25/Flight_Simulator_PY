@@ -86,27 +86,27 @@ class WindModel:
 
         # U matrices
 
-        self.Phi_u = [[1]] # Set Phi_u matrix to identity as there is no wind
+        self.Phi_u = [[1.0]] # Set Phi_u matrix to identity as there is no wind
 
-        self.Gamma_u = [[0]] # Set Gamma_u matrix to zero as there is no wind
+        self.Gamma_u = [[0.0]] # Set Gamma_u matrix to zero as there is no wind
 
-        self.H_u = [[1]] # Set H_u matrix to col of 1s as there is no wind
+        self.H_u = [[1.0]] # Set H_u matrix to col of 1s as there is no wind
 
         # V matrices
 
-        self.Phi_v = [[1, 0], [0, 1]] # Set Phi_v matrix to identity as there is no wind
+        self.Phi_v = [[1.0, 0.0], [0.0, 1.0]] # Set Phi_v matrix to identity as there is no wind
 
-        self.Gamma_v = [[0], [0]] # Set Gamma_v matrix to identity as there is no wind
+        self.Gamma_v = [[0.0], [0.0]] # Set Gamma_v matrix to identity as there is no wind
 
-        self.H_v = [[1, 1]] # Set H_v matrix to col of 1s as there is no wind
+        self.H_v = [[1.0, 1.0]] # Set H_v matrix to col of 1s as there is no wind
 
         # W matrices same as V
 
-        self.Phi_w = [[1, 0], [0, 1]] # Set Phi_w matrix to identity as there is no wind
+        self.Phi_w = [[1.0, 0.0], [0.0, 1.0]] # Set Phi_w matrix to identity as there is no wind
 
-        self.Gamma_w = [[0], [0]] # Set Gamma_w matrix to identity as there is no wind
+        self.Gamma_w = [[0.0], [0.0]] # Set Gamma_w matrix to identity as there is no wind
 
-        self.H_w = [[1, 1]] # Set H_w matrix to col of 1s as there is no wind
+        self.H_w = [[1.0, 1.0]] # Set H_w matrix to col of 1s as there is no wind
 
 
     else:
@@ -244,7 +244,7 @@ class WindModel:
 
     Wu_update = mm.multiply(self.H_u, new_Xu_state) # Equation 3 from Dryden Handout
 
-    self.wind.Wu = Wu_update # Update current Wu wind parameter
+    self.wind.Wu = Wu_update[0][0] # Update current Wu wind parameter
 
     self.x_u_prev = new_Xu_state # Set old u state to new u state
 
@@ -255,7 +255,7 @@ class WindModel:
 
     Wv_update = mm.multiply(self.H_v, new_Xv_state) # Equation 3 from Dryden Handout
 
-    self.wind.Wv = Wv_update # Update current Wv wind parameter
+    self.wind.Wv = Wv_update[0][0] # Update current Wv wind parameter
 
     self.x_v_prev = new_Xv_state # Set old v state to new v state
 
@@ -265,7 +265,7 @@ class WindModel:
 
     Ww_update = mm.multiply(self.H_w, new_Xw_state) # Equation 3 from Dryden Handout
 
-    self.wind.Ww = Ww_update # Update current Ww wind parameter
+    self.wind.Ww = Ww_update[0][0] # Update current Ww wind parameter
 
     self.x_w_prev = new_Xw_state # Set old w state to new w state
 
