@@ -70,7 +70,7 @@ class VehicleAerodynamicsModel:
 
 
 
-    def CalculatePropForces(Va, Throttle):
+    def CalculatePropForces(self, Va, Throttle):
     
         ''' Function to calculate the propeller forces and torques on the aircraft. 
         Uses the fancy propeller model that parameterizes the torque and thrust coefficients of the propeller using the advance ratio. 
