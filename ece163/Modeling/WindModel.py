@@ -239,7 +239,7 @@ class WindModel:
 
     Ww_update = mm.multiply(self.H_w, new_Xw_state) # Equation 3 from Dryden Handout
 
-    self.wind.Ww = Ww_update[0][0] # Update current Ww wind parameter
+    self.wind.Ww = Ww_update[0][1] # Update current Ww wind parameter
 
     self.x_w_prev = new_Xw_state # Set old w state to new w state
 
