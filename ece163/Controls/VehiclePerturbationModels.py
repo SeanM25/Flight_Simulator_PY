@@ -42,7 +42,7 @@ def dThrust_dThrottle(Va, Throttle, epsilon=0.01):
 
     dTdT = (Fx_eps - Fx) / epsilon # Get the partial using the formula
 
-    return dTdT # Return partial of Thrust with respect to Throttle
+    return dTdT # Return partial of Thrust with respect to Throttle.
 
 
 def CreateTransferFunction(trimState, trimInputs):
