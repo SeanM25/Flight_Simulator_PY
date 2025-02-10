@@ -62,7 +62,7 @@ class WindModel:
 
     # Create Transfer Functions
 
-    WindModel.CreateTransferFns(self, dT, Va, drydenParameters) # Call function and create the Dryden Trans Functions
+    WindModel.CreateDrydenTransferFns(self, dT, Va, drydenParameters) # Call function and create the Dryden Trans Functions
 
     return # Return nothing
    
