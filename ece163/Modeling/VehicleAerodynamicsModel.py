@@ -245,7 +245,11 @@ class VehicleAerodynamicsModel:
         '''Function to update all of the aerodynamic, propulsive, and gravity forces and moments. All calculations required to update the forces are included. 
            state is updated with new values for airspeed, angle of attack, and sideslip angles (see class definition for members)'''
 
+        # Update Va, alpha, beta with wind this time
 
+        Va, alpha, beta = self.CalculateAirspeed(state, wind) # Get Va, Alpha, and beta from the airspeed function which factors in Wind
+
+        '''
 
         Va = math.hypot(state.u, state.v, state.w) # Va equation with no wind from lecture
 
@@ -257,6 +261,8 @@ class VehicleAerodynamicsModel:
         else:
 
             beta = math.asin((state.v) / (Va)) # Otherwise calculate it using no wind ocndition
+
+        '''
 
         state.Va = Va # Assign Va
 
@@ -295,9 +301,9 @@ class VehicleAerodynamicsModel:
         
         state = VehicleAerodynamicsModel.getVehicleState(self) # Get present vehicle state
 
-       # wind = 
+        wind = VehicleAerodynamicsModel.getVehicleState(self) # Get Wind
 
-        updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind = None) # Get current forces on plane
+        updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind) # Get current forces on plane
 
         self.VDynamics.Update(updated_forces) # upadate the forces on our model
 
