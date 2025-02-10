@@ -217,15 +217,15 @@ class WindModel:
 
     # Run the Gaussian to mimic wind note: this is Pseudo Random and not truely random. For a Sim it is fine however
 
-    if(uu == None):
+    if(uu is None):
       
       uu = random.gauss(0, 1) # Generate Random noise for mu in u
 
-    if(uv == None):
+    if(uv is None):
       
       uv = random.gauss(0, 1) # Generate Random noise for mu in v
 
-    if(uw == None):
+    if(uw is None):
       
       uw = random.gauss(0, 1) # Generate Random noise for mu in w
 
@@ -244,7 +244,7 @@ class WindModel:
 
     Wu_update = mm.multiply(self.H_u, new_Xu_state) # Equation 3 from Dryden Handout
 
-    self.wind.Wu = Wu_update[0][0] # Update current Wu wind parameter
+    self.wind.Wu = Wu_update # Update current Wu wind parameter
 
     self.x_u_prev = new_Xu_state # Set old u state to new u state
 
@@ -255,7 +255,7 @@ class WindModel:
 
     Wv_update = mm.multiply(self.H_v, new_Xv_state) # Equation 3 from Dryden Handout
 
-    self.wind.Wv = Wv_update[0][0] # Update current Wv wind parameter
+    self.wind.Wv = Wv_update # Update current Wv wind parameter
 
     self.x_v_prev = new_Xv_state # Set old v state to new v state
 
@@ -265,11 +265,12 @@ class WindModel:
 
     Ww_update = mm.multiply(self.H_w, new_Xw_state) # Equation 3 from Dryden Handout
 
-    self.wind.Ww = Ww_update[0][0] # Update current Ww wind parameter
+    self.wind.Ww = Ww_update # Update current Ww wind parameter
 
     self.x_w_prev = new_Xw_state # Set old w state to new w state
 
     return # Return nothing
+   
    
    def getWind(self):
      
