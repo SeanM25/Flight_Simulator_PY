@@ -181,18 +181,6 @@ class WindModel:
       self.H_w = mm.scalarMultiply(sigma_times_sqrt_w, mtrx_H_w) # Calculate H_w
 
       return # return nothing
-
-
-
-    
-
-
-
-
-
-
-
-    return # Return nothing
    
 
    def Update(self, uu=None, uv=None, uw=None):
