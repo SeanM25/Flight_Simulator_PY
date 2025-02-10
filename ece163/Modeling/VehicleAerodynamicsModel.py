@@ -301,7 +301,7 @@ class VehicleAerodynamicsModel:
         
         state = VehicleAerodynamicsModel.getVehicleState(self) # Get present vehicle state
 
-        wind = VehicleAerodynamicsModel.getWindModel(self) # Get Wind
+        wind = VehicleAerodynamicsModel.getWindModel(self).wind # Get Wind
 
         updated_forces = VehicleAerodynamicsModel.updateForces(self, state, controls, wind) # Get current forces on plane
 
