@@ -19,7 +19,7 @@ def dThrust_dVa(Va, Throttle, epsilon=0.5):
 
     Fx , Mx = VAM.VehicleAerodynamicsModel().CalculatePropForces(Va, Throttle) # Regular Fx Mx not used
 
-    nV = Va + epsilon
+    nV = Va + epsilon # New Va is Va + epsilon
 
     Fx_eps, mx_eps = VAM.VehicleAerodynamicsModel().CalculatePropForces(nV, Throttle) # Fx with epsilon added to Va
 
@@ -40,7 +40,7 @@ def dThrust_dThrottle(Va, Throttle, epsilon=0.01):
 
     Fx, Mx = VAM.VehicleAerodynamicsModel().CalculatePropForces(Va, Throttle) # Regular Fx
 
-    nT = Throttle + epsilon
+    nT = Throttle + epsilon # New throttle is Throttle pluse epsilon
 
     Fx_eps, Mx_eps = VAM.VehicleAerodynamicsModel().CalculatePropForces(Va, nT) # Epsilon added to throttle
 
