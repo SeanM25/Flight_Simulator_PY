@@ -28,11 +28,11 @@ class WindModel:
 
     # Set Initial States for Discrete Time sampling x-
 
-    self.x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
+    self.x_u_prev = [[0.0]] # Initialize previous state x_u to zero given in lecture
 
-    self.x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
+    self.x_v_prev = [[0.0], [0.0]] # Initialize previous state x_v to zero given in lecture
 
-    self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
+    self.x_w_prev = [[0.0], [0.0]] # Initialize previous state x_w to zero given in lecture
 
     # Create Transfer Functions
 
