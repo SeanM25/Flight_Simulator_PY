@@ -270,6 +270,12 @@ class WindModel:
     self.x_w_prev = new_Xw_state # Set old w state to new w state
 
     return # Return nothing
+   
+   def getWind(self):
+     
+    '''Wrapper function to return the wind state from the module '''
+
+    return self.wind # Return present wind state
     
       
       
