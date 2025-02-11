@@ -211,22 +211,12 @@ class WindModel:
 
     Xw_minus = self.x_w_prev
 
-    '''
-    
-    self.x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
-
-    self.x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
-
-    self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
-    
-    '''   
-
 
     # Begin time sampling for u  
 
     new_Xu_state = mm.add(mm.multiply(self.Phi_u, Xu_minus), mm.scalarMultiply(uu, self.Gamma_u)) # Equation 2 from Dryden Handout
 
-    Wu_update = float(mm.multiply(self.H_u, new_Xu_state)) # Equation 3 from Dryden Handout
+    Wu_update = mm.multiply(self.H_u, new_Xu_state) # Equation 3 from Dryden Handout
 
     self.wind.Wu = Wu_update[0][0] # Update current Wu wind parameter
 
@@ -237,7 +227,7 @@ class WindModel:
 
     new_Xv_state = mm.add(mm.multiply(self.Phi_v, Xv_minus), mm.scalarMultiply(uv, self.Gamma_v)) # Equation 2 from Dryden Handout
 
-    Wv_update = float(mm.multiply(self.H_v, new_Xv_state)) # Equation 3 from Dryden Handout
+    Wv_update = mm.multiply(self.H_v, new_Xv_state) # Equation 3 from Dryden Handout
 
     self.wind.Wv = Wv_update[0][0] # Update current Wv wind parameter
 
@@ -247,7 +237,7 @@ class WindModel:
 
     new_Xw_state = mm.add(mm.multiply(self.Phi_w, Xw_minus), mm.scalarMultiply(uw, self.Gamma_w)) # Equation 2 from Dryden Handout
 
-    Ww_update = float(mm.multiply(self.H_w, new_Xw_state)) # Equation 3 from Dryden Handout
+    Ww_update = mm.multiply(self.H_w, new_Xw_state) # Equation 3 from Dryden Handout
 
     self.wind.Ww = Ww_update[0][0] # Update current Ww wind parameter
 
