@@ -178,6 +178,12 @@ class WindModel:
 
     self.drydenParameters = drydenParameters # inject new dryden parameters
 
+    Va = self.Va
+
+    dT = self.dT
+
+    self.CreateDrydenTransferFns(dT, Va, drydenParameters)
+
     return # return nothing
    
    def Update(self, uu=None, uv=None, uw=None):
