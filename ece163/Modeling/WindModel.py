@@ -28,11 +28,11 @@ class WindModel:
 
     # Set Initial States for Discrete Time sampling x-
 
-    self.x_u_prev = [[0.0]] # Initialize previous state x_u to zero given in lecture
+    self.x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
 
-    self.x_v_prev = [[0.0], [0.0]] # Initialize previous state x_v to zero given in lecture
+    self.x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
 
-    self.x_w_prev = [[0.0], [0.0]] # Initialize previous state x_w to zero given in lecture a
+    self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture a
 
     # Create Transfer Functions
 
@@ -60,27 +60,27 @@ class WindModel:
 
         # U matrices
 
-        self.Phi_u = [[1.0]] # Set Phi_u matrix to identity as there is no wind
+        self.Phi_u = [[1]] # Set Phi_u matrix to identity as there is no wind
 
-        self.Gamma_u = [[0.0]] # Set Gamma_u matrix to zero as there is no wind
+        self.Gamma_u = [[0]] # Set Gamma_u matrix to zero as there is no wind
 
-        self.H_u = [[1.0]] # Set H_u matrix to col of 1s as there is no wind
+        self.H_u = [[1]] # Set H_u matrix to col of 1s as there is no wind
 
         # V matrices
 
-        self.Phi_v = [[1.0, 0.0], [0.0, 1.0]] # Set Phi_v matrix to identity as there is no wind
+        self.Phi_v = [[1, 0], [0, 1]] # Set Phi_v matrix to identity as there is no wind
 
-        self.Gamma_v = [[0.0], [0.0]] # Set Gamma_v matrix to identity as there is no wind
+        self.Gamma_v = [[0], [0]] # Set Gamma_v matrix to identity as there is no wind
 
-        self.H_v = [[1.0, 1.0]] # Set H_v matrix to col of 1s as there is no wind
+        self.H_v = [[1, 1]] # Set H_v matrix to col of 1s as there is no wind
 
         # W matrices same as V
 
-        self.Phi_w = [[1.0, 0.0], [0.0, 1.0]] # Set Phi_w matrix to identity as there is no wind
+        self.Phi_w = [[1, 0], [0, 1]] # Set Phi_w matrix to identity as there is no wind
 
-        self.Gamma_w = [[0.0], [0.0]] # Set Gamma_w matrix to identity as there is no wind
+        self.Gamma_w = [[0], [0]] # Set Gamma_w matrix to identity as there is no wind
 
-        self.H_w = [[1.0, 1.0]] # Set H_w matrix to col of 1s as there is no wind
+        self.H_w = [[1, 1]] # Set H_w matrix to col of 1s as there is no wind
 
 
     else:
@@ -178,11 +178,11 @@ class WindModel:
 
     self.drydenParameters = drydenParameters # inject new dryden parameters
 
-    Va = self.Va
+    Va = self.Va # Get current Va
 
-    dT = self.dT
+    dT = self.dT # Get current time step
 
-    self.CreateDrydenTransferFns(dT, Va, drydenParameters)
+    self.CreateDrydenTransferFns(dT, Va, drydenParameters) # Update Dryden TF
 
     return # return nothing
    
@@ -276,11 +276,11 @@ class WindModel:
      
      # Reset model states
 
-     self.x_u_prev = [[0.0]] # Reset previous state x_u to zero given in lecture
+     self.x_u_prev = [[0]] # Reset previous state x_u to zero given in lecture
 
-     self.x_v_prev = [[0.0], [0.0]] # Reset previous state x_v to zero given in lecture
+     self.x_v_prev = [[0], [0]] # Reset previous state x_v to zero given in lecture
 
-     self.x_w_prev = [[0.0], [0.0]] # Reset previous state x_w to zero given in lecture
+     self.x_w_prev = [[0], [0]] # Reset previous state x_w to zero given in lecture
 
      # Rest Wind Model but not parameters
 

@@ -111,37 +111,36 @@ def CreateTransferFunction(trimState, trimInputs):
 
     # Fill the transfer function with calculated parameters
 
-    TransTemp.Va_trim = Va
+    TransTemp.Va_trim = Va # Fill with trim airspeed
 
-    TransTemp.alpha_trim = alpha_in_trim
+    TransTemp.alpha_trim = alpha_in_trim # fill with trim alpha
 
-    TransTemp.gamma_trim = (trimState.pitch - trimState.alpha)
+    TransTemp.beta_trim = trimState.beta # fill with trim beta
 
-    TransTemp.theta_trim = pitch_in_trim
+    TransTemp.gamma_trim = (trimState.pitch - trimState.alpha) # fill with trim gamma from Piazza
 
-    TransTemp.phi_trim = trimState.roll
+    TransTemp.theta_trim = pitch_in_trim # fill with trim pitch angle
+
+    TransTemp.phi_trim = trimState.roll # fill with trim roll angle
     
-    TransTemp.a_phi1 = a_phi_1
+    TransTemp.a_phi1 = a_phi_1 # fill with a phi 1
 
-    TransTemp.a_phi2 = a_phi_2
+    TransTemp.a_phi2 = a_phi_2 # fill with a phi 2
 
-    TransTemp.a_beta1 = a_beta_1
+    TransTemp.a_beta1 = a_beta_1 # fill with a beta 1
 
-    TransTemp.a_beta2 = a_beta_2
+    TransTemp.a_beta2 = a_beta_2 # fill with a beta 2
 
-    TransTemp.a_theta1 = a_theta_1
+    TransTemp.a_theta1 = a_theta_1 # fill with a theta 1
 
-    TransTemp.a_theta2 = a_theta_2
+    TransTemp.a_theta2 = a_theta_2 # fill with a theta 2
 
-    TransTemp.a_theta3 = a_theta_3
+    TransTemp.a_theta3 = a_theta_3 # fill with a theta 3
 
-    TransTemp.a_V1 = a_V1
+    TransTemp.a_V1 = a_V1 # fill with aV 1
 
-    TransTemp.a_V2 = a_V2
+    TransTemp.a_V2 = a_V2 # fill with aV 2
 
-    TransTemp.a_V3 = a_V3
+    TransTemp.a_V3 = a_V3 # fill with aV 3
 
-    TransTemp.beta_trim = trimState.beta
-
-
-    return TransTemp
+    return TransTemp # Returned Complete TF
