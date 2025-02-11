@@ -270,11 +270,11 @@ class WindModel:
      
      # Reset model states
 
-     self.x_u_prev = [[0]] # Reset previous state x_u to zero given in lecture
+     self.x_u_prev = [[0.0]] # Reset previous state x_u to zero given in lecture
 
-     self.x_v_prev = [[0], [0]] # Reset previous state x_v to zero given in lecture
+     self.x_v_prev = [[0.0], [0.0]] # Reset previous state x_v to zero given in lecture
 
-     self.x_w_prev = [[0], [0]] # Reset previous state x_w to zero given in lecture
+     self.x_w_prev = [[0.0], [0.0]] # Reset previous state x_w to zero given in lecture
 
      # Rest Wind Model but not parameters
 
