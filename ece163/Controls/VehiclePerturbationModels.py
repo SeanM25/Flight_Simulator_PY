@@ -61,8 +61,87 @@ def CreateTransferFunction(trimState, trimInputs):
     
     # Initialize TF object
 
-    TransFunct = Linearized.transferFunctions()
+    TransTemp = Linearized.transferFunctions()
 
     # Get all constants needed for the Transfer Function
 
+    Va = trimState.Va # Get airspeed in the trim
 
+    m = VPC.mass # Get aircraft mass
+
+    alpha_in_trim = trimState.alpha # angle of attack in the trim
+
+    pitch_in_trim = trimState.pitch # pitch angle in the trim
+
+    elev_in_trim = trimInputs.Elevator # elev input in the trim
+
+    throt_in_trim = trimInputs.Throttle # throttle input in the trim
+
+    # Get Phi's
+
+    a_phi_1 = ((-1 / 2) * VPC.rho * (Va ** 2) * VPC.S * VPC.b * VPC.Cpp) * (VPC.b / (2 * Va)) # Eq 5.23 Beard Ch 5
+
+    a_phi_2 = (1 / 2) * VPC.rho * (Va ** 2) * VPC.S * VPC.b * VPC.CpdeltaA # Eq 5.24 Beard Ch 5
+
+    # Get Beta's
+
+    a_beta_1 = -1 * (((VPC.rho * Va * VPC.S) / (2 * m)) * VPC.CYbeta) # Pg 71 of Beard
+
+    a_beta_2 = (((VPC.rho * Va * VPC.S) / (2 * m)) * VPC.CYdeltaR) # Also from Pg 71
+
+    # Get Theta's
+
+    a_theta_1 = (-1) * ((VPC.rho * (Va**2) * VPC.S * VPC.c) / (2*VPC.Jyy)) * VPC.CMq * (VPC.c / (2*Va)) # Pg 73 of Beard
+
+    a_theta_2 = -1 * (((VPC.rho * (Va ** 2) * VPC.c * VPC.S) / (2 * VPC.Jyy)) * VPC.CMalpha) # Also on Pg 73
+
+    a_theta_3 = ((VPC.rho * (Va ** 2) * VPC.c * VPC.S) / (2 * VPC.Jyy)) * VPC.CMdeltaE # Pg 73 as well
+
+    # Get V's from Pg 26 of Beard's supplemental since the textbook equations are aparrently wrong? Also need partials
+
+    dTdT = dThrust_dThrottle(Va, throt_in_trim, 0.01) # Get Partial Deriv w/ resepect to throttle
+
+    dTdVa = dThrust_dVa(Va, throt_in_trim, 0.5) # Partial w/ respect to airspeed in trim
+
+    a_V1 = (((VPC.rho * Va * VPC.S) / m) * (VPC.CD0 + (VPC.CDalpha * alpha_in_trim) + (VPC.CDdeltaE * elev_in_trim))) - ((1 / m) * dTdVa) # Equation for V1 Beard Supl
+
+    a_V2 = (1 / m) * dTdT # V2 equation from Beard Suplemental
+
+    a_V3 = VPC.g0 * (math.cos(pitch_in_trim - alpha_in_trim)) # V3 from Beard Supl
+
+    # Fill the transfer function with calculated parameters
+
+    TransTemp.Va_trim = Va
+
+    TransTemp.alpha_trim = alpha_in_trim
+
+    TransTemp.gamma_trim = (trimState.pitch - trimState.alpha)
+
+    TransTemp.theta_trim = pitch_in_trim
+
+    TransTemp.phi_trim = trimState.roll
+    
+    TransTemp.a_phi1 = a_phi_1
+
+    TransTemp.a_phi2 = a_phi_2
+
+    TransTemp.a_beta1 = a_beta_1
+
+    TransTemp.a_beta2 = a_beta_2
+
+    TransTemp.a_theta1 = a_theta_1
+
+    TransTemp.a_theta2 = a_theta_2
+
+    TransTemp.a_theta3 = a_theta_3
+
+    TransTemp.a_V1 = a_V1
+
+    TransTemp.a_V2 = a_V2
+
+    TransTemp.a_V3 = a_V3
+
+    TransTemp.beta_trim = trimState.beta
+
+
+    return TransTemp
