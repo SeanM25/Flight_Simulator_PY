@@ -28,11 +28,11 @@ class WindModel:
 
     # Set Initial States for Discrete Time sampling x-
 
-    #self.x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
+    self.x_u_prev = [[0]] # Initialize previous state x_u to zero given in lecture
 
-    #self.x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
+    self.x_v_prev = [[0], [0]] # Initialize previous state x_v to zero given in lecture
 
-    #self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
+    self.x_w_prev = [[0], [0]] # Initialize previous state x_w to zero given in lecture
 
     # Create Transfer Functions
 
@@ -205,11 +205,11 @@ class WindModel:
 
     # Get previous states
 
-    Xu_minus = [[0]]
+    Xu_minus = self.x_u_prev
 
-    Xv_minus = [[0], [0]]
+    Xv_minus = self.x_v_prev
 
-    Xw_minus = [[0], [0]]
+    Xw_minus = self.x_w_prev
 
     '''
     
@@ -230,7 +230,7 @@ class WindModel:
 
     self.wind.Wu = Wu_update[0][0] # Update current Wu wind parameter
 
-    Xu_minus = new_Xu_state # Set old u state to new u state
+    self.x_u_prev = new_Xu_state # Set old u state to new u state
 
 
     # Begin time sampling for v  
@@ -241,7 +241,7 @@ class WindModel:
 
     self.wind.Wv = Wv_update[0][0] # Update current Wv wind parameter
 
-    Xv_minus = new_Xv_state # Set old v state to new v state
+    self.x_v_prev = new_Xv_state # Set old v state to new v state
 
     # Begin time sampling for w  
 
@@ -251,7 +251,7 @@ class WindModel:
 
     self.wind.Ww = Ww_update[0][0] # Update current Ww wind parameter
 
-    Xw_minus = new_Xw_state # Set old w state to new w state
+    self.x_w_prev = new_Xw_state # Set old w state to new w state
 
     return # Return nothing
    
