@@ -26,27 +26,6 @@ class WindModel:
 
     self.wind = States.windState(); # Initialize the Wind State
 
-
-    self.Phi_u = [[0.0]]
-
-    self.Gamma_u = [[0.0]]
-
-    self.H_u = [[0.0]]
-
-
-    self.Phi_v = [[0.0, 0.0], [0.0, 0.0]]
-
-    self.Gamma_v = [[0.0], [0.0]]
-
-    self.H_v = [[0.0, 0.0]]
-
-
-    self.Phi_w = [[0.0, 0.0], [0.0, 0.0]]
-
-    self.Gamma_w = [[0.0], [0.0]]
-
-    self.H_w = [[0.0, 0.0]]
-
     # Set Initial States for Discrete Time sampling x-
 
     self.x_u_prev = [[0.0]] # Initialize previous state x_u to zero given in lecture
@@ -83,7 +62,7 @@ class WindModel:
 
         self.Phi_u = [[1.0]] # Set Phi_u matrix to identity as there is no wind
 
-        #self.Gamma_u = [[0.0]] # Set Gamma_u matrix to zero as there is no wind
+        self.Gamma_u = [[0.0]] # Set Gamma_u matrix to zero as there is no wind
 
         self.H_u = [[1.0]] # Set H_u matrix to col of 1s as there is no wind
 
@@ -91,7 +70,7 @@ class WindModel:
 
         self.Phi_v = [[1.0, 0.0], [0.0, 1.0]] # Set Phi_v matrix to identity as there is no wind
 
-        #self.Gamma_v = [[0.0], [0.0]] # Set Gamma_v matrix to identity as there is no wind
+        self.Gamma_v = [[0.0], [0.0]] # Set Gamma_v matrix to identity as there is no wind
 
         self.H_v = [[1.0, 1.0]] # Set H_v matrix to col of 1s as there is no wind
 
@@ -99,7 +78,7 @@ class WindModel:
 
         self.Phi_w = [[1.0, 0.0], [0.0, 1.0]] # Set Phi_w matrix to identity as there is no wind
 
-        #self.Gamma_w = [[0.0], [0.0]] # Set Gamma_w matrix to identity as there is no wind
+        self.Gamma_w = [[0.0], [0.0]] # Set Gamma_w matrix to identity as there is no wind
 
         self.H_w = [[1.0, 1.0]] # Set H_w matrix to col of 1s as there is no wind
 
