@@ -32,7 +32,7 @@ class WindModel:
 
     self.x_v_prev = [[0.0], [0.0]] # Initialize previous state x_v to zero given in lecture
 
-    self.x_w_prev = [[0.0], [0.0]] # Initialize previous state x_w to zero given in lecture
+    self.x_w_prev = [[0.0], [0.0]] # Initialize previous state x_w to zero given in lecture a
 
     # Create Transfer Functions
 
