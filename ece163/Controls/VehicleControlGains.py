@@ -70,4 +70,35 @@ class PDControl(kp=0.0, kd=0.0, trim=0.0, lowLimit=0.0, highLimit=0.0):
     
 
     
+    def setPDGains(self, kp=0.0, kd=0.0, trim=0.0, lowLimit=0.0, highLimit=0.0):
+
+        '''Function to set the gains for the PI control block (including the trim output and the limits)'''
+
+    # Basically this function is kinda like init but rather than initializing we are changing values on the fly
+
+        # Parameters:
+            # kp: proportional gain
+            # kd : derivative gain
+            # trim : trim output
+            # lowLimit : lower limit of accumulator saturation
+            # highLimit : upper limit of accumulator saturation 
+
+        self.kp = kp # kp is new Kp
+
+        self.kd = kd # kd is new kd
+
+        self.trim = trim # trim is new trim
+
+        self.lowLimit = lowLimit # lowLimit is new lowLimit
+
+        self.highLimit = highLimit # highLimit is new highLimit
+
+        return # return nothing
+    
+
+
+
+    
+
+
 
