@@ -249,7 +249,7 @@ class PIDControl:
 
         # Get u 
 
-        u = self.trim + (self.kp * error) + (self.ki * self.accumulator) - (self.kd * derivative) # Given PI control equation
+        u = self.trim + (self.kp * error) + (self.ki * self.accumulator) - (self.kd * derivative) # Given PID control equation
 
         # Check saturation bounds
 
@@ -269,9 +269,23 @@ class PIDControl:
 
         self.pastError = error # current error becomes the past error state
 
-        return u # # Return PI control output
+        return u # # Return PID control output
     
+    def resetIntergrator(self):
+
+        # Same for PID as it was with PI
+
+        # This function resets the acumulator and past error state back to 0
+
+        self.accumulator = 0.0 # accumulator reset to 0
+
+        self.pastError = 0.0 # reset past error state to 0
+
+        return # return nothing
+
+
     
+
     
 
 
