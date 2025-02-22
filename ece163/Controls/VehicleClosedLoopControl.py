@@ -282,6 +282,32 @@ class PIDControl:
         self.pastError = 0.0 # reset past error state to 0
 
         return # return nothing
+    
+    def setPIDGains(self, dT=VPC.dT, kp=0.0, kd=0.0, ki=0.0, trim=0.0, lowLimit=0.0, highLimit=0.0):
+
+        # Function to set the gains for the PI control block (including the trim output and the limits)
+
+        self.dT = dT # set PID time step
+
+        self.kp = kp # set kp for PID
+
+        self.kd = kd # set kd for PID
+
+        self.ki = ki # set ki fpr PID
+
+        self.trim = trim # set trim output for PID
+
+        self.lowLimit = lowLimit # set lower saturation limit for PID
+
+        self.highLimit = highLimit # set upper saturation limit for PID
+
+        return # return nothing
+    
+
+    # State Machine Time then helpers
+    
+
+
 
 
     
