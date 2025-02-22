@@ -164,7 +164,39 @@ class PIControl:
 
         self.pastError = error # current error becomes the past error state
 
-        return u
+        return u # # Return PI control output
+    
+    def resetIntegrator(self):
+
+        # Function to reset the integration state to zero, used when switching modes or otherwise resetting the integral state
+
+        # This function resets the acumulator and past error state back to 0
+
+        self.accumulator = 0.0 # accumulator reset to 0
+
+        self.pastError = 0.0 # reset past error state to 0
+
+        return # return nothing
+    
+    def setPIGains(self, dT=VPC.dT, kp=0.0, ki=0.0, trim=0.0, lowLimit=0.0, highLimit=0.0):
+
+        # Function to set the gains for the PI control block (including the trim output and the limits)
+
+        self.dT = dT # set PI time step
+
+        self.kp = kp # set kp for PI
+
+        self.ki = ki # set ki fpr PI
+
+        self.trim = trim # set trim output for PI
+
+        self.lowLimit = lowLimit # set lower saturation limit for PI
+
+        self.highLimit = highLimit # set upper saturation limit for PI
+
+        return # return nothing
+    
+
 
 
 
