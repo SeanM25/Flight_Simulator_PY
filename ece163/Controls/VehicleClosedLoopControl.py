@@ -92,6 +92,81 @@ class PDControl:
 
         return # return nothing
     
-#class PIControl:
+class PIControl:
 
-    #def __init__(self, dT=VPC.dT, kp=0.0, ki=0.0, trim=0.0, lowLimit=0.0, highLimit=0.0):
+    def __init__(self, dT=VPC.dT, kp=0.0, ki=0.0, trim=0.0, lowLimit=0.0, highLimit=0.0):
+
+        '''Functions which implement the PI control with saturation where the integrator has both a reset and an anti-windup such that when output saturates, 
+       the integration is undone and the output forced the output to the limit. The output is: u = u_ref + Kp * error + Ki * integral{error} limited between lowLimit and highLimit.''' 
+        
+    # Parameters:
+            # kp: proportional gain
+            # kd : derivative gain
+            # trim : trim output
+            # lowLimit : lower limit of accumulator saturation
+            # highLimit : upper limit of accumulator saturation 
+
+            # To perform integration we use the trapezoidal method outlined in lecture accumulator = 1/2 (error + prev error) dT
+
+            # As such, we must define a accumulator member and a previous error member as well
+
+        self.dT = dT # Timestep set to 0.01
+
+        self.kp = kp # proportional gain set to desired value
+
+        self.ki = ki # integral gain set to desired valuue
+
+        self.trim = trim # trim output set to given value
+
+        self.lowLimit = lowLimit # lower limit of saturation specified
+
+        self.highLimit = highLimit # upper limit of saturation specified
+
+        self.accumulator = 0.0 # Initial accumulator state for integration is set to 0
+
+        self.pastError = 0.0 # Initial past error state is 0
+        
+        return # return nothing
+    
+    def Update(self, command=0.0, current=0.0):
+
+        '''Calculates the output of the PI loop given the gains and limits from instantiation, and using the command and current or actual inputs.
+          Output is limited to between lowLimit and highLimit from instantiation. 
+          Integration for the integral state is done using trapezoidal integration, and anti-windup is implemented such that if the output is out of limits, the integral state is not updated (no additional error accumulation).'''
+
+        # Get the error
+
+        error = command - current # input error equals reference command minus system output
+
+        # Do the accumulation that is trapezoidal  integration
+
+        self.accumulator += (1 / 2) * (error + self.pastError) * (self.dT)  # Accumulator trapez equation from lecture
+
+        # Get u 
+
+        u = self.trim + (self.kp * error) + (self.ki * self.accumulator) # Given PI control equation
+
+        # Check saturation bounds
+
+        if (u > self.highLimit): # If we're at the upper limit of saturation
+
+            u = self.highLimit # set u to the upper limit
+
+            self.accumulator -= (1 / 2) * (error + self.pastError) * (self.dT) # Decrement the accumulator as specified in lecture
+
+        elif(u < self.lowLimit): # If we're at the lower limit of saturation
+
+            u = self.lowLimit # set u to the lower limit
+
+            self.accumulator -= (1 / 2) * (error + self.pastError) * (self.dT) # Decrement the accumulator as specified in lecture
+
+        # Change past Error state
+
+        self.pastError = error # current error becomes the past error state
+
+        return u
+
+
+
+
+
