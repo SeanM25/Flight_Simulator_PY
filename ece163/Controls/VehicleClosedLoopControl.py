@@ -381,6 +381,14 @@ class VehicleClosedLoopControl:
         # Wrapper function that gets the current trim inputs
 
         return self.trimInputs # return present trim inputs
+    
+    def setTrimInputs(self, trimInputs = Inputs.controlInputs(Throttle=0.5, Aileron=0.0, Elevator=0.0, Rudder=0.0)):
+
+        # Wrapper function that injects the current trim inputs
+
+        self.trimInputs = trimInputs # inject new trim inputs
+
+        return  # return nothing
 
 
     
