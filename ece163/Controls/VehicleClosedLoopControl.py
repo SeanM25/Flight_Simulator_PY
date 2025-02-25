@@ -306,8 +306,56 @@ class PIDControl:
 
     # State Machine Time then helpers
     
+class VehicleClosedLoopControl:
+
+    def __init__(self, dT=0.01, rudderControlSource='SIDESLIP', useSensors=False, useEstimator=False):
+
+        # We can ignore everything besides dT until Lab 5 & 6
 
 
+        self.VAM = VehicleAerodynamicsModule.VehicleAerodynamicsModel() # Give an VAM instance for the class
+
+        self.controlGains = Controls.controlGains() # Give a control gains instance to keep track of Kp, Ki Kd
+
+        # Two controlInputs one for trim inputs and the other for Vehicle Aerodynamics module
+
+        self.trimInputs = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the trim state
+
+        self.controlSurfaces = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the control surfaces that are fed into VAM
+
+        # Store the given dT
+
+        self.dT = dT # Store the given dT value as well
+
+        # Intialize controller mode for State Machine
+
+        self.controller_climb_Mode = Controls.AltitudeStates.HOLDING # Intializes the mode of the controller to Holding other possible modes are Climbing & Decending
+
+        # Create the 7 feedback contollers
+
+        # PI Controllers
+
+        self.rollFromCourse = PIControl()
+
+        self.rudderFromSideslip = PIControl()
+
+        self.throttleFromAirspeed = PIControl()
+
+        self.pitchFromAltitude = PIControl()
+
+        self.pitchFromAirspeed = PIControl()
+
+        # PD Controller
+
+        self.elevatorFromPitch = PDControl()
+
+        # PID Controller
+
+        self.aileronFromRoll = PIDControl()
+
+        return # return nothing
+
+        
 
 
     
