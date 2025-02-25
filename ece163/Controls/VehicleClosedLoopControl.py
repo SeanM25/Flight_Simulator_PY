@@ -321,7 +321,7 @@ class VehicleClosedLoopControl:
 
         self.trimInputs = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the trim state
 
-        self.controlSurfaces = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the control surfaces that are fed into VAM
+        self.VehicleControlSurfaces = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the vehicle control surfaces that are fed into VAM
 
         # Store the given dT
 
@@ -389,6 +389,18 @@ class VehicleClosedLoopControl:
         self.trimInputs = trimInputs # inject new trim inputs
 
         return  # return nothing
+    
+    def getVehicleAerodynmaicsModel(self):
+
+        # Gets current VAM & attributes
+
+        return self.VAM # return vehicle aerodynamics modes
+    
+    def getVehicleControlSurfaces(self):
+
+        # Gets current Vehicle Control Surfaces and attributes
+
+        return self.VehicleControlSurfaces # Get current Control Surfaces
 
 
     
