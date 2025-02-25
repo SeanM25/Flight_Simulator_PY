@@ -354,6 +354,16 @@ class VehicleClosedLoopControl:
         self.aileronFromRoll = PIDControl()
 
         return # return nothing
+    
+
+    def getControlGains(self):
+
+        # wrapper function to extract control gains from class
+
+        return self.controlGains # return control gains
+    
+
+    
 
         
 
