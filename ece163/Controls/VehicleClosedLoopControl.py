@@ -368,7 +368,17 @@ class VehicleClosedLoopControl:
 
         return self.VAM.VDynamics.state # retun the Vehicle state
     
+    def setVehicleState(self, state):
+
+        # wrapper function to set that is inject the vehicle state
+
+        self.VAM.VDynamics.state = state # Set new vehicle stae
+
+        return # return nothing
+
+
     
+
 
 
 
