@@ -375,6 +375,12 @@ class VehicleClosedLoopControl:
         self.VAM.VDynamics.state = state # Set new vehicle stae
 
         return # return nothing
+    
+    def getTrimInputs(self):
+
+        # Wrapper function that gets the current trim inputs
+
+        return self.trimInputs # return present trim inputs
 
 
     
