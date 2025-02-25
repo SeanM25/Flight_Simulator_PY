@@ -362,8 +362,15 @@ class VehicleClosedLoopControl:
 
         return self.controlGains # return control gains
     
+    def getVehicleState(self):
 
+        # Wrapper function to extract vehicle state from the class.
+
+        return self.VAM.VDynamics.state # retun the Vehicle state
     
+    
+
+
 
         
 
