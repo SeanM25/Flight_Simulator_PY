@@ -502,6 +502,28 @@ class VehicleClosedLoopControl:
         self.pitchFromAirspeed = PIControl.setPIGains(dT, kp_pitchAir, ki_pitchAir, 0.0, pitch_AirlowLim, pitch_AirhighLim) # update pitch from airspeed gains
 
         return # return nothing
+    
+
+    def reset(self):
+
+        # Resets VAM and all the controllers except elevatorFromPitch since there is no integral term
+
+        self.VAM = self.VAM.reset()
+
+        self.rollFromCourse = self.rollFromCourse.resetIntegrator()
+
+        self.rudderFromSideslip = self.rudderFromSideslip.resetIntegrator()
+
+        self.throttleFromAirspeed = self.throttleFromAirspeed.resetIntegrator()
+
+        self.pitchFromAltitude = self.pitchFromAltitude.resetIntegrator()
+
+        self.pitchFromAirspeed = self.pitchFromAirspeed.resetIntegrator()
+
+        self.aileronFromRoll = self.aileronFromRoll.resetIntergrator()
+
+
+        return # return nothing
 
 
 
