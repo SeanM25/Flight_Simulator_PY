@@ -508,20 +508,19 @@ class VehicleClosedLoopControl:
 
         # Resets VAM and all the controllers except elevatorFromPitch since there is no integral term
 
-        self.VAM = self.VAM.reset()
+        self.VAM = self.VAM.reset() # Reset VAM
 
-        self.rollFromCourse = self.rollFromCourse.resetIntegrator()
+        self.rollFromCourse = self.rollFromCourse.resetIntegrator() # reset roll from course
 
-        self.rudderFromSideslip = self.rudderFromSideslip.resetIntegrator()
+        self.rudderFromSideslip = self.rudderFromSideslip.resetIntegrator() # reset rudder from sideslip
 
-        self.throttleFromAirspeed = self.throttleFromAirspeed.resetIntegrator()
+        self.throttleFromAirspeed = self.throttleFromAirspeed.resetIntegrator() # reset throttle from airspeed
 
-        self.pitchFromAltitude = self.pitchFromAltitude.resetIntegrator()
+        self.pitchFromAltitude = self.pitchFromAltitude.resetIntegrator() # reset pitch from alitutde
 
-        self.pitchFromAirspeed = self.pitchFromAirspeed.resetIntegrator()
+        self.pitchFromAirspeed = self.pitchFromAirspeed.resetIntegrator() # reset pitch from airspeed
 
-        self.aileronFromRoll = self.aileronFromRoll.resetIntergrator()
-
+        self.aileronFromRoll = self.aileronFromRoll.resetIntergrator() # reset aileron from roll
 
         return # return nothing
 
