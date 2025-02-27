@@ -303,8 +303,6 @@ class PIDControl:
 
         return # return nothing
     
-
-    # State Machine Time then helpers
     
 class VehicleClosedLoopControl:
 
@@ -403,7 +401,107 @@ class VehicleClosedLoopControl:
         return self.VehicleControlSurfaces # Get current Control Surfaces
 
 
-    
+    def setControlGains(self, controlGains=Controls.controlGains()):
+
+        # Function calls the appropriate set gains function for each controller : PD, PI, or PID
+
+        # Some parameters must be converted from degrees to rads using math.radians()
+
+        self.controlGains = controlGains # update control gains parameter from function argument
+
+        trimInputs = self.trimInputs # Get current trim inputs
+
+        dT = self.dT # Get current timestep dT
+        
+        # Set PD Controller Gain (Elevator from Pitch)
+
+        kp_pitch_EFP = self.controlGains.kp_pitch # Get prop gain for elevator from pitch
+
+        kd_pitch_EFP = self.controlGains.kd_pitch # Get deriv gain for elevator from pitch
+        
+        elev_minLimit = VPC.minControls.Elevator # Get the lower limit for the elevator from VPC min/max controls
+
+        elev_maxLimit = VPC.maxControls.Elevator # Get the upper limit for the elevator from VPC min/max controls
+
+        self.elevatorFromPitch = PDControl.setPDGains(kp_pitch_EFP, kd_pitch_EFP, trimInputs.Elevator, elev_minLimit, elev_maxLimit) # Set gains for elevatorFromPitch Controller
+
+        # Set PID Controller Gain (Aileron from roll)
+
+        kp_AFR = self.controlGains.kp_roll # Aileron from roll prop gain
+
+        kd_AFR = self.controlGains.kd_roll # Aileron from roll deriv gain
+
+        ki_AFR = self.controlGains.ki_roll # Aileron from roll int gain
+
+        aileron_MIN = VPC.minControls.Aileron # min aileron limit
+
+        aileron_MAX = VPC.maxControls.Aileron # max aileron limit
+
+        self.aileronFromRoll = PIDControl.setPIDGains(dT, kp_AFR, kd_AFR, ki_AFR, trimInputs.Aileron, aileron_MIN, aileron_MAX) # Update Aileron From Roll gains
+
+        # Set PI Controller Gains for rollFromCourse, rudderFromSideslip, throttleFromAirspeed, pitchFromAltitude, pitchFromAirspeed
+
+            # Roll From Course
+
+        kp_RFC = self.controlGains.kp_course # Course gain used to get the roll
+
+        ki_RFC = self.controlGains.ki_course # Course integral gain used to get the roll
+
+        RFC_lowerLimit = -1 * math.radians(VPC.bankAngleLimit) # convert the lower limit of integration for Roll to Course to rads from degrees this is the bank angle limit
+
+        RFC_upperLimit = math.radians(VPC.bankAngleLimit) # convert the upper limit of integration for Roll to Course to rads from degrees this is the bank angle limit
+
+        self.rollFromCourse = PIControl.setPIGains(dT, kp_RFC, ki_RFC, 0.0, RFC_lowerLimit, RFC_upperLimit) # Upfate Roll From Course gains
+
+            # Rudder From Sideslip
+
+        kp_RSS = self.controlGains.kp_sideslip # Sideslip gain used in Rudder from Sideslip
+
+        ki_RSS = self.controlGains.ki_sideslip # Sideslip integral gain used in Rudder from Sideslip
+
+        RSS_lowLimit = VPC.minControls.Rudder # Rudder lower limit for integration
+
+        RSS_highLimit = VPC.maxControls.Rudder # Rudder upper limit for integration
+
+        self.rudderFromSideslip = PIControl.setPIGains(dT, kp_RSS, ki_RSS, trimInputs.Rudder, RSS_lowLimit, RSS_highLimit) # Update rudder from sideslip gains
+
+            # Throttle From Airspeed 
+
+        kp_TFS = self.controlGains.kp_SpeedfromThrottle # Proportion gain Throttle from airspeed
+
+        ki_TFS = self.controlGains.ki_SpeedfromThrottle # Integral gain throttle from airspeed
+
+        TFS_lowLimit = VPC.minControls.Throttle # Throttle lower limit
+
+        TFS_highLimit = VPC.maxControls.Throttle # throttle upper limit
+
+        self.throttleFromAirspeed = PIControl.setPIGains(dT, kp_TFS, ki_TFS, trimInputs.Throttle, TFS_lowLimit, TFS_highLimit) # update throttle from airspeed gains
+
+            # Pitch from Altitutde    
+
+        kp_PFA = self.controlGains.kp_altitude # proprtional gain pitch from altitude
+
+        ki_PFA = self.controlGains.ki_altitude # integral gain pitch from altitude
+
+        PFA_lowLimit = -1 * math.radians(VPC.pitchAngleLimit) # lower limit of integration for pitch
+
+        PFA_highLimit = math.radians(VPC.pitchAngleLimit) # upper limit of integration for pitch
+
+        self.pitchFromAltitude = PIControl.setPIGains(dT, kp_PFA, ki_PFA, 0.0, PFA_lowLimit, PFA_highLimit) # update pitch from altitude gains
+
+        # Pitch from Airspeed
+
+        kp_pitchAir = self.controlGains.kp_SpeedfromElevator # pitch from airspeed gain
+
+        ki_pitchAir = self.controlGains.ki_SpeedfromElevator # pitch from airspeed integral gain
+
+        pitch_AirlowLim = -1 * math.radians(VPC.pitchAngleLimit) # lower limit of integration for pitch
+
+        pitch_AirhighLim = math.radians(VPC.pitchAngleLimit) # upper limit of integration for pitch
+
+        self.pitchFromAirspeed = PIControl.setPIGains(dT, kp_pitchAir, ki_pitchAir, 0.0, pitch_AirlowLim, pitch_AirhighLim) # update pitch from airspeed gains
+
+        return # return nothing
 
 
 
