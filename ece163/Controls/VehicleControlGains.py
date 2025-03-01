@@ -175,6 +175,8 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
         tuningParameters.Zeta_SpeedfromElevator = -(controlGains.kp_SpeedfromElevator * k_theta_dc * VPC.g0 - linearizedModel.a_V1) / (2 * tuningParameters.Wn_SpeedfromElevator) # Beard (6.28)
 
+        return tuningParameters
+
 
         # Possible exceptions: Bad Values & nonsense parameters passed in
 
