@@ -327,7 +327,7 @@ class VehicleClosedLoopControl:
 
         # Intialize controller mode for State Machine
 
-        self.controller_climb_Mode = Controls.AltitudeStates.HOLDING # Intializes the mode of the controller to Holding other possible modes are Climbing & Decending
+        self.climbState = Controls.AltitudeStates.HOLDING # Intializes the mode of the controller to Holding other possible modes are Climbing & Decending
 
         # Create the 7 feedback contollers
 
@@ -524,6 +524,91 @@ class VehicleClosedLoopControl:
 
         return # return nothing
 
+
+    def UpdateControlCommands(self, referenceCommands, state):
+
+        # Implements the Altitude Hold State Machine outlined in Lab manual and lecture
+
+        # All logic comes from Lecture Diagrams / State Machine in Lab Manual
+
+        referenceCommands = Controls.referenceCommands() # Comment Out temp holder
+
+        state = self.getVehicleState() # Comment out tmep holder for easy coding
+
+        curAlt = -state.pd # Gets current altitutde
+
+        controlSurfaceOutputs = Inputs.controlInputs() # Creates a control inputs instance to fill and return
+
+        upper_threshold = referenceCommands.commandedAltitude + VPC.altitudeHoldZone # Upper threshold given in handout
+
+        lower_threshold = referenceCommands.commandedAltitude - VPC.altitudeHoldZone # Lower threshold given in handout
+
+        
+
+        # Get and check course error
+
+        courseError = referenceCommands.commandedCourse - state.chi # Get course error as defined in lecture
+
+        if(courseError >= math.pi): # If greater than pi incrment chi by 2pi
+
+            state.chi += 2 * math.pi
+        
+        elif(courseError <= -math.pi): # If ledd than -pi decrement chi by 2pi
+
+            state.chi -= 2 * math.pi
+
+        
+        # State Machine Start, the Entry State is Holding (Aircraft neither climbing or decending)
+
+        # State: Holding
+
+        if(self.climbState == Controls.AltitudeStates.HOLDING):
+
+            # Pitch command determined by altitutude
+
+            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Get new pitch command from Alt
+
+            # Throttle command determined by Airspeed
+
+            controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va ) # Get new throttle from Va
+
+            # Holding To Decending Transition Arrow
+
+            if(curAlt > upper_threshold): # If we're ready to decend (Too High!!!)
+
+                self.pitchFromAirspeed.resetIntegrator() # Reset Pitch from Airspeed
+
+                controlSurfaceOutputs.Throttle = VPC.minControls.Throttle # Set throttle to min
+
+                self.climbState = Controls.AltitudeStates.DESCENDING # Set Climb state to Decending
+
+        
+            # Hold to Climb Transition Arrow
+
+            if(curAlt < lower_threshold): # If we're ready to climb (Too Low!!!)
+
+                self.pitchFromAirspeed.resetIntegrator() # Reset Pitch from Airspeed
+
+                controlSurfaceOutputs.Throttle = VPC.maxControls.Throttle # Set throttle to max
+
+                self.climbState = Controls.AltitudeStates.CLIMBING # Set Climb state to Climbing
+
+
+        
+
+        
+
+
+
+
+
+
+            
+
+
+        
+
+        
 
 
 
