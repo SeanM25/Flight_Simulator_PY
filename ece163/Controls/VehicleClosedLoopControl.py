@@ -646,7 +646,7 @@ class VehicleClosedLoopControl:
 
             controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
-            referenceCommands.commandedPitch = pitch_from_Alt(referenceCommands.commandedAltitude, curAlt) # height or alt?
+            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # height or alt?
 
             controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(referenceCommands.commandedPitch, state.pitch, state.q)
 
@@ -655,6 +655,7 @@ class VehicleClosedLoopControl:
         return controlSurfaceOutputs
     
 
+   
     def update(self, referenceCommands=Controls.referenceCommands):
 
         state = self.getVehicleState()

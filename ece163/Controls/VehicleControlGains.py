@@ -121,6 +121,69 @@ def computeGains(tuningParamters = Controls.controlTuning(), linearizedModel = L
 
 
 
+def computeTuningParameters(controlGains = Controls.controlGains(), linearizedModel = Linearized.transferFunctions()):
+
+    # Opposite of compute gains we compute and return the tuning parameters here
+
+    # Tuning Parameters from Ch 6 of Beard
+
+    tuningParameters = Controls.controlTuning()
+
+    try:
+
+        # Roll Tuning
+
+        tuningParameters.Wn_roll = math.sqrt(controlGains.kp_roll * linearizedModel.a_phi2) # Beard (6.5)
+
+        tuningParameters.Zeta_roll = (controlGains.kd_roll * linearizedModel.a_phi2 + linearizedModel.a_phi1) / (2 * tuningParameters.Wn_roll) # Beard (6.6)
+
+        # Course Tuning
+
+        tuningParameters.Wn_course = math.sqrt((VPC.g0 * controlGains.ki_course) / linearizedModel.Va_trim)
+
+        tuningParameters.Zeta_course = (controlGains.kp_course *  VPC.g0) / (tuningParameters.Wn_course * 2 * linearizedModel.Va_trim)
+
+        # Sideslip Tuning
+
+        tuningParameters.Wn_sideslip = (controlGains.kp_sideslip * linearizedModel.a_beta2 + linearizedModel.a_beta1) / (2 * tuningParameters.Zeta_sideslip)
+
+        tuningParameters.Zeta_sideslip = (linearizedModel.a_beta1 + linearizedModel.a_beta2 * controlGains.kp_sideslip) / (2 * math.sqrt(controlGains.ki_sideslip * linearizedModel.a_beta2))
+
+        # Pitch Tuning
+
+        tuningParameters.Wn_pitch = math.sqrt(controlGains.kp_pitch * linearizedModel.a_theta3 + linearizedModel.a_theta2)
+
+        tuningParameters.Zeta_pitch = (controlGains.kd_pitch * linearizedModel.a_theta3  + linearizedModel.a_theta1) / (2 * tuningParameters.Wn_pitch)
+
+        # Altitude Tuning
+
+        k_theta_dc = (controlGains.kp_pitch * linearizedModel.a_theta3) / (linearizedModel.a_theta2 + (controlGains.kp_pitch * linearizedModel.a_theta3)) # Beard (6.23)
+
+        tuningParameters.Wn_altitude = math.sqrt(controlGains.ki_altitude * k_theta_dc * linearizedModel.Va_trim)
+
+        tuningParameters.Zeta_altitude = (controlGains.kp_altitude * k_theta_dc * linearizedModel.Va_trim) / (2* tuningParameters.Wn_altitude)
+
+        # Speed From Throttle Tuning
+
+        tuningParameters.Wn_SpeedfromThrottle = math.sqrt(controlGains.ki_SpeedfromThrottle * linearizedModel.a_V2)
+
+        tuningParameters.Zeta_SpeedfromThrottle = (controlGains.kp_SpeedfromThrottle * linearizedModel.a_V2 + linearizedModel.a_V1)/(2 * tuningParameters.Wn_SpeedfromThrottle)
+
+        # Speed From Elevator Tuning
+
+        tuningParameters.Wn_SpeedfromElevator = math.sqrt(-controlGains.ki_SpeedfromElevator * k_theta_dc * VPC.g0) # Beard (6.27)
+
+        tuningParameters.Zeta_SpeedfromElevator = -(controlGains.kp_SpeedfromElevator * k_theta_dc * VPC.g0 - linearizedModel.a_V1) / (2 * tuningParameters.Wn_SpeedfromElevator) # Beard (6.28)
+
+
+        # Possible exceptions: Bad Values & nonsense parameters passed in
+
+    except:
+
+        tuningParameters = Controls.controlTuning() # Create empty tuning Params
+
+        return tuningParameters # Return empty
+
 
 
 
