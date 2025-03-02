@@ -33,7 +33,7 @@ def computeGains(tuningParamters = Controls.controlTuning(), linearizedModel = L
 
     controlGains.kd_roll = ((2 * Zeta_roll * Wn_roll) - a_phi1) / a_phi2 # Beard (6.9)
     
-    controlGains.ki_roll = 0.0 # No ki term in roll autopilot
+    controlGains.ki_roll = 0.001 # No ki term in roll autopilot
 
     # Sideslip Gains
 
