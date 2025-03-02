@@ -131,65 +131,115 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     Vg = linearizedModel.Va_trim
 
+    # Race Condition Preventing Function From passing calculate equation params before hand?
+
+    kp_roll = controlGains.kp_roll
+
+    a_phi2 = linearizedModel.a_phi2
+
+    kd_roll = controlGains.kd_roll
+
+    a_phi1 = linearizedModel.a_phi1
+
+    ki_course = controlGains.ki_course
+
+    kp_course = controlGains.kp_course
+
+    ki_sideslip = controlGains.ki_sideslip
+
+    a_beta1 = linearizedModel.a_beta1
+
+    a_beta2 = linearizedModel.a_beta2
+
+    kp_sideslip = controlGains.kp_sideslip
+
+    a_theta1 = linearizedModel.a_theta1
+
+    a_theta2 = linearizedModel.a_theta2
+
+    a_theta3 = linearizedModel.a_theta3
+
+    kp_pitch = controlGains.kp_pitch
+
+    kd_pitch = controlGains.kd_pitch
+
+    a_V1 = linearizedModel.a_V1
+
+    a_V2 = linearizedModel.a_V2
+
+    a_V3 = linearizedModel.a_V3
+
+    ki_altitude = controlGains.ki_altitude
+
+    kp_altitude = controlGains.kp_altitude
+
+    ki_SpeedfromThrottle = controlGains.ki_SpeedfromThrottle
+
+    kp_SpeedfromThrottle = controlGains.kp_SpeedfromThrottle
+
+    ki_SpeedfromElevator = controlGains.ki_SpeedfromElevator
+
+    kp_SpeedfromElevator = controlGains.ki_SpeedfromElevator
+
     try:
 
         # Roll Tuning Params
 
-        tuningParameters.Wn_roll = math.sqrt(controlGains.kp_roll * linearizedModel.a_phi2)
+        tuningParameters.Wn_roll = math.sqrt(kp_roll * a_phi2)
 
         Wn_roll = tuningParameters.Wn_roll
 
-        tuningParameters.Zeta_roll = ((controlGains.kd_roll * linearizedModel.a_phi2) + linearizedModel.a_phi1) / (2 * Wn_roll)
+        tuningParameters.Zeta_roll = ((kd_roll * a_phi2) + a_phi1) / (2 * Wn_roll)
 
         # Course Tuning Params
         
-        tuningParameters.Wn_course = math.sqrt((VPC.g0 * controlGains.ki_course)/ Vg )
+        tuningParameters.Wn_course = math.sqrt((VPC.g0 * ki_course)/ Vg )
 
         Wn_course = tuningParameters.Wn_course
 
-        tuningParameters.Zeta_course = (controlGains.kp_course * VPC.g0) / (2 * Wn_course * Vg)
+        tuningParameters.Zeta_course = (kp_course * VPC.g0) / (2 * Wn_course * Vg)
 
         # Sideslip Tuning Params
         
-        tuningParameters.Wn_sideslip = math.sqrt(linearizedModel.a_beta2 * controlGains.ki_sideslip)
+        tuningParameters.Wn_sideslip = math.sqrt(a_beta2 * ki_sideslip)
 
         Wn_sideslip = tuningParameters.Wn_sideslip
 
-        tuningParameters.Zeta_sideslip = (linearizedModel.a_beta1 + (linearizedModel.a_beta2 * controlGains.kp_sideslip)) / (2 * Wn_sideslip)
+        tuningParameters.Zeta_sideslip = (a_beta1 + (a_beta2 * kp_sideslip)) / (2 * Wn_sideslip)
 
         # Pitch Tuning Params
 
-        tuningParameters.Wn_pitch = math.sqrt(linearizedModel.a_theta2 + (controlGains.kp_pitch * linearizedModel.a_theta3))
+        tuningParameters.Wn_pitch = math.sqrt(a_theta2 + (kp_pitch * a_theta3))
 
-        kThetaDC = (controlGains.kp_pitch * linearizedModel.a_theta3) / (Wn_pitch ** 2)
+        k_theta_dc = (kp_pitch * a_theta3) / (Wn_pitch ** 2)
 
         Wn_pitch = tuningParameters.Wn_pitch
 
-        tuningParameters.Zeta_pitch = (linearizedModel.a_theta1 + (controlGains.kd_pitch * linearizedModel.a_theta3)) / (2 * Wn_pitch)
+        tuningParameters.Zeta_pitch = (a_theta1 + (kd_pitch * a_theta3)) / (2 * Wn_pitch)
 
         # Altitude Tuning Params
         
-        tuningParameters.Wn_altitude = math.sqrt(kThetaDC * Vg * controlGains.ki_altitude)
+        tuningParameters.Wn_altitude = math.sqrt(k_theta_dc * Vg * ki_altitude)
 
         Wn_altitude = tuningParameters.Wn_altitude
 
-        tuningParameters.Zeta_altitude = (kThetaDC * Vg * controlGains.kp_altitude) / (2 * Wn_altitude)
+        tuningParameters.Zeta_altitude = (k_theta_dc * Vg * kp_altitude) / (2 * Wn_altitude)
 
         # Speed From Throttle Tuning Params
         
-        tuningParameters.Wn_SpeedfromThrottle = math.sqrt(linearizedModel.a_V2 * controlGains.ki_SpeedfromThrottle)
+        tuningParameters.Wn_SpeedfromThrottle = math.sqrt(a_V2 * ki_SpeedfromThrottle)
 
         Wn_SpeedfromThrottle = tuningParameters.Wn_SpeedfromThrottle
 
-        tuningParameters.Zeta_SpeedfromThrottle = (linearizedModel.a_V1 + (linearizedModel.a_V2 * controlGains.kp_SpeedfromThrottle)) / (2 * Wn_SpeedfromThrottle)
+        tuningParameters.Zeta_SpeedfromThrottle = (a_V1 + (a_V2 * kp_SpeedfromThrottle)) / (2 * Wn_SpeedfromThrottle)
 
         # Speed From Elevator Tuning Params
         
-        tuningParameters.Wn_SpeedfromElevator = math.sqrt(-1 * kThetaDC * VPC.g0 * controlGains.ki_SpeedfromElevator)
+        tuningParameters.Wn_SpeedfromElevator = math.sqrt(-1 * k_theta_dc * VPC.g0 * ki_SpeedfromElevator)
 
         Wn_SpeedfromElevator = tuningParameters.Wn_SpeedfromElevator
 
-        tuningParameters.Zeta_SpeedfromElevator = (linearizedModel.a_V1 - (kThetaDC * VPC.g0 * controlGains.kp_SpeedfromElevator)) / (2 * Wn_SpeedfromElevator)
+        tuningParameters.Zeta_SpeedfromElevator = (a_V1 - (k_theta_dc * VPC.g0 * kp_SpeedfromElevator)) / (2 * Wn_SpeedfromElevator)
 
         return tuningParameters
 
