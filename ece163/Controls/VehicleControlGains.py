@@ -181,81 +181,84 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     kp_SpeedfromElevator = controlGains.ki_SpeedfromElevator
 
-    try:
 
-        # Roll Tuning Params
+    # Roll Tuning Params
 
-        tuningParameters.Wn_roll = math.sqrt(kp_roll * a_phi2)
+    tuningParameters.Wn_roll = math.sqrt(kp_roll * a_phi2)
 
-        Wn_roll = tuningParameters.Wn_roll
+    Wn_roll = tuningParameters.Wn_roll
 
-        tuningParameters.Zeta_roll = ((kd_roll * a_phi2) + a_phi1) / (2 * Wn_roll)
+    tuningParameters.Zeta_roll = ((kd_roll * a_phi2) + a_phi1) / (2 * Wn_roll)
 
-        # Course Tuning Params
+    # Course Tuning Params
         
-        tuningParameters.Wn_course = math.sqrt((VPC.g0 * ki_course)/ Vg )
+    tuningParameters.Wn_course = math.sqrt((VPC.g0 * ki_course)/ Vg )
 
-        Wn_course = tuningParameters.Wn_course
+    Wn_course = tuningParameters.Wn_course
 
-        tuningParameters.Zeta_course = (kp_course * VPC.g0) / (2 * Wn_course * Vg)
+    tuningParameters.Zeta_course = (kp_course * VPC.g0) / (2 * Wn_course * Vg)
 
-        # Sideslip Tuning Params
+    # Sideslip Tuning Params
         
-        tuningParameters.Wn_sideslip = math.sqrt(a_beta2 * ki_sideslip)
+    tuningParameters.Wn_sideslip = math.sqrt(a_beta2 * ki_sideslip)
 
-        Wn_sideslip = tuningParameters.Wn_sideslip
+    Wn_sideslip = tuningParameters.Wn_sideslip
 
-        tuningParameters.Zeta_sideslip = (a_beta1 + (a_beta2 * kp_sideslip)) / (2 * Wn_sideslip)
+    tuningParameters.Zeta_sideslip = (a_beta1 + (a_beta2 * kp_sideslip)) / (2 * Wn_sideslip)
 
-        # Pitch Tuning Params
+    # Pitch Tuning Params
 
-        tuningParameters.Wn_pitch = math.sqrt(a_theta2 + (kp_pitch * a_theta3))
+    tuningParameters.Wn_pitch = math.sqrt(a_theta2 + (kp_pitch * a_theta3))
 
-        k_theta_dc = (kp_pitch * a_theta3) / (Wn_pitch ** 2)
+    k_theta_dc = (kp_pitch * a_theta3) / (Wn_pitch ** 2)
 
-        Wn_pitch = tuningParameters.Wn_pitch
+    Wn_pitch = tuningParameters.Wn_pitch
 
-        tuningParameters.Zeta_pitch = (a_theta1 + (kd_pitch * a_theta3)) / (2 * Wn_pitch)
+    tuningParameters.Zeta_pitch = (a_theta1 + (kd_pitch * a_theta3)) / (2 * Wn_pitch)
 
-        # Altitude Tuning Params
+    # Altitude Tuning Params
         
-        tuningParameters.Wn_altitude = math.sqrt(k_theta_dc * Vg * ki_altitude)
+    tuningParameters.Wn_altitude = math.sqrt(k_theta_dc * Vg * ki_altitude)
 
-        Wn_altitude = tuningParameters.Wn_altitude
+    Wn_altitude = tuningParameters.Wn_altitude
 
-        tuningParameters.Zeta_altitude = (k_theta_dc * Vg * kp_altitude) / (2 * Wn_altitude)
+    tuningParameters.Zeta_altitude = (k_theta_dc * Vg * kp_altitude) / (2 * Wn_altitude)
 
-        # Speed From Throttle Tuning Params
+    # Speed From Throttle Tuning Params
         
-        tuningParameters.Wn_SpeedfromThrottle = math.sqrt(a_V2 * ki_SpeedfromThrottle)
+    tuningParameters.Wn_SpeedfromThrottle = math.sqrt(a_V2 * ki_SpeedfromThrottle)
 
-        Wn_SpeedfromThrottle = tuningParameters.Wn_SpeedfromThrottle
+    Wn_SpeedfromThrottle = tuningParameters.Wn_SpeedfromThrottle
 
-        tuningParameters.Zeta_SpeedfromThrottle = (a_V1 + (a_V2 * kp_SpeedfromThrottle)) / (2 * Wn_SpeedfromThrottle)
+    tuningParameters.Zeta_SpeedfromThrottle = (a_V1 + (a_V2 * kp_SpeedfromThrottle)) / (2 * Wn_SpeedfromThrottle)
 
         # Speed From Elevator Tuning Params
         
-        tuningParameters.Wn_SpeedfromElevator = math.sqrt(-1 * k_theta_dc * VPC.g0 * ki_SpeedfromElevator)
+    tuningParameters.Wn_SpeedfromElevator = math.sqrt(-1 * k_theta_dc * VPC.g0 * ki_SpeedfromElevator)
 
-        Wn_SpeedfromElevator = tuningParameters.Wn_SpeedfromElevator
+    Wn_SpeedfromElevator = tuningParameters.Wn_SpeedfromElevator
 
-        tuningParameters.Zeta_SpeedfromElevator = (a_V1 - (k_theta_dc * VPC.g0 * kp_SpeedfromElevator)) / (2 * Wn_SpeedfromElevator)
+    tuningParameters.Zeta_SpeedfromElevator = (a_V1 - (k_theta_dc * VPC.g0 * kp_SpeedfromElevator)) / (2 * Wn_SpeedfromElevator)
 
-        return tuningParameters
+    return tuningParameters
 
+
+   # try:
+
+        
         # Possible exceptions: Bad Values & nonsense parameters passed in
 
-    except ValueError:
+    #except ValueError:
 
-        tuningParameters = Controls.controlTuning() # Create empty tuning Params
+        #tuningParameters = Controls.controlTuning() # Create empty tuning Params
 
-        return tuningParameters # Return empty
+        #return tuningParameters # Return empty
     
-    except:
+    #except:
 
-        tuningParameters = Controls.controlTuning() # Create empty tuning Params
+        #tuningParameters = Controls.controlTuning() # Create empty tuning Params
 
-        return tuningParameters # Return empty
+        #return tuningParameters # Return empty
 
 
 
