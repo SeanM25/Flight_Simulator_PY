@@ -210,9 +210,9 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     tuningParameters.Wn_pitch = math.sqrt(a_theta2 + (kp_pitch * a_theta3))
 
-    k_theta_dc = (kp_pitch * a_theta3) / (Wn_pitch ** 2)
-
     Wn_pitch = tuningParameters.Wn_pitch
+
+    k_theta_dc = (kp_pitch * a_theta3) / (Wn_pitch ** 2)
 
     tuningParameters.Zeta_pitch = (a_theta1 + (kd_pitch * a_theta3)) / (2 * Wn_pitch)
 
