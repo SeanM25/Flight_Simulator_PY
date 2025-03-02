@@ -543,14 +543,6 @@ class VehicleClosedLoopControl:
 
         lower_threshold = referenceCommands.commandedAltitude - VPC.altitudeHoldZone # Lower threshold given in handout
 
-       #throttle_from_airspeed = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # throttle from airspeed holder for clarity
-
-        #pitch_from_airspeed = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # PitchFVa Holder
-
-        #pitch_from_Alt = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Pitch from Alt holder
-
-        #pitchCom = referenceCommands.commandedPitch # Pitch command holder for clarity
-
         # Get and check course error
 
         courseError = referenceCommands.commandedCourse - state.chi # Get course error as defined in lecture
@@ -564,99 +556,84 @@ class VehicleClosedLoopControl:
             state.chi -= 2 * math.pi
 
         
-        # State Machine Start, the Entry State is Holding (Aircraft neither climbing or decending)
+        # State Machine Start
 
-        # State: Holding
+        if(curAlt > upper_threshold): # We are Decending
 
-        if(self.climbState == Controls.AltitudeStates.HOLDING):
+            if(self.climbState != Controls.AltitudeStates.DESCENDING):
 
-            # Pitch command determined by altitutude
+                self.climbState = Controls.AltitudeStates.DESCENDING
 
-            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Get new pitch command from Alt
-
-            # Throttle command determined by Airspeed
-
-            controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)  # Get new throttle from Va
-
-            # Holding To Decending Transition Arrow
-
-            if(curAlt > upper_threshold): # If we're ready to decend (Too High!!!)
-
-                referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
-
-                controlSurfaceOutputs.Throttle = VPC.minControls.Throttle # Set throttle to min
-
-                self.pitchFromAirspeed.resetIntegrator() # Reset Pitch from Airspeed
-
-                self.climbState = Controls.AltitudeStates.DESCENDING # Set Climb state to Decending
-
-        
-            # Hold to Climb Transition Arrow
-
-            if(curAlt < lower_threshold): # If we're ready to climb (Too Low!!!)
-
-                referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
-
-                controlSurfaceOutputs.Throttle = VPC.maxControls.Throttle # Set throttle to max
-
-                self.pitchFromAirspeed.resetIntegrator() # Reset Pitch from Airspeed
-
-                self.climbState = Controls.AltitudeStates.CLIMBING # Set Climb state to Climbing
-
-        # State Climbing:
-
-        elif(self.climbState == Controls.AltitudeStates.CLIMBING):
-
-            referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
-
-            controlSurfaceOutputs.Throttle = VPC.minControls.Throttle
-
-            if(lower_threshold < curAlt and curAlt < upper_threshold):
-
-                referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
-
-                controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+                self.pitchFromAirspeed.resetIntegrator()
 
                 self.pitchFromAltitude.resetIntegrator()
 
-                self.climbState = Controls.AltitudeStates.HOLDING
+            pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
-        
-        # State Decending:
+            throttleCOM = VPC.minControls.Throttle
 
-        elif(self.climbState == Controls.AltitudeStates.DESCENDING):
+        elif(curAlt < lower_threshold): # We are Climbing
 
-            referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+            if(self.climbState != Controls.AltitudeStates.CLIMBING):
 
-            controlSurfaceOutputs.Throttle = VPC.minControls.Throttle
+                self.climbState = Controls.AltitudeStates.CLIMBING
 
-            if(lower_threshold < curAlt and curAlt < upper_threshold):
-
-                referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
-
-                controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+                self.pitchFromAirspeed.resetIntegrator()
 
                 self.pitchFromAltitude.resetIntegrator()
 
+            pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+
+            throttleCOM = VPC.maxControls.Throttle
+
+        else: # We're in Holding
+
+            if(self.climbState != Controls.AltitudeStates.HOLDING):
+
                 self.climbState = Controls.AltitudeStates.HOLDING
 
-        else:
+                self.pitchFromAirspeed.resetIntegrator()
 
-            referenceCommands.commandedRoll = self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi)
+                self.pitchFromAltitude.resetIntegrator()
 
-            controlSurfaceOutputs.Aileron = self.aileronFromRoll.Update(referenceCommands.commandedRoll, state.roll, state.p)
+            pitchCOM = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
 
-            controlSurfaceOutputs.Rudder = self.rudderFromSideslip.Update(0.0, state.beta)
+            throttleCOM = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
-            controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
-            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
 
-            controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(referenceCommands.commandedPitch, state.pitch, state.q)
+        referenceCommands.commandedRoll = self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi)
 
-            self.VehicleControlSurfaces = controlSurfaceOutputs
+        controlSurfaceOutputs.Aileron = self.aileronFromRoll.Update(self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi), state.roll, state.p)
+
+        controlSurfaceOutputs.Rudder = self.rudderFromSideslip.Update(0.0, state.beta)
+
+        controlSurfaceOutputs.Throttle = throttleCOM
+
+        referenceCommands.commandedPitch = pitchCOM
+
+        controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(pitchCOM, state.pitch, state.q)
+
+        self.VehicleControlSurfaces = controlSurfaceOutputs
 
         return controlSurfaceOutputs
+
+        
+
+
+
+        
+
+
+
+
+
+
+
+
+                
+
+        
     
 
    

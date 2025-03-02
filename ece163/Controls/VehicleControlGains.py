@@ -131,7 +131,11 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     Vg = linearizedModel.Va_trim
 
-    # Race Condition Preventing Function From passing calculate equation params before hand?
+    # Race Condition Preventing Function From passing, calculate equation params before hand?
+
+    # Update: This method worked
+
+    # Get all necessary Params for Beard's tuning eq's
 
     kp_roll = controlGains.kp_roll
 
