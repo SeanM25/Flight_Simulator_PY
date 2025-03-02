@@ -609,7 +609,7 @@ class VehicleClosedLoopControl:
 
             pitchCom = pitch_from_airspeed
 
-            controlSurfaceOutputs.Throttle = VPC.maxControls.Throttle
+            controlSurfaceOutputs.Throttle = VPC.minControls.Throttle
 
             if(lower_threshold < curAlt and curAlt < upper_threshold):
 
