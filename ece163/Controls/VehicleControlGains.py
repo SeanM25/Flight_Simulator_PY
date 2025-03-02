@@ -180,6 +180,12 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
         # Possible exceptions: Bad Values & nonsense parameters passed in
 
+    except ValueError:
+
+        tuningParameters = Controls.controlTuning() # Create empty tuning Params
+
+        return tuningParameters # Return empty
+    
     except:
 
         tuningParameters = Controls.controlTuning() # Create empty tuning Params

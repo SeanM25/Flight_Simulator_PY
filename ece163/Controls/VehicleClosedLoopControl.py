@@ -656,8 +656,6 @@ class VehicleClosedLoopControl:
 
             self.VehicleControlSurfaces = controlSurfaceOutputs
 
-            #
-
         return controlSurfaceOutputs
     
 
