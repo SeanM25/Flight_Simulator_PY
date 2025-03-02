@@ -648,9 +648,9 @@ class VehicleClosedLoopControl:
 
             controlSurfaceOutputs.Rudder = self.rudderFromSideslip.Update(0.0, state.beta)
 
-            controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+            #controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
-            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # height or alt?
+            referenceCommands.commandedPitch = pitchCom
 
             controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(referenceCommands.commandedPitch, state.pitch, state.q)
 
