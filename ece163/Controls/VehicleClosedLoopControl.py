@@ -566,7 +566,7 @@ class VehicleClosedLoopControl:
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
-                self.pitchFromAltitude.resetIntegrator() # Reset Altittude integrator
+                self.pitchFromAltitude.resetIntegrator() # Reset Altittude integrator since next stop is Holding
 
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get current pitch command
 
@@ -574,60 +574,60 @@ class VehicleClosedLoopControl:
 
         elif(curAlt < lower_threshold): # We need to be Climbing
 
-            if(self.climbState != Controls.AltitudeStates.CLIMBING):
+            if(self.climbState != Controls.AltitudeStates.CLIMBING): # If not climbing
 
-                self.climbState = Controls.AltitudeStates.CLIMBING
+                self.climbState = Controls.AltitudeStates.CLIMBING # Set to climbing
 
-                self.pitchFromAirspeed.resetIntegrator()
+                self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
-                self.pitchFromAltitude.resetIntegrator()
+                self.pitchFromAltitude.resetIntegrator() # Reset Altitude Integrator for Holding
 
-            pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+            pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get pitch from airspeed
 
-            throttleCOM = VPC.maxControls.Throttle
+            throttleCOM = VPC.maxControls.Throttle # Throttle to maximim
 
-        else: # We're in Holding
+        else: # If not Cimbing or Decending We're in Holding
 
-            if(self.climbState != Controls.AltitudeStates.HOLDING):
+            if(self.climbState != Controls.AltitudeStates.HOLDING): # If not in Holding Mode
 
-                self.climbState = Controls.AltitudeStates.HOLDING
+                self.climbState = Controls.AltitudeStates.HOLDING # Set to Holding
 
-                self.pitchFromAirspeed.resetIntegrator()
+                self.pitchFromAirspeed.resetIntegrator() # Reset Integrator for Airspeed
 
-                self.pitchFromAltitude.resetIntegrator()
+                self.pitchFromAltitude.resetIntegrator() # Reset Integrator for Altitude
 
-            pitchCOM = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
+            pitchCOM = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Get Pitch from Altitude
 
-            throttleCOM = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+            throttleCOM = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get throttle from Airspeed
 
+        # If we're not in one of climbing states we update everything as outlined in lecture
 
+        referenceCommands.commandedRoll = self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi) # Update roll command
 
-        referenceCommands.commandedRoll = self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi)
+        controlSurfaceOutputs.Aileron = self.aileronFromRoll.Update(self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi), state.roll, state.p) # Update aileron command
 
-        controlSurfaceOutputs.Aileron = self.aileronFromRoll.Update(self.rollFromCourse.Update(referenceCommands.commandedCourse, state.chi), state.roll, state.p)
+        controlSurfaceOutputs.Rudder = self.rudderFromSideslip.Update(0.0, state.beta) # update rudder command
 
-        controlSurfaceOutputs.Rudder = self.rudderFromSideslip.Update(0.0, state.beta)
+        controlSurfaceOutputs.Throttle = throttleCOM # Update throttle command as determined by the climb states
 
-        controlSurfaceOutputs.Throttle = throttleCOM
+        referenceCommands.commandedPitch = pitchCOM # Update pitch command as determined by the climb states
 
-        referenceCommands.commandedPitch = pitchCOM
+        controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(pitchCOM, state.pitch, state.q) # Update throttle commands
 
-        controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(pitchCOM, state.pitch, state.q)
+        self.VehicleControlSurfaces = controlSurfaceOutputs # Set Vehicle Control Surfaces attribute for class
 
-        self.VehicleControlSurfaces = controlSurfaceOutputs
-
-        return controlSurfaceOutputs
+        return controlSurfaceOutputs # Return control surfaces
 
          
     def update(self, referenceCommands=Controls.referenceCommands):
 
-        state = self.getVehicleState()
+        state = self.getVehicleState() # Get current state
 
-        self.UpdateControlCommands(referenceCommands, state)
+        self.UpdateControlCommands(referenceCommands, state) # Call the autopilot and get the Control Surfaces commands
 
-        self.VAM.Update(self.VehicleControlSurfaces)
+        self.VAM.Update(self.VehicleControlSurfaces) # Update VAM with said commands
 
-        return
+        return # return nothing
 
 
 
