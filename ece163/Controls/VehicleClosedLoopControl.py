@@ -558,21 +558,21 @@ class VehicleClosedLoopControl:
         
         # State Machine Start
 
-        if(curAlt > upper_threshold): # We are Decending
+        if(curAlt > upper_threshold): # We need to be Decending
 
-            if(self.climbState != Controls.AltitudeStates.DESCENDING):
+            if(self.climbState != Controls.AltitudeStates.DESCENDING): # If not in decending mode
 
-                self.climbState = Controls.AltitudeStates.DESCENDING
+                self.climbState = Controls.AltitudeStates.DESCENDING # Set mode to decending
 
-                self.pitchFromAirspeed.resetIntegrator()
+                self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
-                self.pitchFromAltitude.resetIntegrator()
+                self.pitchFromAltitude.resetIntegrator() # Reset Altittude integrator
 
-            pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+            pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get current pitch command
 
-            throttleCOM = VPC.minControls.Throttle
+            throttleCOM = VPC.minControls.Throttle # Set throttle to maximum
 
-        elif(curAlt < lower_threshold): # We are Climbing
+        elif(curAlt < lower_threshold): # We need to be Climbing
 
             if(self.climbState != Controls.AltitudeStates.CLIMBING):
 
@@ -618,32 +618,14 @@ class VehicleClosedLoopControl:
 
         return controlSurfaceOutputs
 
-        
-
-
-
-        
-
-
-
-
-
-
-
-
-                
-
-        
-    
-
-   
+         
     def update(self, referenceCommands=Controls.referenceCommands):
 
         state = self.getVehicleState()
 
-        controlOutputs = self.UpdateControlCommands(referenceCommands, state)
+        self.UpdateControlCommands(referenceCommands, state)
 
-        self.VAM.Update(controlOutputs)
+        self.VAM.Update(self.VehicleControlSurfaces)
 
         return
 
