@@ -423,7 +423,7 @@ class VehicleClosedLoopControl:
 
         elev_maxLimit = VPC.maxControls.Elevator # Get the upper limit for the elevator from VPC min/max controls
 
-        self.elevatorFromPitch = PDControl.setPDGains(kp_pitch_EFP, kd_pitch_EFP, trimInputs.Elevator, elev_minLimit, elev_maxLimit) # Set gains for elevatorFromPitch Controller
+        self.elevatorFromPitch.setPDGains(kp_pitch_EFP, kd_pitch_EFP, trimInputs.Elevator, elev_minLimit, elev_maxLimit) # Set gains for elevatorFromPitch Controller
 
         # Set PID Controller Gain (Aileron from roll)
 
@@ -437,7 +437,7 @@ class VehicleClosedLoopControl:
 
         aileron_MAX = VPC.maxControls.Aileron # max aileron limit
 
-        self.aileronFromRoll = PIDControl.setPIDGains(dT, kp_AFR, kd_AFR, ki_AFR, trimInputs.Aileron, aileron_MIN, aileron_MAX) # Update Aileron From Roll gains
+        self.aileronFromRoll.setPIDGains(dT, kp_AFR, kd_AFR, ki_AFR, trimInputs.Aileron, aileron_MIN, aileron_MAX) # Update Aileron From Roll gains
 
         # Set PI Controller Gains for rollFromCourse, rudderFromSideslip, throttleFromAirspeed, pitchFromAltitude, pitchFromAirspeed
 
@@ -451,7 +451,7 @@ class VehicleClosedLoopControl:
 
         RFC_upperLimit = math.radians(VPC.bankAngleLimit) # convert the upper limit of integration for Roll to Course to rads from degrees this is the bank angle limit
 
-        self.rollFromCourse = PIControl.setPIGains(dT, kp_RFC, ki_RFC, 0.0, RFC_lowerLimit, RFC_upperLimit) # Upfate Roll From Course gains
+        self.rollFromCourse.setPIGains(dT, kp_RFC, ki_RFC, 0.0, RFC_lowerLimit, RFC_upperLimit) # Upfate Roll From Course gains
 
             # Rudder From Sideslip
 
@@ -463,7 +463,7 @@ class VehicleClosedLoopControl:
 
         RSS_highLimit = VPC.maxControls.Rudder # Rudder upper limit for integration
 
-        self.rudderFromSideslip = PIControl.setPIGains(dT, kp_RSS, ki_RSS, trimInputs.Rudder, RSS_lowLimit, RSS_highLimit) # Update rudder from sideslip gains
+        self.rudderFromSideslip.setPIGains(dT, kp_RSS, ki_RSS, trimInputs.Rudder, RSS_lowLimit, RSS_highLimit) # Update rudder from sideslip gains
 
             # Throttle From Airspeed 
 
@@ -475,7 +475,7 @@ class VehicleClosedLoopControl:
 
         TFS_highLimit = VPC.maxControls.Throttle # throttle upper limit
 
-        self.throttleFromAirspeed = PIControl.setPIGains(dT, kp_TFS, ki_TFS, trimInputs.Throttle, TFS_lowLimit, TFS_highLimit) # update throttle from airspeed gains
+        self.throttleFromAirspeed.setPIGains(dT, kp_TFS, ki_TFS, trimInputs.Throttle, TFS_lowLimit, TFS_highLimit) # update throttle from airspeed gains
 
             # Pitch from Altitutde    
 
@@ -487,7 +487,7 @@ class VehicleClosedLoopControl:
 
         PFA_highLimit = math.radians(VPC.pitchAngleLimit) # upper limit of integration for pitch
 
-        self.pitchFromAltitude = PIControl.setPIGains(dT, kp_PFA, ki_PFA, 0.0, PFA_lowLimit, PFA_highLimit) # update pitch from altitude gains
+        self.pitchFromAltitude.setPIGains(dT, kp_PFA, ki_PFA, 0.0, PFA_lowLimit, PFA_highLimit) # update pitch from altitude gains
 
         # Pitch from Airspeed
 
@@ -499,7 +499,7 @@ class VehicleClosedLoopControl:
 
         pitch_AirhighLim = math.radians(VPC.pitchAngleLimit) # upper limit of integration for pitch
 
-        self.pitchFromAirspeed = PIControl.setPIGains(dT, kp_pitchAir, ki_pitchAir, 0.0, pitch_AirlowLim, pitch_AirhighLim) # update pitch from airspeed gains
+        self.pitchFromAirspeed.setPIGains(dT, kp_pitchAir, ki_pitchAir, 0.0, pitch_AirlowLim, pitch_AirhighLim) # update pitch from airspeed gains
 
         return # return nothing
     
