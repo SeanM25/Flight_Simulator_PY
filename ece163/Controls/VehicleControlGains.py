@@ -179,7 +179,7 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     ki_SpeedfromElevator = controlGains.ki_SpeedfromElevator
 
-    kp_SpeedfromElevator = controlGains.ki_SpeedfromElevator
+    kp_SpeedfromElevator = controlGains.kp_SpeedfromElevator
 
 
     # Roll Tuning Params
