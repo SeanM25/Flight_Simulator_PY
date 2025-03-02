@@ -531,9 +531,9 @@ class VehicleClosedLoopControl:
 
         # All logic comes from Lecture Diagrams / State Machine in Lab Manual
 
-        referenceCommands = Controls.referenceCommands() # Comment Out temp holder
+        #referenceCommands = Controls.referenceCommands() # Comment Out temp holder
 
-        state = self.getVehicleState() # Comment out tmep holder for easy coding
+        #state = self.getVehicleState() # Comment out tmep holder for easy coding
 
         curAlt = -state.pd # Gets current altitutde
 
