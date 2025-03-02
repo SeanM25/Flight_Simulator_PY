@@ -531,9 +531,9 @@ class VehicleClosedLoopControl:
 
         # All logic comes from Lecture Diagrams / State Machine in Lab Manual
 
-        #referenceCommands = Controls.referenceCommands() # Comment Out temp holder
+        referenceCommands = Controls.referenceCommands() # Comment Out temp holder
 
-        #state = self.getVehicleState() # Comment out tmep holder for easy coding
+        state = self.getVehicleState() # Comment out tmep holder for easy coding
 
         curAlt = -state.pd # Gets current altitutde
 
@@ -543,13 +543,13 @@ class VehicleClosedLoopControl:
 
         lower_threshold = referenceCommands.commandedAltitude - VPC.altitudeHoldZone # Lower threshold given in handout
 
-        throttle_from_airspeed = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # throttle from airspeed holder for clarity
+       #throttle_from_airspeed = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # throttle from airspeed holder for clarity
 
-        pitch_from_airspeed = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # PitchFVa Holder
+        #pitch_from_airspeed = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # PitchFVa Holder
 
-        pitch_from_Alt = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Pitch from Alt holder
+        #pitch_from_Alt = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Pitch from Alt holder
 
-        pitchCom = referenceCommands.commandedPitch # Pitch command holder for clarity
+        #pitchCom = referenceCommands.commandedPitch # Pitch command holder for clarity
 
         # Get and check course error
 
@@ -572,17 +572,17 @@ class VehicleClosedLoopControl:
 
             # Pitch command determined by altitutude
 
-            pitchCom = pitch_from_Alt # Get new pitch command from Alt
+            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt) # Get new pitch command from Alt
 
             # Throttle command determined by Airspeed
 
-            controlSurfaceOutputs.Throttle = throttle_from_airspeed  # Get new throttle from Va
+            controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)  # Get new throttle from Va
 
             # Holding To Decending Transition Arrow
 
             if(curAlt > upper_threshold): # If we're ready to decend (Too High!!!)
 
-                pitchCom = pitch_from_airspeed
+                referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
                 controlSurfaceOutputs.Throttle = VPC.minControls.Throttle # Set throttle to min
 
@@ -595,7 +595,7 @@ class VehicleClosedLoopControl:
 
             if(curAlt < lower_threshold): # If we're ready to climb (Too Low!!!)
 
-                pitchCom = pitch_from_airspeed
+                referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
                 controlSurfaceOutputs.Throttle = VPC.maxControls.Throttle # Set throttle to max
 
@@ -607,15 +607,15 @@ class VehicleClosedLoopControl:
 
         elif(self.climbState == Controls.AltitudeStates.CLIMBING):
 
-            pitchCom = pitch_from_airspeed
+            referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
             controlSurfaceOutputs.Throttle = VPC.minControls.Throttle
 
             if(lower_threshold < curAlt and curAlt < upper_threshold):
 
-                pitchCom = pitch_from_Alt
+                referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
 
-                controlSurfaceOutputs.Throttle = throttle_from_airspeed
+                controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
                 self.pitchFromAltitude.resetIntegrator()
 
@@ -626,15 +626,15 @@ class VehicleClosedLoopControl:
 
         elif(self.climbState == Controls.AltitudeStates.DESCENDING):
 
-            pitchCom = pitch_from_airspeed
+            referenceCommands.commandedPitch = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
             controlSurfaceOutputs.Throttle = VPC.minControls.Throttle
 
             if(lower_threshold < curAlt and curAlt < upper_threshold):
 
-                pitchCom = pitch_from_Alt
+                referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
 
-                controlSurfaceOutputs.Throttle = throttle_from_airspeed
+                controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
                 self.pitchFromAltitude.resetIntegrator()
 
@@ -648,13 +648,15 @@ class VehicleClosedLoopControl:
 
             controlSurfaceOutputs.Rudder = self.rudderFromSideslip.Update(0.0, state.beta)
 
-            #controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
+            controlSurfaceOutputs.Throttle = self.throttleFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va)
 
-            referenceCommands.commandedPitch = pitchCom
+            referenceCommands.commandedPitch = self.pitchFromAltitude.Update(referenceCommands.commandedAltitude, curAlt)
 
             controlSurfaceOutputs.Elevator = self.elevatorFromPitch.Update(referenceCommands.commandedPitch, state.pitch, state.q)
 
             self.VehicleControlSurfaces = controlSurfaceOutputs
+
+            #
 
         return controlSurfaceOutputs
     
