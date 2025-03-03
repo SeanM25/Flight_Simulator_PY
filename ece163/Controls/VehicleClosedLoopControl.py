@@ -566,7 +566,7 @@ class VehicleClosedLoopControl:
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
-                self.pitchFromAltitude.resetIntegrator() # Reset Altittude integrator since next stop is Holding
+                #self.pitchFromAltitude.resetIntegrator() # Reset Altittude integrator since next stop is Holding
 
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get current pitch command
 
@@ -580,7 +580,7 @@ class VehicleClosedLoopControl:
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
-                self.pitchFromAltitude.resetIntegrator() # Reset Altitude Integrator for Holding
+                #self.pitchFromAltitude.resetIntegrator() # Reset Altitude Integrator for Holding
 
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get pitch from airspeed
 
@@ -623,9 +623,9 @@ class VehicleClosedLoopControl:
 
         state = self.getVehicleState() # Get current state
 
-        self.UpdateControlCommands(referenceCommands, state) # Call the autopilot and get the Control Surfaces commands
+        ControlCommands = self.UpdateControlCommands(referenceCommands, state) # Call the autopilot and get the Control Surfaces commands
 
-        self.VAM.Update(self.VehicleControlSurfaces) # Update VAM with said commands
+        self.VAM.Update(ControlCommands) # Update VAM with said commands
 
         return # return nothing
 
