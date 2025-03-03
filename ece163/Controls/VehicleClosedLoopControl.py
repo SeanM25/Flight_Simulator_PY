@@ -531,10 +531,6 @@ class VehicleClosedLoopControl:
 
         # All logic comes from Lecture Diagrams / State Machine in Lab Manual
 
-        #referenceCommands = Controls.referenceCommands() # Comment Out temp holder
-
-        #state = self.getVehicleState() # Comment out tmep holder for easy coding
-
         curAlt = -state.pd # Gets current altitutde
 
         controlSurfaceOutputs = Inputs.controlInputs() # Creates a control inputs instance to fill and return
@@ -566,8 +562,6 @@ class VehicleClosedLoopControl:
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
-                #self.pitchFromAltitude.resetIntegrator() # Reset Altittude integrator since next stop is Holding
-
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get current pitch command
 
             throttleCOM = VPC.minControls.Throttle # Set throttle to maximum
@@ -579,8 +573,6 @@ class VehicleClosedLoopControl:
                 self.climbState = Controls.AltitudeStates.CLIMBING # Set to climbing
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
-
-                #self.pitchFromAltitude.resetIntegrator() # Reset Altitude Integrator for Holding
 
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get pitch from airspeed
 
