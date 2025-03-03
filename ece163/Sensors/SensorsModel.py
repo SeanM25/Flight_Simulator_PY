@@ -41,6 +41,37 @@ class GaussMarkov:
 
         return # return nothing
 
+
+    def update(self, vnoise = None):
+
+        # Updates and Computes the Gauss Markov function with the option to drive GM with known value vnoise
+
+        tau = self.tau # Get current tau
+
+        dT = self.dT # get current time step
+
+        if (self.eta == None): # If 0 then random.gauss(0,0) which is just 0
+
+            w = 0.0 # w is 0 this is the random number from GM
+        else:
+
+            w = random.gauss(0, self.eta) # Otherwise random.gauss(0, eta)
+
+        
+        if(vnoise == None): # If were not driving with a known value 
+
+            V = (math.exp(-(dT / tau)) * w) + w # Use random gauss
+
+        else:
+
+            V = (math.exp(-(dT / tau)) * self.prev_V) + vnoise # otherwise use Vnoise
+
+        self.prev_V = V # set previous GM state to current GM state
+
+        return V # Return GM
+
+
+
         
 
     
