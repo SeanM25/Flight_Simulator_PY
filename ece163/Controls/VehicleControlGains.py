@@ -127,64 +127,11 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     # Tuning Parameters from Ch 6 of Beard
 
+    # Above equations edited for desired params
+
     tuningParameters = Controls.controlTuning()
 
     Vg = linearizedModel.Va_trim
-
-    # Race Condition Preventing Function From passing, calculate equation params before hand?
-
-    # Update: This method worked
-
-    # Get all necessary Params for Beard's tuning eq's
-
-    #kp_roll = controlGains.kp_roll
-
-    #a_phi2 = linearizedModel.a_phi2
-
-    #kd_roll = controlGains.kd_roll
-
-    #a_phi1 = linearizedModel.a_phi1
-
-    #ki_course = controlGains.ki_course
-
-    #kp_course = controlGains.kp_course
-
-    #ki_sideslip = controlGains.ki_sideslip
-
-    #a_beta1 = linearizedModel.a_beta1
-
-    #a_beta2 = linearizedModel.a_beta2
-
-    #kp_sideslip = controlGains.kp_sideslip
-
-    #a_theta1 = linearizedModel.a_theta1
-
-    #a_theta2 = linearizedModel.a_theta2
-
-    #a_theta3 = linearizedModel.a_theta3
-
-    #kp_pitch = controlGains.kp_pitch
-
-    #kd_pitch = controlGains.kd_pitch
-
-    #a_V1 = linearizedModel.a_V1
-
-    #a_V2 = linearizedModel.a_V2
-
-    #a_V3 = linearizedModel.a_V3
-
-    #ki_altitude = controlGains.ki_altitude
-
-    #kp_altitude = controlGains.kp_altitude
-
-    #ki_SpeedfromThrottle = controlGains.ki_SpeedfromThrottle
-
-    #kp_SpeedfromThrottle = controlGains.kp_SpeedfromThrottle
-
-    #ki_SpeedfromElevator = controlGains.ki_SpeedfromElevator
-
-    #kp_SpeedfromElevator = controlGains.kp_SpeedfromElevator
-
 
     try:
 
