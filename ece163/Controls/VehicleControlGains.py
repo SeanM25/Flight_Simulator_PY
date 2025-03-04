@@ -129,9 +129,9 @@ def computeTuningParameters(controlGains = Controls.controlGains(), linearizedMo
 
     # Above equations edited for desired params
 
-    tuningParameters = Controls.controlTuning()
+    tuningParameters = Controls.controlTuning() # Create empty tuning params to fill
 
-    Vg = linearizedModel.Va_trim
+    Vg = linearizedModel.Va_trim # Vg = Va trim
 
     try:
 

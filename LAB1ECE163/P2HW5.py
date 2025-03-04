@@ -36,7 +36,7 @@ for i in range (num_steps): # For every time value
  
  n = random.gauss(mu, sigma) # Pick a random number from the gaussian distribution
 
- V[i] = math.exp(t_data[i] / tau * -1) * V_o + n # Given equation
+ V[i] = math.exp(dT / tau * -1) * V_o + n # Given equation
 
  V_o = V[i] # New Previous state is current state
 

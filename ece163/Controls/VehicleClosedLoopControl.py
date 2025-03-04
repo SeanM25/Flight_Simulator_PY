@@ -562,6 +562,8 @@ class VehicleClosedLoopControl:
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
 
+                # Decending State
+
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get current pitch command
 
             throttleCOM = VPC.minControls.Throttle # Set throttle to maximum
@@ -573,6 +575,8 @@ class VehicleClosedLoopControl:
                 self.climbState = Controls.AltitudeStates.CLIMBING # Set to climbing
 
                 self.pitchFromAirspeed.resetIntegrator() # Reset Airspeed Integrator
+
+                # Climbing State
 
             pitchCOM = self.pitchFromAirspeed.Update(referenceCommands.commandedAirspeed, state.Va) # Get pitch from airspeed
 

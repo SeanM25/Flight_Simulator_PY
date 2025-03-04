@@ -60,7 +60,7 @@ class GaussMarkov:
         
         if(vnoise == None): # If were not driving with a known value 
 
-            V = (math.exp(-(dT / tau)) * w) + w # Use random gauss
+            V = (math.exp(-(dT / tau)) * self.prev_V) + w # Use random gauss
 
         else:
 
@@ -69,6 +69,11 @@ class GaussMarkov:
         self.prev_V = V # set previous GM state to current GM state
 
         return V # Return GM
+
+
+class GaussMarkovXYZ:
+
+
 
 
 
