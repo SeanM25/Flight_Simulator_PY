@@ -69,23 +69,3 @@ class GaussMarkov:
         self.prev_V = V # set previous GM state to current GM state
 
         return V # Return GM
-
-
-class GaussMarkovXYZ:
-
-
-
-
-
-        
-
-    
-        
-
-
-        
-
-
-
-
-        
