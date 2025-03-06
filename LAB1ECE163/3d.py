@@ -10,9 +10,8 @@ import ece163.Utilities.MatrixMath as mm
 
 import ece163.Constants.VehiclePhysicalConstants as VPC
 
-# Hw 6 Problem 3 Part 3c.) Basic Airspeed Complementary Filter w/ Slower Va dot Faster Va
+# Hw 6 Problem 3 Part 3a.) Basic Airspeed Complementary Filter
 
-# That is when we don't have an accelerometer reading we set it to zero and update Va estimate anyways
 
 
 K_i = 0.1 # Given Ki
@@ -21,19 +20,19 @@ K_p = 1 # Given Kp
 
 T_tot  = 10 # Simulate for 10 seconds
 
-f_pitot = 10
+f_acc = 10
 
-f_acc = 100
+f_pitot = 100
 
-# Change Timestep to account for Va dot at 10 Hz and Va pitot at 100 Hz
+dT = 0.01 # Given time step
 
-dT_actual = 1 / (math.lcm(f_pitot, f_acc))
+dT_10Hz = 0.1
 
-num_steps = int(T_tot / dT_actual) # Get Number of steps
+num_steps = int(T_tot / dT) # Get Number of steps
 
 # Intitalize All Data
 
-t_data = [i * dT_actual for i in range (num_steps)] # Get necessary time data
+t_data = [i * dT for i in range (num_steps)] # Get necessary time data
 
 Va_est = [0 for i in range(num_steps)] # Empty Airspeed estimate to fill
 
@@ -49,40 +48,52 @@ Va_est_dot = [0 for i in range(num_steps)] # Airspeed estimate dot data
 
 Va_est = [0 for i in range(num_steps)] # Airspeed estimate data
 
+count_10Hz = 0
+
+bias_prev = 0.0
+
+
 for i in range(num_steps):
 
-    # This implements the algorithim outlined in the estimation handout with the if measurment condition
+    Va_dot[i] = 2 * math.pi * math.cos(2 * math.pi  * t_data[i]) # Get Accelerometer data every 100 Hz
 
-    # This is the Airspeed Filter with slower Va dot faster Va
+    count_10Hz += 1
 
-    Va_pitot[i] = 24 + math.sin(2 * math.pi * t_data[i]) # Get pitot data
+    if(count_10Hz == 10): # Same Idea as, only update every 10Hz when there is a measurement
 
-    Va_dot[i] = 2 * math.pi * math.cos(2 * math.pi * t_data[i]) # Get Accelerometer data
+        count_10Hz = 0
 
-    if(Va_dot[i] > 0): # If we have a measurement that is the accleromoter Va dot does not read 0
+        #print(t_data[i])
 
-        # Update Everything as usual
+        Va_pitot[i] = 24 + math.sin(2 * math.pi * t_data[i]) # Get pitot data
 
         bias_Va_dot[i] = (-K_i * (Va_pitot[i] - Va_est[i])) # Get bias estimate derivative
 
-        bias_Va_est[i] = bias_Va_est[i] + (bias_Va_dot[i] * dT_actual) # integrate to get Bias estimate
+        bias_Va_est[i] = bias_Va_est[i] + (bias_Va_dot[i] * 0.1) # integrate to get Bias estimate
+
+        bias_prev = bias_Va_est[i]
 
         Va_est_dot[i] = Va_dot[i] - bias_Va_est[i] + (K_p * (Va_pitot[i] - Va_est[i])) # Get airspeed estimate derivative
 
-        Va_est[i] = Va_est[i] + (Va_est_dot[i] * dT_actual) # Integrate to get Airspeed Estimate
+        Va_est[i] = Va_est[i] + (Va_est_dot[i] * 0.1) # Integrate to get Airspeed Estimate
+
+    else: # Otherwise set to 0 and continue update
+
+        Va_dot[i] = 0.0 # Get Accelerometer data
+
+        bias_Va_dot[i] = (-K_i * (Va_pitot[i] - Va_est[i])) # Get bias estimate derivative
+
+        bias_Va_est[i] = bias_Va_est[i] + (bias_Va_dot[i] * 0.1) # integrate to get Bias estimate
+
+        Va_est_dot[i] = Va_dot[i] - bias_Va_est[i] + (K_p * (Va_pitot[i] - Va_est[i])) # Get airspeed estimate derivative
+
+        Va_est[i] = Va_est[i] + ((Va_est_dot[i] - bias_prev) * 0.1) # Integrate to get Airspeed Estimate
+
+
+
+
+
     
-    else: # Otherwise if we don't have an accleometer reading set Va dot to zero in between measurements
-
-        Va_dot[i] = 0.0 # Set present accelerometer reading to 0
-
-        bias_Va_dot[i] = (-K_i * (Va_pitot[i] - Va_est[i])) # Get bias estimate derivative
-
-        bias_Va_est[i] = bias_Va_est[i] + (bias_Va_dot[i] * dT_actual) # integrate to get Bias estimate
-
-        Va_est_dot[i] = Va_dot[i] - bias_Va_est[i] + (K_p * (Va_pitot[i] - Va_est[i])) # Get airspeed estimate derivative
-
-        Va_est[i] = Va_est[i] + (Va_est_dot[i] * dT_actual) # Integrate to get Airspeed Estimate
-
 
 fig, (f1,f2) = plt.subplots(2,1)
 
@@ -105,3 +116,4 @@ f2.legend()
 
 
 plt.show()
+

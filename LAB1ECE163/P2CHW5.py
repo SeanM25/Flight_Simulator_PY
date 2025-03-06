@@ -106,7 +106,7 @@ for i in range(num_steps):
     accumulator += err * dT # integrate the error with the second accumulator
 
     accumulator = max(min(accumulator, ac_MAX), -ac_MAX) # Check accumulator bounds
-    
+        
     rudder_data[i] = err * ((K_i * accumulator) + K_p) # get rudder data form hasn't changed
 
     u = wind_data[i] +  VPC.CndeltaR / VPC.Cnbeta * rudder_data[i]  # update u

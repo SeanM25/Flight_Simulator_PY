@@ -20,19 +20,19 @@ K_p = 1 # Given Kp
 
 T_tot  = 10 # Simulate for 10 seconds
 
-f_pitot = 100
-
 f_acc = 10
 
-# Change Timestep to account for Va dot at 10 Hz and Va pitot at 100 Hz
+f_pitot = 100
 
-dt_actual = 1 / (math.lcm(f_pitot, f_acc))
+dT = 0.01 # Given time step
 
-num_steps = int(T_tot / dt_actual) # Get Number of steps
+dT_10Hz = 0.1 # Time step at 10Hz
+
+num_steps = int(T_tot / dT) # Get Number of steps
 
 # Intitalize All Data
 
-t_data = [i * dt_actual for i in range (num_steps)] # Get necessary time data
+t_data = [i * dT for i in range (num_steps)] # Get necessary time data
 
 Va_est = [0 for i in range(num_steps)] # Empty Airspeed estimate to fill
 
@@ -48,28 +48,35 @@ Va_est_dot = [0 for i in range(num_steps)] # Airspeed estimate dot data
 
 Va_est = [0 for i in range(num_steps)] # Airspeed estimate data
 
+count_10Hz = 0
+
+
 for i in range(num_steps):
-
-    # This implements the algorithim outlined in the estimation handout with the if measurment condition
-
-    # This is the Airspeed Filter with slower Va dot
 
     Va_pitot[i] = 24 + math.sin(2 * math.pi * t_data[i]) # Get pitot data
 
-    Va_dot[i] = 2 * math.pi * math.cos(2 * math.pi * t_data[i]) # Get Accelerometer data
+    count_10Hz += 1 # 10 Hz will pass every 10 time steps since dT 10 Hz = 0.1 & 10 * 0.01 = 0.1
 
-    if(Va_dot[i] > 0): # If we have a measurement that is the accleromoter Va dot does not read 0
+    if(count_10Hz == 10): # Only update our data every 10 Hz that is when there is a measurement
 
-        # Update Everything as usual, should look jagged according to Xianjiang
+        count_10Hz = 0 # Reset counter to 0 after 10 Hz
+
+        #print(t_data[i])
+
+
+        Va_dot[i] = 2 * math.pi * math.cos(2 * math.pi  * t_data[i]) # Get Accelerometer data
 
         bias_Va_dot[i] = (-K_i * (Va_pitot[i] - Va_est[i])) # Get bias estimate derivative
 
-        bias_Va_est[i] = bias_Va_est[i] + (bias_Va_dot[i] * dt_actual) # integrate to get Bias estimate
+        bias_Va_est[i] = bias_Va_est[i] + (bias_Va_dot[i] * 0.1) # integrate to get Bias estimate
 
         Va_est_dot[i] = Va_dot[i] - bias_Va_est[i] + (K_p * (Va_pitot[i] - Va_est[i])) # Get airspeed estimate derivative
 
-        Va_est[i] = Va_est[i] + (Va_est_dot[i] * dt_actual) # Integrate to get Airspeed Estimate
+        Va_est[i] = Va_est[i] + (Va_est_dot[i] * 0.1) # Integrate to get Airspeed Estimate
 
+
+
+    
 
 fig, (f1,f2) = plt.subplots(2,1)
 
@@ -89,6 +96,5 @@ f2.set_ylabel("Bias Estimate (V)")
 
 f2.legend()
 
-
-
 plt.show()
+
