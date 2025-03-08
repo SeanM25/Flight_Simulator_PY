@@ -143,6 +143,24 @@ class GaussMarkovXYZ:
         self.GM_XYZ_Z = self.GM_XYZ_Z.reset()
 
         return # return nothing
+    
+    def update(self, vXnoise=None, vYnoise=None, vZnoise=None):
+
+        # Updates each of the GM XYZ object indvidually by calling the Gen Gauss Markov
+
+        # Updates with optional parameter Vnoise
+
+
+        Vx = self.GM_XYZ_X.update(vXnoise) # Update X axis
+
+        Vy = self.GM_XYZ_Y.update(vYnoise) # Update Y axis
+
+        Vz = self.GM_XYZ_Z.update(vZnoise) # Update Z axis
+
+        return Vx, Vy, Vz # Return new noise values for each axis
+
+
+
 
 
 
