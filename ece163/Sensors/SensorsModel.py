@@ -130,3 +130,5 @@ class GaussMarkovXYZ:
 
         self.GM_XYZ_Z = GaussMarkov(self.dT_XYZ, self.tauY, self.etaZ) # Create Z axis Gauss Markov Object
 
+        return # Return nothing
+
