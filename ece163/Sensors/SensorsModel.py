@@ -69,3 +69,64 @@ class GaussMarkov:
         self.prev_V = V # set previous GM state to current GM state
 
         return V # Return GM
+
+
+class GaussMarkovXYZ:
+
+    def __init__(self, dT=VPC.dT, tauX=1e6, etaX=0.0, tauY=None, etaY=None, tauZ=None, etaZ=None):
+
+        # Function creates three Gauss Markov models one for each axis X Y or Z
+
+        # If the Y or Z Parameters are none we default to their X values
+
+        # Due to the random nature of GM even with default values each process will develop differently
+        
+
+        self.dT_XYZ = dT # Assign timestep for GM XYZ
+
+        self.tauX = tauX # Assign tauX
+
+        self.etaX = etaX # Assign etaX
+
+        # Check Y Conds
+
+        if(tauY == None): # If Tau Y is none
+
+            self.tauY = tauX # set Tau Y to Tau X
+        else:
+
+            self.tauY = tauY # Other wise set Tau Y = Tau Y
+
+        if(etaY == None): # If etaY is none
+
+            self.etaY = etaX # Set equal to etaX
+        else:
+
+            self.etaY = etaY # Otherwise set equal to etaY
+
+        # Check Z Conds
+
+        if(tauZ == None): # If Tau Z is none
+
+            self.tauZ = tauX # set Tau Z to Tau X
+        else:
+
+            self.tauZ = tauZ # Other wise set Tau  Z= Tau Y
+
+        if(etaZ == None): # If etaZ is none
+
+            self.etaZ = etaX # Set equal to etaZ
+        else:
+
+            self.etaZ = etaZ # Otherwise set equal to etaZ
+
+
+        # Create GM Objects for each axis
+
+
+        self.GM_XYZ_X = GaussMarkov(self.dT_XYZ, self.tauX, self.etaX) # Create X axis Gauss Markov Object
+
+        self.GM_XYZ_Y = GaussMarkov(self.dT_XYZ, self.tauY, self.etaY) # Create Y axis Gauss Markov Object
+
+        self.GM_XYZ_Z = GaussMarkov(self.dT_XYZ, self.tauY, self.etaZ) # Create Z axis Gauss Markov Object
+
