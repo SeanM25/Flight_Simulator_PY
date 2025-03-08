@@ -131,4 +131,18 @@ class GaussMarkovXYZ:
         self.GM_XYZ_Z = GaussMarkov(self.dT_XYZ, self.tauY, self.etaZ) # Create Z axis Gauss Markov Object
 
         return # Return nothing
+    
+    def reset(self):
+
+        # Resets GM XYZ models
+
+        self.GM_XYZ_X = self.GM_XYZ_X.reset()
+
+        self.GM_XYZ_Y = self.GM_XYZ_Y.reset()
+
+        self.GM_XYZ_Z = self.GM_XYZ_Z.reset()
+
+        return # return nothing
+
+
 
