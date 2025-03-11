@@ -334,6 +334,28 @@ class SensorsModel:
         self.sensorsNoisy = sensorsNoisy # Set new sensorsNoisy state
 
         return # return nothing
+    
+    def reset(self):
+
+        # reset all sensors
+
+        self.sensorsTrue = Sensors.vehicleSensors()
+
+        self.sensorsNoisy = Sensors.vehicleSensors()
+
+        # Recalculate biases and sigmas
+
+        self.sensorsBiases = self.initializeBiases()
+
+        self.sensorsSigmas = self.initializeSigmas()
+
+        # Reset Gauss Markov
+
+        self.GPS_GM_XYZ.reset()
+
+        self.Gyro_GM_XYZ.reset() 
+
+        return # return nothing
 
 
 
