@@ -111,7 +111,7 @@ class GaussMarkovXYZ:
             self.tauZ = tauX # set Tau Z to Tau X
         else:
 
-            self.tauZ = tauZ # Other wise set Tau  Z= Tau Y
+            self.tauZ = tauZ # Other wise set Tau Z = Tau Y
 
         if(etaZ == None): # If etaZ is none
 
@@ -158,6 +158,55 @@ class GaussMarkovXYZ:
         Vz = self.GM_XYZ_Z.update(vZnoise) # Update Z axis
 
         return Vx, Vy, Vz # Return new noise values for each axis
+    
+
+class SensorsModel:
+
+    def __init__(self, aeroModel = VehicleAerodynamicsModel.VehicleAerodynamicsModel(), taugyro = VSC.gyro_tau, etagyro = VSC.gyro_eta, tauGPS = VSC.GPS_tau, etaGPSHorizontal = VSC.GPS_etaHorizontal, etaGPSVertical = VSC.GPS_etaVertical, gpsUpdateHz = VSC.GPS_rate):
+
+        self.VAM = aeroModel # Keep an instance of Vehicle Aerodynamics Module.
+
+        # Create four different sensor containers for True readings, Biases, Sigmas, and Noise
+
+        self.sensorsTrue = Sensors.vehicleSensors() # Container for True readings
+
+        self.sensorsBiases = SensorsModel.initializeBiases() # Container for Bias readings call Bias function to intialize
+
+        self.sensorsSigmas = SensorsModel.initializeSigmas() # Container for Sigma readings call Sigma function to intialize
+
+        self.sensorsNoisy = Sensors.vehicleSensors() # Container for Noisy readings
+
+        # Get time step dT
+
+        dT_sensors = self.VAM.VDynamics.dT # Get dT
+
+        # Intialize Gauss Markov for both Gyro & GPS. Use GM XYZ since they both measure in 3-D
+
+        self.Gyro_GM_XYZ = GaussMarkovXYZ(dT_sensors, taugyro, etagyro) # Create a GM XYZ for the GPS using the passed in tau and eta for the gyro
+
+        gps_dT = (1 / gpsUpdateHz) # Period or timestep of the GPS
+
+        self.GPS_GM_XYZ = GaussMarkovXYZ(gps_dT, tauGPS, etaGPSHorizontal, tauGPS, etaGPSHorizontal, tauGPS, etaGPSVertical)
+
+        # Create a GM XYZ for the GPS using tau gps for tau and the appropriate etas for X,Y, and Z
+        
+        self.updateTicks = 0 # Intialize tick counter to zero. This tells us when its time to update the GPS
+
+        self.gpsTickUpdate = (gps_dT / dT_sensors) # Get number of dT's that fit in a GPS update period
+
+        return # Return nothing
+    
+
+    def initializeSigmas(self, gyroSigma = VSC.gyro_sigma, accelSigma = VSC.accel_sigma, magSigma = VSC.mag_sigma, baroSigma = VSC.baro_sigma, pitotSigma = VSC.pitot_sigma, gpsSigmaHorizontal = VSC.GPS_sigmaHorizontal, gpsSigmaVertical = VSC.GPS_sigmaVertical, gpsSigmaSOG = VSC.GPS_sigmaSOG, gpsSigmaCOG = VSC.GPS_sigmaCOG):
+
+        
+
+
+
+
+
+
+
 
 
 
