@@ -248,7 +248,7 @@ class SensorsModel:
 
         return sensorSigmas # Return filled sensorSigmas container
     
-    def initializeBiases(gyroBias = VSC.gyro_bias, accelBias = VSC.accel_bias, magBias = VSC.mag_bias, baroBias = VSC.baro_bias, pitotBias = VSC.pitot_bias):
+    def initializeBiases(self, gyroBias = VSC.gyro_bias, accelBias = VSC.accel_bias, magBias = VSC.mag_bias, baroBias = VSC.baro_bias, pitotBias = VSC.pitot_bias):
 
         # Creates and fills a sensor bias container
         # Gets random number from random.uniform(-1, 1) according to documentation says -gyro_bias gyro_bias in lab doc
