@@ -320,6 +320,20 @@ class SensorsModel:
         self.sensorsTrue = sensorsTrue # set new sensors true state
 
         return # return nothing
+    
+    def getSensorsNoisy(self):
+
+        # Wrapper for sensors nosiy
+
+        return self.sensorsNoisy # return sensorsNoisy
+    
+    def setSensorsNoisy(self, sensorsNoisy = Sensors.vehicleSensors()):
+
+        # Simple setter to set a new sensorsNoisy state
+
+        self.sensorsNoisy = sensorsNoisy # Set new sensorsNoisy state
+
+        return # return nothing
 
 
 
