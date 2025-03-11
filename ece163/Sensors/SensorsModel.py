@@ -199,7 +199,58 @@ class SensorsModel:
 
     def initializeSigmas(self, gyroSigma = VSC.gyro_sigma, accelSigma = VSC.accel_sigma, magSigma = VSC.mag_sigma, baroSigma = VSC.baro_sigma, pitotSigma = VSC.pitot_sigma, gpsSigmaHorizontal = VSC.GPS_sigmaHorizontal, gpsSigmaVertical = VSC.GPS_sigmaVertical, gpsSigmaSOG = VSC.GPS_sigmaSOG, gpsSigmaCOG = VSC.GPS_sigmaCOG):
 
+        # Gets and returns appropriate sigmas for each variable within an instance of vehicleSensors
+
         
+        sensorSigmas = Sensors.vehicleSensors() # Create vehicle sensors instance to fill
+
+        # Assign Gyro sigmas
+
+        sensorSigmas.gyro_x = gyroSigma # Sigma for gyro in x
+
+        sensorSigmas.gyro_y = gyroSigma # Sigma for gyro in y
+
+        sensorSigmas.gyro_z = gyroSigma # Sigma for gyro in z
+
+        # Assign accelerometer sigmas
+
+        sensorSigmas.accel_x = accelSigma # Sigma for Accelerometer in X
+
+        sensorSigmas.accel_y = accelSigma # Sigma for Accelerometer in Y
+
+        sensorSigmas.accel_z = accelSigma # Sigma for Accelerometer in Z
+
+        # Assign magnetometer sigmas
+
+        sensorSigmas.mag_x = magSigma # Sigma for Magnetometer in X
+
+        sensorSigmas.mag_y = magSigma # Sigma for Magnetometer in Y
+
+        sensorSigmas.mag_z = magSigma # Sigma for Magnetometer in Z
+
+        # Assign Baro and Pitot sigma
+
+        sensorSigmas.baro = baroSigma # Sigma for Baro
+
+        sensorSigmas.pitot = pitotSigma # Sigma for Pitot
+
+        # Assign GPS Sigmas
+
+        sensorSigmas.gps_cog = gpsSigmaCOG # Assign GPS Course over Ground Sigma
+
+        sensorSigmas.gps_sog = gpsSigmaSOG # Assign GPS Speed over Ground Sigma
+
+        sensorSigmas.gps_n = gpsSigmaHorizontal # GPS N gets Sigma for white noise in Horizontal
+
+        sensorSigmas.gps_e = gpsSigmaHorizontal # GPS E gets Sigma for white noise in Horizontal
+
+        sensorSigmas.gps_cog = gpsSigmaVertical # GPS DWN gets Sigma for white noise in Horizontal
+
+        return sensorSigmas # Return filled sensorSigmas container
+
+
+
+
 
 
 
