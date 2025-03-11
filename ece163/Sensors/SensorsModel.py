@@ -247,6 +247,66 @@ class SensorsModel:
         sensorSigmas.gps_cog = gpsSigmaVertical # GPS DWN gets Sigma for white noise in Horizontal
 
         return sensorSigmas # Return filled sensorSigmas container
+    
+    def initializeBiases(gyroBias = VSC.gyro_bias, accelBias = VSC.accel_bias, magBias = VSC.mag_bias, baroBias = VSC.baro_bias, pitotBias = VSC.pitot_bias):
+
+        # Creates and fills a sensor bias container
+        # Gets random number from random.uniform(-1, 1) according to documentation says -gyro_bias gyro_bias in lab doc
+        # Very similar to sigma function
+
+        sensorBiases = Sensors.vehicleSensors() # Create empty sensorBiases container to fill
+
+        limit = 1 # uniform dist limit
+
+        # We select a random number from the uniform dist then multiply by the passed in biases
+
+        # Get Gyro Biases for X, Y, and Z
+
+        sensorBiases.gyro_x = random.uniform(-limit, limit) * gyroBias
+
+        sensorBiases.gyro_y = random.uniform(-limit, limit) * gyroBias
+
+        sensorBiases.gyro_z = random.uniform(-limit, limit) * gyroBias
+
+        # Get Accelerometer Biases for X, Y, and Z
+
+        sensorBiases.accel_x = random.uniform(-limit, limit) * accelBias
+
+        sensorBiases.accel_y = random.uniform(-limit, limit) * accelBias
+
+        sensorBiases.accel_z = random.uniform(-limit, limit) * accelBias
+
+        # Get Magnetometer biases for X, Y, and Z
+
+        sensorBiases.mag_x = random.uniform(-limit, limit) * magBias
+
+        sensorBiases.mag_y = random.uniform(-limit, limit) * magBias
+
+        sensorBiases.mag_z = random.uniform(-limit, limit) * magBias
+
+        # Get Baro and Pitot biases
+
+        sensorBiases.baro = random.uniform(-limit, limit) * baroBias
+
+        sensorBiases.pitot = random.uniform(-limit, limit) * pitotBias
+
+        # Get GPS Biases
+
+        # Note: GPS is unbiased so set all biases to 0.0
+
+        sensorBiases.gps_alt = 0.0
+
+        sensorBiases.gps_cog = 0.0
+
+        sensorBiases.gps_e = 0.0
+
+        sensorBiases.gps_sog = 0.0
+
+        sensorBiases.gps_n = 0.0
+
+
+        return sensorBiases # return all biases
+
 
 
 
