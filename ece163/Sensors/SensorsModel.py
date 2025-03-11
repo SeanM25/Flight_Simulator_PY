@@ -306,6 +306,20 @@ class SensorsModel:
 
 
         return sensorBiases # return all biases
+    
+    def getSensorsTrue(self):
+        
+        # Wrapper that returns present sensors true
+
+        return self.sensorsTrue # return sensorsTrue
+    
+    def setSensorsTrue(self, sensorsTrue = Sensors.vehicleSensors()):
+
+        # Simple setter to set a new sensors true state
+
+        self.sensorsTrue = sensorsTrue # set new sensors true state
+
+        return # return nothing
 
 
 
