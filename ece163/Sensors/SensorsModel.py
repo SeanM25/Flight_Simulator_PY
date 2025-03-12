@@ -397,7 +397,7 @@ class SensorsModel:
 
         # The accelerometer equations can be found in Ch 7 Pg 122 of Beard
 
-        a_x = dot.u + (state.q * state.w) - (state.r * state.v) + (VPC.g0 * math.sin(state.pitch)) # Get accelerometer in x reading
+        a_x = dot.u +  (state.q * state.w) - (state.r * state.v) + (VPC.g0 * math.sin(state.pitch)) # Get accelerometer in x reading
 
         a_y = dot.v + (state.r * state.u) - (state.p * state.w) - (VPC.g0 * math.cos(state.pitch) * math.sin(state.roll)) # Get accelerometer in y reading
 
@@ -424,6 +424,24 @@ class SensorsModel:
         gps_COG = math.atan2(dot.pe, dot.pn) # Get course over ground for GPS as defined in lecture
 
         return gps_N, gps_E, gps_alt, gps_SOG, gps_COG # Return all GPS true params
+    
+    def updatePressureSensorsTrue(self, state):
+
+        state = States.vehicleState()
+
+        # Updates Barot and Pitot
+
+        # Get True Pitot Sensor Reading
+
+        Pitot = (VPC.rho * (state.Va ** 2)) / 2 # Beard Pg 130 also found in lecture
+
+        # Get True Baro
+
+        Baro = VSC.Pground + (VPC.rho * VPC.g0 * state.pd) # Given equation from lecture
+
+        return Baro, Pitot # Return Baro and Pitot True
+
+
 
 
 
