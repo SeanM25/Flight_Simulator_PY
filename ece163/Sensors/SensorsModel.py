@@ -185,15 +185,15 @@ class SensorsModel:
 
         self.Gyro_GM_XYZ = GaussMarkovXYZ(dT_sensors, taugyro, etagyro) # Create a GM XYZ for the GPS using the passed in tau and eta for the gyro
 
-        gps_dT = (1 / gpsUpdateHz) # Period or timestep of the GPS
+        self.gps_dT = (1 / gpsUpdateHz) # Period or timestep of the GPS
 
-        self.GPS_GM_XYZ = GaussMarkovXYZ(gps_dT, tauGPS, etaGPSHorizontal, tauGPS, etaGPSHorizontal, tauGPS, etaGPSVertical)
+        self.GPS_GM_XYZ = GaussMarkovXYZ(self.gps_dT, tauGPS, etaGPSHorizontal, tauGPS, etaGPSHorizontal, tauGPS, etaGPSVertical)
 
         # Create a GM XYZ for the GPS using tau gps for tau and the appropriate etas for X,Y, and Z
         
         self.updateTicks = 0 # Intialize tick counter to zero. This tells us when its time to update the GPS
 
-        self.gpsTickUpdate = (gps_dT / dT_sensors) # Get number of dT's that fit in a GPS update period
+        self.gpsTickUpdate = (self.gps_dT / dT_sensors) # Get number of dT's that fit in a GPS update period
 
         return # Return nothing
     
@@ -428,7 +428,45 @@ class SensorsModel:
 
         return Baro, Pitot # Return Baro and Pitot True
     
-    
+    def updateSensorsTrue(self, prevTrueSensors, state, dot):
+
+        ST = Sensors.vehicleSensors() # Create Sensors true container to fill
+
+        # Deal with GPS Update Ticks
+
+        if((self.updateTicks % self.gpsTickUpdate) == 0): # When the GPS has reached the threshold for an update
+
+            ST.gps_n, ST.gps_e, ST.gps_alt, ST.gps_sog, ST.gps_cog = self.updateGPSTrue(state, dot) # Update the GPS True values as normal
+
+        else:
+
+            # Otherwise do the zero hold and heep the previous GPS values
+
+            ST.gps_n = prevTrueSensors.gps_n # north is prev
+
+            ST.gps_e = prevTrueSensors.gps_e # east is prev
+
+            ST.gps_alt = prevTrueSensors.gps_alt # alt is prev
+
+            ST.gps_sog = prevTrueSensors.gps_sog # sog is prev
+
+            ST.gps_cog = prevTrueSensors.gps_cog # cog is prev
+
+        # Update Everything Else as normal
+
+        ST.gyro_x, ST.gyro_y, ST.gyro_z = self.updateGyrosTrue(state) # Update The Gyros
+
+        ST.accel_x, ST.accel_y, ST.accel_z = self.updateAccelsTrue(state, dot) # Update Accelerometers
+
+        ST.mag_x, ST.mag_y, ST.mag_z = self.updateMagsTrue(state) # Update Magnetometers
+
+        ST.baro, ST.pitot = self.updatePressureSensorsTrue(state) # Update Baro and Pitot
+
+        return ST # Return filled Sensors True Container
+
+
+
+
 
 
 
