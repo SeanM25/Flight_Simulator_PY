@@ -405,7 +405,27 @@ class SensorsModel:
 
         return a_x, a_y, a_z # Return accel readings for each axis x y z
     
-    #def updateGPSTrue(self, state, dot):
+    def updateGPSTrue(self, state, dot):
+
+        # Updates GPS state and returns parameters
+
+        #state = States.vehicleState()
+        
+        #dot = States.vehicleState()
+
+        gps_N = state.pn # Get GPS Northern coordinate
+
+        gps_E = state.pe # Get GPS Eastern coordinate
+
+        gps_alt = -state.pd # GPS altitude is opposite of down
+
+        gps_SOG = math.hypot(state.u, state.v, state.w) # Get speed over ground for GPS as defined in lecture
+
+        gps_COG = math.atan2(dot.pe, dot.pn) # Get course over ground for GPS as defined in lecture
+
+        return gps_N, gps_E, gps_alt, gps_SOG, gps_COG # Return all GPS true params
+
+
 
 
 
