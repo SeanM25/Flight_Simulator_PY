@@ -179,11 +179,11 @@ class SensorsModel:
 
         # Get time step dT
 
-        dT_sensors = self.VAM.VDynamics.dT # Get dT
+        self.dT = self.VAM.VDynamics.dT # Get dT
 
         # Intialize Gauss Markov for both Gyro & GPS. Use GM XYZ since they both measure in 3-D
 
-        self.Gyro_GM_XYZ = GaussMarkovXYZ(dT_sensors, taugyro, etagyro) # Create a GM XYZ for the GPS using the passed in tau and eta for the gyro
+        self.Gyro_GM_XYZ = GaussMarkovXYZ(self.dT, taugyro, etagyro) # Create a GM XYZ for the GPS using the passed in tau and eta for the gyro
 
         self.gps_dT = (1 / gpsUpdateHz) # Period or timestep of the GPS
 
@@ -193,7 +193,7 @@ class SensorsModel:
         
         self.updateTicks = 0 # Intialize tick counter to zero. This tells us when its time to update the GPS
 
-        self.gpsTickUpdate = (self.gps_dT / dT_sensors) # Get number of dT's that fit in a GPS update period
+        self.gpsTickUpdate = (self.gps_dT / self.dT) # Get number of dT's that fit in a GPS update period
 
         return # Return nothing
     
