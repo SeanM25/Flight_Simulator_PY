@@ -427,7 +427,7 @@ class SensorsModel:
     
     def updatePressureSensorsTrue(self, state):
 
-        state = States.vehicleState()
+        #state = States.vehicleState()
 
         # Updates Barot and Pitot
 
