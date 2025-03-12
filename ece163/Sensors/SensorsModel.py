@@ -1,7 +1,7 @@
 import math
 import random
 from ece163.Modeling import VehicleAerodynamicsModel
-from ece163.Utilities import MatrixMath
+from ece163.Utilities import MatrixMath as mm
 from ..Containers import Sensors
 from ..Constants import VehiclePhysicalConstants as VPC
 from ..Constants import VehicleSensorConstants as VSC
@@ -365,6 +365,32 @@ class SensorsModel:
         #state = States.vehicleState()
 
         return state.p, state.q, state.r # Return p q r
+    
+    def updateMagsTrue(self, state):
+
+        # This function gets and returns the body frame magnetic field. 
+        # As such we must rotate the magnetic field from VSC into the body frame
+
+        #state = States.vehicleState()
+
+        R = state.R # Get rotation matrix inertial to body
+
+        mag_field_inertial = VSC.magfield # Get magnetic field in inertial frame NED
+
+        mag_field_body = mm.multiply(R, mag_field_inertial) # rotate magnetic field into body
+
+        mag_x = mag_field_inertial[1][0] # get x component of mag field in body
+
+        mag_y = mag_field_inertial[2][0] # get y component of mag field in body
+
+        mag_z = mag_field_inertial[3][0] # get z component of mag field in body
+
+        return mag_x, mag_y, mag_z # Return components in body
+
+
+
+
+
 
 
 
