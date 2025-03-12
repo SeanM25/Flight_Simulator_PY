@@ -645,6 +645,10 @@ class VehicleClosedLoopControl:
          
     def update(self, referenceCommands=Controls.referenceCommands):
 
+        if(self.useSensors): # If we're using sensors
+
+            self.sensorsModel.update() # update the senors
+
         state = self.getVehicleState() # Get current state
 
         ControlCommands = self.UpdateControlCommands(referenceCommands, state) # Call the autopilot and get the Control Surfaces commands

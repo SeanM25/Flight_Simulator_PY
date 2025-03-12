@@ -430,7 +430,7 @@ class SensorsModel:
     
     def updateSensorsTrue(self, prevTrueSensors, state, dot):
 
-        ST = Sensors.vehicleSensors() # Create Sensors true container to fill
+        ST = Sensors.vehicleSensors() # Create Sensors true container to fill ST "Sensors True"
 
         # Deal with GPS Update Ticks
 
@@ -468,7 +468,7 @@ class SensorsModel:
 
         # Gets all True measurements and adds noise and biases to each as applicable
 
-        SN = Sensors.vehicleSensors() # Create empty sensors noisy container
+        SN = Sensors.vehicleSensors() # Create empty sensors noisy container SN "Sensors Noisy"
 
 
         # Deal With GPS
@@ -531,36 +531,57 @@ class SensorsModel:
 
         C_gx, C_gy, C_gz = self.Gyro_GM_XYZ.update() # Get GM colored noise
 
-        SN.gyro_x = trueSensors.gyro_x + sensorBiases.gyro_x + C_gx + random.gauss(0, sensorSigmas.gyro_x)
+        SN.gyro_x = trueSensors.gyro_x + sensorBiases.gyro_x + C_gx + random.gauss(0, sensorSigmas.gyro_x) # Add noise gyro x
 
-        SN.gyro_y = trueSensors.gyro_y + sensorBiases.gyro_y + C_gy + random.gauss(0, sensorSigmas.gyro_y)
+        SN.gyro_y = trueSensors.gyro_y + sensorBiases.gyro_y + C_gy + random.gauss(0, sensorSigmas.gyro_y) # Add noise gyro y
 
-        SN.gyro_z = trueSensors.gyro_z + sensorBiases.gyro_z + C_gz + random.gauss(0, sensorSigmas.gyro_z)
+        SN.gyro_z = trueSensors.gyro_z + sensorBiases.gyro_z + C_gz + random.gauss(0, sensorSigmas.gyro_z) # Add noise gyro z
 
 
-        # Update Accelerometers
+        # Update Accelerometers No Colored Noise
 
-        SN.accel_x = trueSensors.accel_x + sensorBiases.accel_x + random.gauss(0, sensorSigmas.accel_x)
+        SN.accel_x = trueSensors.accel_x + sensorBiases.accel_x + random.gauss(0, sensorSigmas.accel_x) # Add noise accel x
 
-        SN.accel_y = trueSensors.accel_y + sensorBiases.accel_y + random.gauss(0, sensorSigmas.accel_y)
+        SN.accel_y = trueSensors.accel_y + sensorBiases.accel_y + random.gauss(0, sensorSigmas.accel_y) # Add noise accel y
 
-        SN.accel_z = trueSensors.accel_z + sensorBiases.accel_z + random.gauss(0, sensorSigmas.accel_z)
+        SN.accel_z = trueSensors.accel_z + sensorBiases.accel_z + random.gauss(0, sensorSigmas.accel_z) # Add noise accel z
 
-        # Update Magnetometers
+        # Update Magnetometers No Colored Noise
 
-        SN.mag_x = trueSensors.mag_x + sensorBiases.mag_x + random.gauss(0, sensorSigmas.mag_x)
+        SN.mag_x = trueSensors.mag_x + sensorBiases.mag_x + random.gauss(0, sensorSigmas.mag_x) # Add noise mag x
 
-        SN.mag_y = trueSensors.mag_y + sensorBiases.mag_y + random.gauss(0, sensorSigmas.mag_y)
+        SN.mag_y = trueSensors.mag_y + sensorBiases.mag_y + random.gauss(0, sensorSigmas.mag_y) # Add noise mag y
 
-        SN.mag_z = trueSensors.mag_z + sensorBiases.mag_z + random.gauss(0, sensorSigmas.mag_z)
+        SN.mag_z = trueSensors.mag_z + sensorBiases.mag_z + random.gauss(0, sensorSigmas.mag_z) # Add noise mag z
 
-        # Update Baro and Pitot
+        # Update Baro and Pitot Again No colored Noise
 
-        SN.baro = trueSensors.baro  + sensorBiases.baro + random.gauss(0, sensorSigmas.baro)
+        SN.baro = trueSensors.baro  + sensorBiases.baro + random.gauss(0, sensorSigmas.baro) # Add noise to Barot
 
-        SN.pitot = trueSensors.pitot  + sensorBiases.pitot + random.gauss(0, sensorSigmas.pitot)
+        SN.pitot = trueSensors.pitot  + sensorBiases.pitot + random.gauss(0, sensorSigmas.pitot) # Add noise to Pitot
 
-        return SN
+        return SN # Return sensors Noisy
+    
+    def update(self):
+
+        state = self.VAM.VDynamics.state # Get current state
+
+        dot = self.VAM.VDynamics.dot # get current state derivative
+
+        prevSensorTrue = self.sensorsTrue # The previous sensor true state is the current sensors true state
+
+        self.sensorsTrue = self.updateSensorsTrue(prevSensorTrue, state, dot) # Get updated Sensors True
+
+        self.sensorsNoisy = self.updateSensorsNoisy(self.sensorsTrue, self.sensorsNoisy, self.sensorsBiases, self.sensorsSigmas) # Pass sensors true to sensors noisy
+
+        self.updateTicks += 1 # Increment Tick Counter
+
+        return # return nothing
+    
+    
+    
+
+
 
 
 
