@@ -379,11 +379,11 @@ class SensorsModel:
 
         mag_field_body = mm.multiply(R, mag_field_inertial) # rotate magnetic field into body
 
-        mag_x = mag_field_body[1][0] # get x component of mag field in body
+        mag_x = mag_field_body[0][0] # get x component of mag field in body
 
-        mag_y = mag_field_body[2][0] # get y component of mag field in body
+        mag_y = mag_field_body[1][0] # get y component of mag field in body
 
-        mag_z = mag_field_body[3][0] # get z component of mag field in body
+        mag_z = mag_field_body[2][0] # get z component of mag field in body
 
         return mag_x, mag_y, mag_z # Return components in body
     
