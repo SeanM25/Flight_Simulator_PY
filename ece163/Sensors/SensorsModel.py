@@ -6,6 +6,7 @@ from ..Containers import Sensors
 from ..Constants import VehiclePhysicalConstants as VPC
 from ..Constants import VehicleSensorConstants as VSC
 from ..Modeling import VehicleAerodynamicsModel
+from ..Containers import States
 
 
 
@@ -356,6 +357,14 @@ class SensorsModel:
         self.Gyro_GM_XYZ.reset() 
 
         return # return nothing
+    
+    def updateGyrosTrue(self, state):
+
+        # Simple one liner that just returns p, q, and r which the gyro measures
+
+        #state = States.vehicleState()
+
+        return state.p, state.q, state.r # Return p q r
 
 
 
