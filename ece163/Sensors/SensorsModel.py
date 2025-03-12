@@ -171,9 +171,9 @@ class SensorsModel:
 
         self.sensorsTrue = Sensors.vehicleSensors() # Container for True readings
 
-        self.sensorsBiases = SensorsModel.initializeBiases() # Container for Bias readings call Bias function to intialize
+        self.sensorsBiases = self.initializeBiases() # Container for Bias readings call Bias function to intialize
 
-        self.sensorsSigmas = SensorsModel.initializeSigmas() # Container for Sigma readings call Sigma function to intialize
+        self.sensorsSigmas = self.initializeSigmas() # Container for Sigma readings call Sigma function to intialize
 
         self.sensorsNoisy = Sensors.vehicleSensors() # Container for Noisy readings
 
@@ -405,6 +405,10 @@ class SensorsModel:
 
         return a_x, a_y, a_z # Return accel readings for each axis x y z
     
+    #def updateGPSTrue(self, state, dot):
+
+
+
 
 
 
