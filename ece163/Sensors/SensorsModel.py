@@ -463,6 +463,130 @@ class SensorsModel:
         ST.baro, ST.pitot = self.updatePressureSensorsTrue(state) # Update Baro and Pitot
 
         return ST # Return filled Sensors True Container
+    
+    def updateSensorsNoisy(self, trueSensors = Sensors.vehicleSensors(), noisySensors = Sensors.vehicleSensors(), sensorBiases = Sensors.vehicleSensors(), sensorSigmas = Sensors.vehicleSensors()):
+
+        # Gets all True measurements and adds noise and biases to each as applicable
+
+        SN = Sensors.vehicleSensors() # Create empty sensors noisy container
+
+
+        # Deal With GPS
+
+        if((self.updateTicks % self.gpsTickUpdate) == 0): # When the GPS has reached the threshold for an update
+
+            # Get colored noise from GM
+
+             C_noise_GPSN, C_noise_GPS_E, C_noise_GPS_alt = self.GPS_GM_XYZ.update()
+
+            # Update GPS with colored noise and white noise GPS is unbiased
+
+             SN.gps_n = trueSensors.gps_n + C_noise_GPSN + random.gauss(0, sensorSigmas.gps_n) # Update GPS N
+
+             SN.gps_e = trueSensors.gps_e + C_noise_GPS_E + random.gauss(0, sensorSigmas.gps_e)  # Update GPS E
+
+             SN.gps_alt = trueSensors.gps_alt + C_noise_GPS_alt + random.gauss(0, sensorSigmas.gps_alt)  # Update GPS alt
+
+             SN.gps_sog = trueSensors.gps_sog + random.gauss(0, sensorSigmas.gps_sog) # No Colored noise for sog
+
+            # Deal with and Trap COG
+
+             Trap_term = (sensorSigmas.gps_cog * VPC.InitialSpeed) / trueSensors.gps_sog # Term to check and trap if necessary from lecture
+
+             if(math.isclose(0, trueSensors.gps_sog)): # If numerator of trap term is near or at 0 we need to trap it
+                 
+                 SN.gps_cog = trueSensors.gps_cog + random.gauss(0, sensorSigmas.gps_cog) # If trap needed just use sigma COG
+
+             else:
+                 
+                 SN.gps_cog = trueSensors.gps_cog + random.gauss(0, Trap_term) # Otherwise use the trap term
+
+            # Wrap within Pi
+
+             if(SN.gps_cog > math.pi):
+                 
+                 SN.gps_cog = math.pi
+
+             if(SN.gps_cog < -math.pi):
+                 
+                 SN.gps_cog = -math.pi
+
+        else: # Do the Zero hold again for GPS
+
+            SN.gps_n = noisySensors.gps_n # north is prev
+
+            SN.gps_e = noisySensors.gps_e # east is prev
+
+            SN.gps_alt = noisySensors.gps_alt # alt is prev
+
+            SN.gps_sog = noisySensors.gps_sog # sog is prev
+
+            SN.gps_cog = noisySensors.gps_cog # cog is prev
+        
+        # Add noise to everything else
+
+        # Update Gyros
+
+        # Colored Noise for Gyro
+
+        C_gx, C_gy, C_gz = self.Gyro_GM_XYZ.update() # Get GM colored noise
+
+        SN.gyro_x = trueSensors.gyro_x + sensorBiases.gyro_x + C_gx + random.gauss(0, sensorSigmas.gyro_x)
+
+        SN.gyro_y = trueSensors.gyro_y + sensorBiases.gyro_y + C_gy + random.gauss(0, sensorSigmas.gyro_y)
+
+        SN.gyro_z = trueSensors.gyro_z + sensorBiases.gyro_z + C_gz + random.gauss(0, sensorSigmas.gyro_z)
+
+
+        # Update Accelerometers
+
+        SN.accel_x = trueSensors.accel_x + sensorBiases.accel_x + random.gauss(0, sensorSigmas.accel_x)
+
+        SN.accel_y = trueSensors.accel_y + sensorBiases.accel_y + random.gauss(0, sensorSigmas.accel_y)
+
+        SN.accel_z = trueSensors.accel_z + sensorBiases.accel_z + random.gauss(0, sensorSigmas.accel_z)
+
+        # Update Magnetometers
+
+        SN.mag_x = trueSensors.mag_x + sensorBiases.mag_x + random.gauss(0, sensorSigmas.mag_x)
+
+        SN.mag_y = trueSensors.mag_y + sensorBiases.mag_y + random.gauss(0, sensorSigmas.mag_y)
+
+        SN.mag_z = trueSensors.mag_z + sensorBiases.mag_z + random.gauss(0, sensorSigmas.mag_z)
+
+        # Update Baro and Pitot
+
+        SN.baro = trueSensors.baro  + sensorBiases.baro + random.gauss(0, sensorSigmas.baro)
+
+        SN.pitot = trueSensors.pitot  + sensorBiases.pitot + random.gauss(0, sensorSigmas.pitot)
+
+        return SN
+
+
+
+
+
+
+
+
+
+
+
+                 
+
+
+
+        
+
+
+            
+
+
+
+
+
+
+
 
 
 
