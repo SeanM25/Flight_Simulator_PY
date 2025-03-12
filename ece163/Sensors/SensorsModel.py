@@ -416,8 +416,6 @@ class SensorsModel:
     
     def updatePressureSensorsTrue(self, state):
 
-        #state = States.vehicleState()
-
         # Updates Barot and Pitot
 
         # Get True Pitot Sensor Reading
@@ -429,6 +427,8 @@ class SensorsModel:
         Baro = VSC.Pground + (VPC.rho * VPC.g0 * state.pd) # Given equation from lecture
 
         return Baro, Pitot # Return Baro and Pitot True
+    
+    
 
 
 

@@ -310,6 +310,15 @@ class VehicleClosedLoopControl:
 
         # We can ignore everything besides dT until Lab 5 & 6
 
+        # Lab 5 Modifications:
+
+        self.useSensors = useSensors # Assign use sensors Boolean
+
+        if(self.useSensors): # If the use sensors boolean is true
+
+            self.sensorsModel = SensorsModel.SensorsModel(aeroModel = VehicleAerodynamicsModule.VehicleAerodynamicsModel()) # Assign sensors model param
+            
+
 
         self.VAM = VehicleAerodynamicsModule.VehicleAerodynamicsModel() # Give an VAM instance for the class
 
@@ -504,9 +513,28 @@ class VehicleClosedLoopControl:
         return # return nothing
     
 
+    def getSensorsModel(self):
+
+        # Simple geter that returns the snesors model if we're using the sensors
+
+        if(self.useSensors):
+
+            sensorModel = self.sensorsModel
+
+            return sensorModel
+
+        return # Otherwise return nothing
+    
+
     def reset(self):
 
         # Resets VAM and all the controllers except elevatorFromPitch since there is no integral term
+
+        if(self.useSensors): # if the use sensors boolean is true
+
+            self.sensorsModel.reset() # Reset the sensor model
+
+
 
         self.VAM = self.VAM.reset() # Reset VAM
 
