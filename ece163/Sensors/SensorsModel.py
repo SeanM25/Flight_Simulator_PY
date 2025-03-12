@@ -362,16 +362,13 @@ class SensorsModel:
 
         # Simple one liner that just returns p, q, and r which the gyro measures
 
-        #state = States.vehicleState()
-
         return state.p, state.q, state.r # Return p q r
     
     def updateMagsTrue(self, state):
 
         # This function gets and returns the body frame magnetic field. 
-        # As such we must rotate the magnetic field from VSC into the body frame
 
-        #state = States.vehicleState()
+        # As such we must rotate the magnetic field from VSC into the body frame
 
         R = state.R # Get rotation matrix inertial to body
 
@@ -391,10 +388,6 @@ class SensorsModel:
 
         # Function to update the accelerometers using the formulas in Beard Ch 7
 
-        #state = States.vehicleState()
-        
-        #dot = States.vehicleState()
-
         # The accelerometer equations can be found in Ch 7 Pg 122 of Beard
 
         a_x = dot.u +  (state.q * state.w) - (state.r * state.v) + (VPC.g0 * math.sin(state.pitch)) # Get accelerometer in x reading
@@ -409,17 +402,13 @@ class SensorsModel:
 
         # Updates GPS state and returns parameters
 
-        #state = States.vehicleState()
-        
-        #dot = States.vehicleState()
-
         gps_N = state.pn # Get GPS Northern coordinate
 
         gps_E = state.pe # Get GPS Eastern coordinate
 
         gps_alt = -state.pd # GPS altitude is opposite of down
 
-        gps_SOG = math.hypot(state.u, state.v, state.w) # Get speed over ground for GPS as defined in lecture
+        gps_SOG = math.hypot(dot.pn, dot.pe) # Get speed over ground for GPS as defined in lecture
 
         gps_COG = math.atan2(dot.pe, dot.pn) # Get course over ground for GPS as defined in lecture
 
