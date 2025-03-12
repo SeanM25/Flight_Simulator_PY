@@ -379,13 +379,33 @@ class SensorsModel:
 
         mag_field_body = mm.multiply(R, mag_field_inertial) # rotate magnetic field into body
 
-        mag_x = mag_field_inertial[1][0] # get x component of mag field in body
+        mag_x = mag_field_body[1][0] # get x component of mag field in body
 
-        mag_y = mag_field_inertial[2][0] # get y component of mag field in body
+        mag_y = mag_field_body[2][0] # get y component of mag field in body
 
-        mag_z = mag_field_inertial[3][0] # get z component of mag field in body
+        mag_z = mag_field_body[3][0] # get z component of mag field in body
 
         return mag_x, mag_y, mag_z # Return components in body
+    
+    def updateAccelsTrue(self, state, dot):
+
+        # Function to update the accelerometers using the formulas in Beard Ch 7
+
+        #state = States.vehicleState()
+        
+        #dot = States.vehicleState()
+
+        # The accelerometer equations can be found in Ch 7 Pg 122 of Beard
+
+        a_x = dot.u + (state.q * state.w) - (state.r * state.v) + (VPC.g0 * math.sin(state.pitch)) # Get accelerometer in x reading
+
+        a_y = dot.v + (state.r * state.u) - (state.p * state.w) - (VPC.g0 * math.cos(state.pitch) * math.sin(state.roll)) # Get accelerometer in y reading
+
+        a_z = dot.w + (state.p * state.v) - (state.q * state.u) - (VPC.g0 * math.cos(state.pitch) * math.cos(state.roll)) # Get accelerometer in z reading
+
+        return a_x, a_y, a_z # Return accel readings for each axis x y z
+    
+
 
 
 
