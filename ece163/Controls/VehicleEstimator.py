@@ -15,7 +15,7 @@ class LowPassFilter:
 
         self.dT = dT # Set timestep of the LPF
 
-        self.cutoffDef = 1 # Default cutooff of 1 Hz
+        self.cutoffDef = 1 # Default cutoff of 1 Hz
 
         self.cutoff = cutoff # actual cutoff freq Hz
 
@@ -36,6 +36,30 @@ class LowPassFilter:
 
         return # return nothing
     
+    def update(self, input):
+
+
+        # Update yk low pass filter based on input
+
+       # f = self.cutoff # Get cutoff freq Hz
+
+        #prevInput_yk = self.yk_prev
+
+        dT = self.dT # Get timestep dT
+
+        a = 2 * math.pi * self.cutoff # Given a
+
+        exp_term = math.exp(-a * dT)
+
+        self.yk = (exp_term * self.yk_prev) + ((1-exp_term) * input)
+
+        self.yk_prev = self.yk# Update previous state with new output
+
+        return self.yk # return current output
+
+
 
     
+
+
 
