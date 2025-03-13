@@ -137,11 +137,11 @@ class GaussMarkovXYZ:
 
         # Resets GM XYZ models
 
-        self.GM_XYZ_X = self.GM_XYZ_X.reset()
+        self.GM_XYZ_X = self.GM_XYZ_X.reset() # reset GM_XYZ X
 
-        self.GM_XYZ_Y = self.GM_XYZ_Y.reset()
+        self.GM_XYZ_Y = self.GM_XYZ_Y.reset() # reset GM_XYZ Y
 
-        self.GM_XYZ_Z = self.GM_XYZ_Z.reset()
+        self.GM_XYZ_Z = self.GM_XYZ_Z.reset() # reset GM_XYZ Z
 
         return # return nothing
     
@@ -340,21 +340,21 @@ class SensorsModel:
 
         # reset all sensors
 
-        self.sensorsTrue = Sensors.vehicleSensors()
+        self.sensorsTrue = Sensors.vehicleSensors() # reset sensors true
 
-        self.sensorsNoisy = Sensors.vehicleSensors()
+        self.sensorsNoisy = Sensors.vehicleSensors() # reset sensors noisy
 
         # Recalculate biases and sigmas
 
-        self.sensorsBiases = self.initializeBiases()
+        self.sensorsBiases = self.initializeBiases() # Recalculate biases
 
-        self.sensorsSigmas = self.initializeSigmas()
+        self.sensorsSigmas = self.initializeSigmas() # Recalculate sigmas
 
-        # Reset Gauss Markov
+        # Reset Gauss Markov for GPS and Gyro
 
-        self.GPS_GM_XYZ.reset()
+        self.GPS_GM_XYZ.reset() # Reset GPS GM
 
-        self.Gyro_GM_XYZ.reset() 
+        self.Gyro_GM_XYZ.reset()  # Reset Gyro GM
 
         return # return nothing
     
