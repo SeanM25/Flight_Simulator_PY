@@ -397,7 +397,7 @@ class VehicleClosedLoopControl:
 
         return  # return nothing
     
-    def getVehicleAerodynmaicsModel(self):
+    def getVehicleAerodynamicsModel(self):
 
         # Gets current VAM & attributes
 
