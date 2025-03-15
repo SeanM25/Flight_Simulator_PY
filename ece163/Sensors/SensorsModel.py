@@ -491,13 +491,13 @@ class SensorsModel:
 
             # Deal with and Trap COG
 
-             Trap_term = (sensorSigmas.gps_cog * VPC.InitialSpeed) / trueSensors.gps_sog # Term to check and trap if necessary from lecture
-
              if(math.isclose(0, trueSensors.gps_sog)): # If numerator of trap term is near or at 0 we need to trap it
                  
                  SN.gps_cog = trueSensors.gps_cog + random.gauss(0, sensorSigmas.gps_cog) # If trap needed just use sigma COG
 
              else:
+                 
+                 Trap_term = (sensorSigmas.gps_cog * VPC.InitialSpeed) / trueSensors.gps_sog # Term to check and trap if necessary from lecture
                  
                  SN.gps_cog = trueSensors.gps_cog + random.gauss(0, Trap_term) # Otherwise use the trap term
 
