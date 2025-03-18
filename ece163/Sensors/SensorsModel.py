@@ -179,7 +179,7 @@ class SensorsModel:
 
         # Get time step dT
 
-        self.dT = self.VAM.VDynamics.dT # Get dT
+        self.dT = self.VAM.getVehicleDynamicsModel().dT # Get dT
 
         # Intialize Gauss Markov for both Gyro & GPS. Use GM XYZ since they both measure in 3-D
 
@@ -579,67 +579,3 @@ class SensorsModel:
         return # return nothing
     
     
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-                 
-
-
-
-        
-
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
