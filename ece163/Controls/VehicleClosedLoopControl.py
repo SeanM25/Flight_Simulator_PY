@@ -322,6 +322,8 @@ class VehicleClosedLoopControl:
 
         self.VAM = VehicleAerodynamicsModule.VehicleAerodynamicsModel() # Give an VAM instance for the class
 
+        #self.state = VehicleAerodynamicsModule.VehicleAerodynamicsModel().getVehicleState()
+
         self.controlGains = Controls.controlGains() # Give a control gains instance to keep track of Kp, Ki Kd
 
         # Two controlInputs one for trim inputs and the other for Vehicle Aerodynamics module
@@ -372,8 +374,8 @@ class VehicleClosedLoopControl:
     def getVehicleState(self):
 
         # Wrapper function to extract vehicle state from the class.
-
-        return self.VAM.VDynamics.state # retun the Vehicle state
+        
+        return self.VAM.getVehicleState() # return the Vehicle state
     
     def setVehicleState(self, state):
 
@@ -534,21 +536,19 @@ class VehicleClosedLoopControl:
 
             self.sensorsModel.reset() # Reset the sensor model
 
+        self.VAM.reset() # Reset VAM
 
+        self.rollFromCourse.resetIntegrator() # reset roll from course
 
-        self.VAM = self.VAM.reset() # Reset VAM
+        self.rudderFromSideslip.resetIntegrator() # reset rudder from sideslip
 
-        self.rollFromCourse = self.rollFromCourse.resetIntegrator() # reset roll from course
+        self.throttleFromAirspeed.resetIntegrator() # reset throttle from airspeed
 
-        self.rudderFromSideslip = self.rudderFromSideslip.resetIntegrator() # reset rudder from sideslip
+        self.pitchFromAltitude.resetIntegrator() # reset pitch from alitutde
 
-        self.throttleFromAirspeed = self.throttleFromAirspeed.resetIntegrator() # reset throttle from airspeed
+        self.pitchFromAirspeed.resetIntegrator() # reset pitch from airspeed
 
-        self.pitchFromAltitude = self.pitchFromAltitude.resetIntegrator() # reset pitch from alitutde
-
-        self.pitchFromAirspeed = self.pitchFromAirspeed.resetIntegrator() # reset pitch from airspeed
-
-        self.aileronFromRoll = self.aileronFromRoll.resetIntergrator() # reset aileron from roll
+        self.aileronFromRoll.resetIntergrator() # reset aileron from roll
 
         return # return nothing
 

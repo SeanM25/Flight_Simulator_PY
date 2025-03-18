@@ -67,6 +67,16 @@ def CreateTransferFunction(trimState, trimInputs):
 
     Va = trimState.Va # Get airspeed in the trim
 
+    # Va error checking for bugs
+
+    if(Va == 0): # If Va is equal to zero
+
+        Va = 1 # Make it 1
+
+    elif(Va < 0): # If a negative airspeed is passed in
+
+        Va = -1 * Va # Flip the sign
+
     m = VPC.mass # Get aircraft mass
 
     alpha_in_trim = trimState.alpha # angle of attack in the trim
@@ -79,7 +89,7 @@ def CreateTransferFunction(trimState, trimInputs):
 
     # Get Phi's
 
-    a_phi_1 = ((-1 / 2) * VPC.rho * (Va ** 2) * VPC.S * VPC.b * VPC.Cpp) * (VPC.b / (2 * Va)) # Eq 5.23 Beard Ch 5
+    a_phi_1 = (-1 / 2) * VPC.rho * (Va ** 2) * VPC.S * VPC.b * VPC.Cpp * (VPC.b / (2 * Va)) # Eq 5.23 Beard Ch 5
 
     a_phi_2 = (1 / 2) * VPC.rho * (Va ** 2) * VPC.S * VPC.b * VPC.CpdeltaA # Eq 5.24 Beard Ch 5
 

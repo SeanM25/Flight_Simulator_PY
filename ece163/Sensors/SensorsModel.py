@@ -137,11 +137,11 @@ class GaussMarkovXYZ:
 
         # Resets GM XYZ models
 
-        self.GM_XYZ_X = self.GM_XYZ_X.reset() # reset GM_XYZ X
+        self.GM_XYZ_X.reset() # reset GM_XYZ X
 
-        self.GM_XYZ_Y = self.GM_XYZ_Y.reset() # reset GM_XYZ Y
+        self.GM_XYZ_Y.reset() # reset GM_XYZ Y
 
-        self.GM_XYZ_Z = self.GM_XYZ_Z.reset() # reset GM_XYZ Z
+        self.GM_XYZ_Z.reset() # reset GM_XYZ Z
 
         return # return nothing
     
