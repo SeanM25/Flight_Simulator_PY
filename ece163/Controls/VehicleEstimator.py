@@ -53,7 +53,7 @@ class LowPassFilter:
         return self.yk # return current output
     
 
-    class VehicleEstimator:
+class VehicleEstimator:
 
         def __init__(self, dT = VPC.dT, gains = Controls.VehicleEstimatorGains(), sensorsModel = SensorsModel.SensorsModel()):
 
