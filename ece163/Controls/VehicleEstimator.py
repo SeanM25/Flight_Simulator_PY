@@ -51,8 +51,25 @@ class LowPassFilter:
         self.yk_prev = self.yk# Update previous state with new output
 
         return self.yk # return current output
+    
 
+    class VehicleEstimator:
 
+        def __init__(self, dT = VPC.dT, gains = Controls.VehicleEstimatorGains(), sensorsModel = SensorsModel.SensorsModel()):
+
+            self.sensorsModel = sensorsModel # Create sensors model attribute
+
+            self.dT = dT # Time stamp attribute
+
+            self.estimatorGains = gains # Get gains for the estimators
+
+            self.estState = States.vehicleState(pd = VPC.InitialDownPosition, Va = VPC.InitialSpeed) # estimated state instation with default pd and Va
+
+            self.baro = LowPassFilter() # Initialize low pass filter for the baro
+
+            self.filterBiases = Sensors.vehicleSensors() # Initalize biases for comp filters
+
+            return # return nothing
 
     
 
