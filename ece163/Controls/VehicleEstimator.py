@@ -6,7 +6,7 @@ from ..Constants import VehiclePhysicalConstants as VPC
 from ..Constants import VehicleSensorConstants as VSC
 from ..Modeling import VehicleDynamicsModel as VDM
 from ..Sensors import SensorsModel
-from ..Utilities import MatrixMath as MM
+from ..Utilities import MatrixMath as mm
 
 
 class LowPassFilter:
@@ -61,7 +61,7 @@ class LowPassFilter:
 
             self.dT = dT # Time stamp attribute
 
-            self.estimatorGains = gains # Get gains for the estimators
+            self.gains = gains # Get gains for the estimators
 
             self.estState = States.vehicleState(pd = VPC.InitialDownPosition, Va = VPC.InitialSpeed) # estimated state instation with default pd and Va
 
@@ -70,6 +70,61 @@ class LowPassFilter:
             self.filterBiases = Sensors.vehicleSensors() # Initalize biases for comp filters
 
             return # return nothing
+        
+        def estimateAttitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
+
+            # This follows Algorithim 5 from the Estimation handout
+
+            dT = self.dT
+
+            # Intialize IC's and Inertials
+
+            R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] # Intial DCM for Atitude
+
+            b_hat = [[0.0], [0.0], [0.0]] # Intial Bias
+
+            a_hat_i = mm.vectorNorm([[0.0], [0.0], [-VPC.g0]]) # Normalize known inertial acceleration
+
+            h_hat_i = mm.vectorNorm(VSC.magfield) # Normalize known inertial magnetic field
+
+            w_meas = [[sensorData.gyro_x], [sensorData.gyro_y], [sensorData.gyro_z]]
+
+            # Get Body Frame readings for magnetometer and accelerometer
+
+            h_hat_bod = mm.vectorNorm([[sensorData.mag_x], [sensorData.mag_y], [sensorData.mag_z]]) # Get body mag field readings and normalize
+
+            a_hat_bod = mm.vectorNorm([[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]])
+
+            w_error_mag = mm.crossProduct(h_hat_bod, mm.multiply(R_hat, h_hat_i)) # Get angular rates error for magnetometer
+
+            b_hat_dot = mm.scalarMultiply(-self.gains.Ki_mag, w_error_mag) # Get bias estimate rate
+
+            if(0.9*VPC.g0 <= math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z) <= 1.1*VPC.g0 ):
+
+                w_error_acc = mm.crossProduct(a_hat_bod, mm.multiply(R_hat, a_hat_i))
+
+                b_hat_dot = b_hat_dot + mm.scalarMultiply(-self.gains.Ki_acc, w_error_acc)
+
+            b_hat = b_hat + (b_hat_dot * dT)
+
+            # Get w hat R+ and R hat
+
+            # Create dummy dot state
+
+            dummy_dot = States.vehicleState()
+
+            w_hat = w_meas - b_hat
+
+
+            return b_hat, w_hat, 1
+                
+
+
+
+
+
+
+            
 
     
 
