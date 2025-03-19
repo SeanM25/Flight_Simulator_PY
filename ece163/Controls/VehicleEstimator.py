@@ -63,7 +63,11 @@ class VehicleEstimator:
 
             self.gains = gains # Get gains for the estimators
 
-            self.estState = States.vehicleState(pd = VPC.InitialDownPosition, Va = VPC.InitialSpeed) # estimated state instation with default pd and Va
+            self.estState = States.vehicleState() # estimated state instation with default pd and Va
+
+            self.estState.pd = VPC.InitialDownPosition
+
+            self.estState.Va =  VPC.InitialSpeed
 
             self.baro = LowPassFilter() # Initialize low pass filter for the baro
 
