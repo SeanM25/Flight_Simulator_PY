@@ -309,23 +309,21 @@ class VehicleEstimator:
 
              # Get Va Pitot
 
-             sqrt_term = (2 * sensorData.pitot) / VPC.rho
-
-             Va_pitot = math.sqrt(sqrt_term)
+             Va_pitot = math.sqrt(2 * sensorData.pitot / VPC.rho)
 
              # Initialize estimate and Bias
 
-             Va_hat = self.Va_hat
+             Va_hat = estimatedState.Va
 
              b_hat_Va = self.b_hat_Va
 
              # Get ax term
 
-             grav_vector = [[0], [0], [-VPC.g0]]
+             grav_vector = [[0], [0], [VPC.g0]]
 
              acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]]
 
-             ax = mm.add(acc_body, mm.multiply(self.R_hat, grav_vector ))
+             ax = mm.add(acc_body, mm.multiply(estimatedState.R, grav_vector ))
 
              ax_extract = ax[0][0] 
 
@@ -340,7 +338,7 @@ class VehicleEstimator:
              
              Va_dot = ax_extract + term_to_add
 
-             Va_hat = Va_hat + (Va_pitot * dT)
+             Va_hat = Va_hat + (Va_dot * dT)
 
              self.Va_hat = Va_hat
 
