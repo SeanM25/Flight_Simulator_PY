@@ -188,7 +188,7 @@ class VehicleEstimator:
 
             # Normalize Accel and Mag in inertial frame
 
-            acc_Inertial = mm.vectorNorm([[0], [0], [-VPC.g0]])
+            acc_Inertial = mm.vectorNorm([[0], [0], [VPC.g0]])
 
             mag_Inertial = mm.vectorNorm(VSC.magfield) # Normalize magnetic field
 
@@ -337,7 +337,7 @@ class VehicleEstimator:
 
              Va_hat = Va_hat + (Va_dot * dT) # Get Va hat
 
-             return b_hat_Va, Va_hat
+             return b_hat_Va, Va_hat # Return b_hat_Va and Va_hat
 
 
 
