@@ -69,13 +69,11 @@ class VehicleEstimator:
 
             self.estState = States.vehicleState()
 
-            self.estState.pd = -VPC.InitialDownPosition
+            self.estState.pd = VPC.InitialDownPosition
 
             self.estState.Va = VPC.InitialSpeed
 
             self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-
-            self.b_hat_Va = 0.0
 
             # Intialize Low Pass Filter for Baro
 
@@ -83,15 +81,15 @@ class VehicleEstimator:
 
             # Intialize Biases for each filter
 
-            self.estimatedGyroBias = [[0], [0], [0]]
+            self.estimatedGyroBias = [[0], [0], [0]] # Iniialize Gyro Bias
 
-            self.estimatedPitotBias = 0
+            self.estimatedPitotBias = 0 # Pitot Bias
 
-            self.estimatedChiBias = 0
+            self.estimatedChiBias = 0 # Course Bias
 
-            self.estimatedAscentRate = 0
+            self.estimatedAscentRate = 0 # Ascent rate bias
 
-            self.estimatedAltitudeGPSBias = 0
+            self.estimatedAltitudeGPSBias = 0 # GPS Alt bias
         
             return # return nothing
         
@@ -102,61 +100,58 @@ class VehicleEstimator:
         
         def setEstimatedState(self, estimatedState = States.vehicleState()):
              
-             self.estState = estimatedState
+             self.estState = estimatedState # Set new estimated state
              
-             return
+             return # return nothing
         
         def getEstimatorGains(self):
              
-             return self.gains
+             return self.gains # Return current estimator gains
         
         def setEstimatorGains(self, gains = Controls.VehicleEstimatorGains()):
              
-             self.gains = gains
-             
+             self.gains = gains # Set current estimator gains
 
-             return
+             return # Return nothing
         
         def setEstimatorBiases(self, estimatedGyroBias = [[0], [0], [0]], estimatedPitotBias = 0, estimatedChiBias = 0, estimatedAscentRate = 0, estimatedAltitudeGPSBias = 0):
              
-            self.estimatedGyroBias = estimatedGyroBias
+            self.estimatedGyroBias = estimatedGyroBias # Set gyro bias
 
-            self.estimatedPitotBias = estimatedPitotBias
+            self.estimatedPitotBias = estimatedPitotBias # Set pitot Bias
 
-            self.estimatedAltitudeGPSBias = estimatedAltitudeGPSBias 
+            self.estimatedAltitudeGPSBias = estimatedAltitudeGPSBias  # Set GPS alt bias
 
-            self.estimatedChiBias = estimatedChiBias
+            self.estimatedChiBias = estimatedChiBias # Set course bias
 
-            self.estimatedAscentRate = estimatedAscentRate
+            self.estimatedAscentRate = estimatedAscentRate # Set ascent rate bias
 
 
-            return
+            return # return nothing
         
 
         
         def reset(self):
              
-             self.BaroLPF.reset()
+             self.BaroLPF.reset() # Reset LPF for Baro
 
-             self.estimatedState = States.vehicleState()
+             self.estimatedState = States.vehicleState() # Reset estimated state
 
-             self.estimatedGyroBias = [[0], [0], [0]]
+             self.estimatedGyroBias = [[0], [0], [0]] # Reset Gyro Bias
 
-             self.estimatedPitotBias = 0
+             self.estimatedPitotBias = 0 # Reset Pitot Bias
 
-             self.estimatedChiBias = 0
+             self.estimatedChiBias = 0 # Reset Course Bias
 
-             self.estimatedAscentRate = 0
+             self.estimatedAscentRate = 0 # Reset ascent bias
 
-             self.estimatedAltitudeGPSBias = 0
+             self.estimatedAltitudeGPSBias = 0 # Reset GPS alt bias
 
-             self.estState.pd = VPC.InitialDownPosition
+             self.estState.pd = VPC.InitialDownPosition # Rest position down
 
-             self.estState.Va = VPC.InitialSpeed
+             self.estState.Va = VPC.InitialSpeed # Reset Va to intial
 
-             self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-
-             self.b_hat_Va = 0.0
+             self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] # Rest R_hat
 
              return
              
@@ -206,37 +201,37 @@ class VehicleEstimator:
 
             # Get cross product terms for mag and acc for the two feedback loops
 
-            w_err_mag = mm.crossProduct(mag_Body, mm.multiply(self.R_hat, mag_Inertial))
+            w_err_mag = mm.crossProduct(mag_Body, mm.multiply(self.R_hat, mag_Inertial)) # Error for the magnetometer 
 
-            w_err_acc = mm.crossProduct(acc_Body, mm.multiply(self.R_hat, acc_Inertial))
+            w_err_acc = mm.crossProduct(acc_Body, mm.multiply(self.R_hat, acc_Inertial)) # Error for the Accelerometer
 
             # Multiply both errors by Kp to go back into gyro (w hat feedback loop)
 
-            kp_w_err_mag = mm.scalarMultiply(Kp_mag, w_err_mag)
+            kp_w_err_mag = mm.scalarMultiply(Kp_mag, w_err_mag) # mag error times prop gain
 
-            kp_w_err_acc = mm.scalarMultiply(Kp_acc, w_err_acc)
+            kp_w_err_acc = mm.scalarMultiply(Kp_acc, w_err_acc) # acc error times prop gain
 
             # Multiply both errors by Ki to go back into sensors (b hat feedback loop)
 
-            ki_w_err_mag = mm.scalarMultiply(-Ki_mag, w_err_mag)
+            ki_w_err_mag = mm.scalarMultiply(-Ki_mag, w_err_mag) # mag error times int gain
 
-            ki_w_err_acc = mm.scalarMultiply(-Ki_acc, w_err_acc)
+            ki_w_err_acc = mm.scalarMultiply(-Ki_acc, w_err_acc) # acc error times int gain
 
             # Check condition acc_body
 
-            magnitude_acc_b = math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z)
+            magnitude_acc_b = math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z) #Magnitude of acc in body frame for if statement
 
-            if(0.9 * VPC.g0 <= magnitude_acc_b <= 1.1 * VPC.g0):
+            if(0.9 * VPC.g0 <= magnitude_acc_b <= 1.1 * VPC.g0): # If we have a valid acc measurement
                  
-                 feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_mag, kp_w_err_acc))
+                 feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_mag, kp_w_err_acc)) # Incorporate both the acc and magnetomiter errors times Kp into the gyro feedback loop
 
-                 b_dot = mm.add(ki_w_err_mag, ki_w_err_acc)
+                 b_dot = mm.add(ki_w_err_mag, ki_w_err_acc) # Incorporate both the acc and magnetomiter errors times Ki into the b_hat feedback loop
 
             else:
                  
                  # Don't use acc not valid
 
-                 feedback_gyro = mm.add(gyros_biased, ki_w_err_mag)
+                 feedback_gyro = mm.add(gyros_biased, kp_w_err_mag) 
 
                  b_dot = ki_w_err_mag
 
@@ -244,23 +239,23 @@ class VehicleEstimator:
 
             # create dummy dot and dummy state
 
-            dummy_dot = States.vehicleState()
+            dummy_dot = States.vehicleState() # Create a dummy dot state for matrix exp
 
-            dummy_state = States.vehicleState()
+            dummy_state = States.vehicleState() # Create a dummy state for matrix exp
 
-            dummy_state.p = feedback_gyro[0][0]
+            dummy_state.p = feedback_gyro[0][0] # Get p parameter for exp
 
-            dummy_state.q = feedback_gyro[1][0]
+            dummy_state.q = feedback_gyro[1][0] # Get q parameter for exp
 
-            dummy_state.r = feedback_gyro[2][0]
+            dummy_state.r = feedback_gyro[2][0] # Get r parameter for exp
 
-            matrix_exp = VDM.VehicleDynamicsModel().Rexp(dT, dummy_state, dummy_dot)
+            matrix_exp = VDM.VehicleDynamicsModel().Rexp(dT, dummy_state, dummy_dot) # Compute matrix exponetial
             
-            R_plus = mm.multiply(matrix_exp, estimatedState.R)
+            R_plus = mm.multiply(matrix_exp, estimatedState.R) # Use matrix exponential to compute new estimated R
 
-            self.R_hat = R_plus
+            self.R_hat = R_plus # New estimated R is R plus
 
-            return b_hat, gyros_biased, R_plus
+            return b_hat, gyros_biased, R_plus # Return bias estimate, gyros with bias, and the estimated rotation matrix
         
 
         def estimateAltitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
