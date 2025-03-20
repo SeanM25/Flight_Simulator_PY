@@ -342,6 +342,8 @@ class VehicleEstimator:
 
              self.Va_hat = Va_hat
 
+             self.b_hat_Va = b_hat_Va
+
              return b_hat_Va, Va_hat
 
 
