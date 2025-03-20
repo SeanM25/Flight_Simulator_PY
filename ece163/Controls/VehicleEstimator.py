@@ -123,6 +123,20 @@ class VehicleEstimator:
              return
         
 
+        
+        def reset(self):
+             
+             self.BaroLPF.reset()
+
+             self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition, dcm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+
+             self.biases = Sensors.vehicleSensors()
+
+             return
+             
+
+        
+
 
         def estimateAttitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
 
