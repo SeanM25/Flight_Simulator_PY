@@ -67,7 +67,13 @@ class VehicleEstimator:
 
             # Initialize Est States for each of the 4 Filters (Attitude, Airspeed, Altitude, Course)
 
-            self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition)
+            self.estState = States.vehicleState()
+
+            self.estState.pd = VPC.InitialDownPosition
+
+            self.estState.Va = VPC.InitialSpeed
+
+            self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
             # Intialize Low Pass Filter for Baro
 
@@ -128,9 +134,11 @@ class VehicleEstimator:
              
              self.BaroLPF.reset()
 
-             self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition, dcm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+             self.estState = States.vehicleState()
 
              self.biases = Sensors.vehicleSensors()
+
+             self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
              return
              
@@ -140,7 +148,7 @@ class VehicleEstimator:
 
         def estimateAttitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
 
-            # This follows Algorithim 5 from the Estimation handout and the given block diagram for CF Attitude
+            # This follows Algorithim 5 from the Estimation handout and the given block diagram for CF Attitude in both lecture and handout
 
             dT = self.dT # Get dT
 
