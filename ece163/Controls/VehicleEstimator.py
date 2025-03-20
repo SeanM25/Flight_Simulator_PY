@@ -75,8 +75,6 @@ class VehicleEstimator:
 
             self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
-            self.Va_hat = 0.0
-
             self.b_hat_Va = 0.0
 
             # Intialize Low Pass Filter for Baro
@@ -157,6 +155,8 @@ class VehicleEstimator:
              self.estState.Va = VPC.InitialSpeed
 
              self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+             self.b_hat_Va = 0.0
 
              return
              
@@ -313,7 +313,7 @@ class VehicleEstimator:
 
              Va_hat = estimatedState.Va # Get estimated Va hat
 
-             b_hat_Va = 0.0 # Estimated bias
+             b_hat_Va = self.b_hat_Va # Estimated bias
 
              # Get ax term
 
@@ -330,6 +330,8 @@ class VehicleEstimator:
              b_hat_dot = -Ki_Va * (Va_pitot - Va_hat) # b_hat_dot eqaution
 
              b_hat_Va = b_hat_Va + (b_hat_dot * dT) # b_hat_Va equation integrate bias
+
+             self.b_hat_Va = b_hat_Va
 
              term_to_add = -b_hat_Va + (Kp_Va * (Va_pitot - Va_hat)) # Piece added to get Va dot and incoorporate ax
              
