@@ -234,7 +234,7 @@ class VehicleEstimator:
 
             R_plus = mm.multiply(exp, R_hat)
 
-            self.estState.R = R_plus
+            #self.estState.R = R_plus
 
 
 
