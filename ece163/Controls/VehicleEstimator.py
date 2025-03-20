@@ -75,7 +75,7 @@ class VehicleEstimator:
 
             # Intialize Biases for each filter
 
-            self.filterBiases = States.vehicleState() # Get all biases for each filter
+            self.filterBiases = self.sensorsModel.initializeBiases() # Get all biases for each filter
         
             return # return nothing
         
@@ -100,6 +100,32 @@ class VehicleEstimator:
              
 
              return
+        
+        def setEstimatorBiases(self, estimatedGyroBias = [[0], [0], [0]], estimatedPitotBias = 0, estimatedChiBias = 0, estimatedAscentRate = 0, estimatedAltitudeGPSBias = 0):
+             
+             self.filterBiases.p = estimatedGyroBias[0][0]
+
+             self.filterBiases.q = estimatedGyroBias[1][0]
+
+             self.filterBiases.r = estimatedGyroBias[2][0]
+
+
+             self.filterBiases.pitot = estimatedPitotBias
+
+             self.filterBiases.gps_alt = estimatedAltitudeGPSBias 
+
+             self.filterBiases.gps_cog = estimatedChiBias
+
+             self.filterBiases.gps_sog = estimatedAltitudeGPSBias
+
+
+             return
+        
+        
+
+
+             
+
         
         
         
