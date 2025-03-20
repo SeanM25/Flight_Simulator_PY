@@ -154,9 +154,9 @@ class VehicleEstimator:
 
             # Normalize Accel and Mag in Body frame
 
-            acc_Body = mm.vectorNorm([sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]) # Normalize acc in body frame
+            acc_Body = mm.vectorNorm([[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]]) # Normalize acc in body frame
 
-            mag_Body = mm.vectorNorm([sensorData.mag_x], [sensorData.mag_y], [sensorData.mag_z]) # Normalize mag in body frame
+            mag_Body = mm.vectorNorm([[sensorData.mag_x], [sensorData.mag_y], [sensorData.mag_z]]) # Normalize mag in body frame
 
             # Get actual and biased gyros
 
