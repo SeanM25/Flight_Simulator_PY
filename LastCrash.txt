@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\seanm\ECE163GIT\smanger\Chapter8.py", line 375, in <module>
+    ourWindow = Chapter6()
+  File "C:\Users\seanm\ECE163GIT\smanger\Chapter8.py", line 31, in __init__
+    self.simulateInstance = ece163.Simulation.Chapter8Simulate.Chapter8Simulate()
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\seanm\ECE163GIT\smanger\ece163\Simulation\Chapter8Simulate.py", line 14, in __init__
+    self.vehicleEstimator = self.underlyingModel.getVehicleEstimator()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'VehicleClosedLoopControl' object has no attribute 'getVehicleEstimator'. Did you mean: 'getVehicleState'?

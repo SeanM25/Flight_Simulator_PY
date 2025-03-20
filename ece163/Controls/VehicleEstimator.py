@@ -231,11 +231,11 @@ class VehicleEstimator:
                  
                  # Don't use acc not valid
 
-                 feedback_gyro = mm.add(gyros_biased, kp_w_err_mag) 
+                 feedback_gyro = mm.add(gyros_biased, kp_w_err_mag) # Only use Kp error term for magnetometer
 
-                 b_dot = ki_w_err_mag
+                 b_dot = ki_w_err_mag # Only use Ki error term from magnetometer
 
-            b_hat = mm.add(b_hat, mm.scalarMultiply(dT, b_dot))
+            b_hat = mm.add(b_hat, mm.scalarMultiply(dT, b_dot)) # given b_hat equation
 
             # create dummy dot and dummy state
 
@@ -316,7 +316,7 @@ class VehicleEstimator:
 
              acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]] # body acceleration in each axis from accelerometer
 
-             ax = mm.add(acc_body, mm.multiply(estimatedState.R, grav_vector )) # Get acceleration vector
+             ax = mm.add(acc_body, mm.multiply(estimatedState.R, grav_vector)) # Get acceleration vector
 
              ax_extract = ax[0][0]  # Extract [1, 1] element from acceleration vector
 
@@ -335,6 +335,80 @@ class VehicleEstimator:
              Va_hat = Va_hat + (Va_dot * dT) # Get Va hat
 
              return b_hat_Va, Va_hat # Return b_hat_Va and Va_hat
+        
+
+        def estimateCourse(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
+             
+             X_hat = sensorData.gps_cog # Intialize estimate
+
+             b_X_hat = 0.0 # intialize course bias 
+
+             one_over_COS = 1 / math.cos(estimatedState.pitch) # one over Cos term for X_hat_dot
+
+
+             X_hat_dot = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll))) # Compute X hat dot
+
+             Ki_chi = self.gains.Ki_chi
+
+             Kp_chi = self.gains.Kp_chi
+
+             dT = self.dT
+
+
+             updateTicks =  self.sensorsModel.updateTicks
+
+             gpsTickUpdate = self.sensorsModel.gpsTickUpdate
+
+             if ((updateTicks % gpsTickUpdate) == 0): # If the GPS is ready for an update
+                  
+                  X_error = sensorData.gps_cog - X_hat # Form the course error
+
+                  if(X_error >= math.pi):
+                       
+                       X_error = math.pi
+
+                  elif(X_error <= -math.pi):
+                       
+                       X_error = math.pi
+
+                   
+                  b_X_hat_dot = -Ki_chi * X_error # bias rate on course
+
+                  b_X_hat = b_X_hat + (b_X_hat_dot * dT) # Integrate bias
+
+                  dT_term = (Kp_chi * X_error) - b_X_hat # Term added to new course update and multiplied by dT
+
+                  X_hat = X_hat + (dT_term * dT) # New course update
+               
+             else:
+                  
+                  X_hat = X_hat + ((X_hat_dot - b_X_hat) * dT) # Integrate course rate
+
+
+             if(X_hat >= math.pi):
+                  
+                  X_hat = math.pi
+
+             elif(X_hat <= -math.pi):
+                  
+                  X_hat = -math.pi
+
+             return X_hat, b_X_hat
+
+ 
+               
+
+                  
+
+
+
+                       
+
+                  
+
+        
+
+
 
 
 
