@@ -81,7 +81,15 @@ class VehicleEstimator:
 
             # Intialize Biases for each filter
 
-            self.biases = Sensors.vehicleSensors() # Get all biases for each filter
+            self.estGyroBias = [[0], [0], [0]]
+
+            self.estPitotBias = 0
+
+            self.estChiBias = 0
+
+            self.estAscentRate = 0
+
+            self.estAltitudeGPSBias = 0
         
             return # return nothing
         
@@ -109,24 +117,20 @@ class VehicleEstimator:
         
         def setEstimatorBiases(self, estimatedGyroBias = [[0], [0], [0]], estimatedPitotBias = 0, estimatedChiBias = 0, estimatedAscentRate = 0, estimatedAltitudeGPSBias = 0):
              
-             self.biases.gyro_x = estimatedGyroBias[0][0]
+            self.estGyroBias = estimatedGyroBias
 
-             self.biases.gyro_y = estimatedGyroBias[1][0]
-
-             self.biases.gyro_z = estimatedGyroBias[2][0]
-
-             self.biases.pitot = estimatedPitotBias
+            self.estPitotBias = estimatedPitotBias
 
              # Check These? What is Ascent Rate?
 
-             self.biases.gps_alt = estimatedAltitudeGPSBias 
+            self.estAltitudeGPSBias = estimatedAltitudeGPSBias 
 
-             self.biases.gps_cog = estimatedChiBias
+            self.estChiBias = estimatedChiBias
 
-             self.biases.gps_sog = estimatedAscentRate
+            self.estAscentRate = estimatedAscentRate
 
 
-             return
+            return
         
 
         
@@ -136,7 +140,19 @@ class VehicleEstimator:
 
              self.estState = States.vehicleState()
 
-             self.biases = Sensors.vehicleSensors()
+             self.estGyroBias = [[0], [0], [0]]
+
+             self.estPitotBias = 0
+
+             self.estChiBias = 0
+
+             self.estAscentRate = 0
+
+             self.estAltitudeGPSBias = 0
+
+             self.estState.pd = VPC.InitialDownPosition
+
+             self.estState.Va = VPC.InitialSpeed
 
              self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
@@ -166,7 +182,7 @@ class VehicleEstimator:
 
             R_hat = self.estState.R # Should be I_3x3 intially
 
-            b_hat = [[self.biases.gyro_x], [self.biases.gyro_y], [self.biases.gyro_z]] # Get gyro biases for all axes
+            b_hat = [[self.estGyroBias[0][0]], [self.estGyroBias[1][0]], [self.estGyroBias[2][0]]] # Get gyro biases for all axes
 
             # Normalize Accel and Mag in inertial frame
 
@@ -241,8 +257,9 @@ class VehicleEstimator:
             
 
             R_plus = mm.multiply(exp, R_hat)
+            
 
-            #self.estState.R = R_plus
+            self.estState.R = R_plus
 
 
 
