@@ -285,6 +285,56 @@ class VehicleEstimator:
 
 
              return 1, 1, 1
+        
+
+        def estimateAirspeed(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
+             
+             # Get timestep
+
+             dT = self.dT
+             
+             # Get necessary gains
+
+             Kp_Va = self.gains.Kp_Va
+
+             Ki_Va = self.gains.Ki_Va
+
+             # Get Va Pitot
+
+             sqrt_term = (2 * sensorData.pitot) / VPC.rho
+
+             Va_pitot = math.sqrt(sqrt_term)
+
+             # Initialize estimate and Bias
+
+             Va_hat = 0.0
+
+             b_hat_Va = 0.0
+
+             # Get ax term
+
+             grav_vector = [[0], [0], [-VPC.g0]]
+
+             acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]]
+
+             ax = mm.add(acc_body, mm.multiply(self.R_hat, grav_vector ))
+
+             ax_extract = ax[0][0] 
+
+
+             b_hat_dot = -Ki_Va * (Va_pitot - Va_hat)
+
+             b_hat_Va = b_hat_Va + (b_hat_dot * dT)
+
+             term_to_add = -b_hat_Va + (Kp_Va * (Va_pitot - Va_hat))
+             
+             Va_dot = ax_extract + term_to_add
+
+             Va_hat = Va_hat + (Va_pitot * dT)
+
+             return b_hat_Va, Va_hat
+
+
 
              
 
