@@ -180,7 +180,7 @@ class VehicleEstimator:
 
             # Intialize R_hat and b_hat
 
-            #R_hat = self.estState.R # Should be I_3x3 intially
+            # I made R_hat an internal variable so its not needed here
 
             b_hat = [[self.estGyroBias[0][0]], [self.estGyroBias[1][0]], [self.estGyroBias[2][0]]] # Get gyro biases for all axes
 
@@ -224,11 +224,11 @@ class VehicleEstimator:
 
             magnitude_acc_b = math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z)
 
-            if(magnitude_acc_b <= 1.1 * VPC.g0 and magnitude_acc_b >= 0.9 * VPC.g0):
+            if(0.9 * VPC.g0 <= magnitude_acc_b <= 1.1 * VPC.g0):
                  
-                 feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_acc, kp_w_err_mag))
+                 feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_mag, kp_w_err_acc))
 
-                 b_dot = mm.add(ki_w_err_acc, ki_w_err_mag)
+                 b_dot = mm.add(ki_w_err_mag, ki_w_err_acc)
 
             else:
                  
@@ -242,26 +242,21 @@ class VehicleEstimator:
 
             # create dummy dot and dummy state
 
-            dot = States.vehicleState()
+            dummy_dot = States.vehicleState()
 
-            state = States.vehicleState()
+            dummy_state = States.vehicleState()
 
-            state.p = feedback_gyro[0][0]
+            dummy_state.p = feedback_gyro[0][0]
 
-            state.q = feedback_gyro[1][0]
+            dummy_state.q = feedback_gyro[1][0]
 
-            state.r = feedback_gyro[2][0]
+            dummy_state.r = feedback_gyro[2][0]
 
-
-            exp = VDM.VehicleDynamicsModel().Rexp(dT, state, dot)
+            exp = VDM.VehicleDynamicsModel().Rexp(dT, dummy_state, dummy_dot)
             
-
             R_plus = mm.multiply(exp, estimatedState.R)
 
-
             self.R_hat = R_plus
-
-
 
             return b_hat, gyros_biased, R_plus
 
