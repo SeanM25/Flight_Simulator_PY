@@ -308,15 +308,26 @@ class VehicleClosedLoopControl:
 
     def __init__(self, dT=0.01, rudderControlSource='SIDESLIP', useSensors=False, useEstimator=False):
 
+        # Store the given dT
+
+        self.dT = dT # Store the given dT value as well
+
         # We can ignore everything besides dT until Lab 5 & 6
 
         # Lab 5 Modifications:
 
         self.useSensors = useSensors # Assign use sensors Boolean
 
+        self.useEstimator = useEstimator
+
         if(self.useSensors): # If the use sensors boolean is true
 
             self.sensorsModel = SensorsModel.SensorsModel(aeroModel = VehicleAerodynamicsModule.VehicleAerodynamicsModel()) # Assign sensors model param
+
+        
+        if(self.useEstimator):
+
+            self.vehicleEstimator = VehicleEstimator.VehicleEstimator(dT = self.dT, sensorsModel = self.sensorsModel)
             
 
 
@@ -331,10 +342,6 @@ class VehicleClosedLoopControl:
         self.trimInputs = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the trim state
 
         self.VehicleControlSurfaces = Inputs.controlInputs() # Gets throttle, aileron, elevator, rudder parameters for the vehicle control surfaces that are fed into VAM
-
-        # Store the given dT
-
-        self.dT = dT # Store the given dT value as well
 
         # Intialize controller mode for State Machine
 
@@ -536,6 +543,10 @@ class VehicleClosedLoopControl:
 
             self.sensorsModel.reset() # Reset the sensor model
 
+        if(self.useEstimator):
+
+            self.vehicleEstimator.reset()
+
         self.VAM.reset() # Reset VAM
 
         self.rollFromCourse.resetIntegrator() # reset roll from course
@@ -649,11 +660,28 @@ class VehicleClosedLoopControl:
 
             self.sensorsModel.update() # update the senors
 
+        if(self.useEstimator):
+
+            self.VehicleControlSurfaces = self.UpdateControlCommands(referenceCommands = Controls.referenceCommands(), state = self.vehicleEstimator.estState)
+
         state = self.getVehicleState() # Get current state
 
         ControlCommands = self.UpdateControlCommands(referenceCommands, state) # Call the autopilot and get the Control Surfaces commands
 
         self.VAM.Update(ControlCommands) # Update VAM with said commands
+
+        if(self.useEstimator):
+
+            self.vehicleEstimator.Update() # Call vehicle estimator update
+
+        return # return nothing
+    
+
+    def getVehicleEstimator(self):
+
+        if(self.useEstimator):
+
+            return self.vehicleEstimator
 
         return # return nothing
 
