@@ -308,7 +308,7 @@ class VehicleEstimator:
 
              Va_hat = estimatedState.Va # Get estimated Va hat
 
-             b_hat_Va = self.b_hat_Va # Estimated bias
+             b_hat_Va = 0.0 # Estimated bias
 
              # Get ax term
 
