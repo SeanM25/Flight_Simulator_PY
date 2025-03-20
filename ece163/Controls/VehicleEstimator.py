@@ -317,7 +317,7 @@ class VehicleEstimator:
 
              # Get ax term
 
-             grav_vector = [[0], [0], [-VPC.g0]] # gravity vector for ax
+             grav_vector = [[0], [0], [VPC.g0]] # gravity vector for ax
 
              acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]] # body acceleration in each axis from accelerometer
 
