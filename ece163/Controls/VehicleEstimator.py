@@ -69,7 +69,7 @@ class VehicleEstimator:
 
             self.estState = States.vehicleState()
 
-            self.estState.pd = VPC.InitialDownPosition
+            self.estState.pd = -VPC.InitialDownPosition
 
             self.estState.Va = VPC.InitialSpeed
 
