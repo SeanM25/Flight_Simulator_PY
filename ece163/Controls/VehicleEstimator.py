@@ -156,9 +156,6 @@ class VehicleEstimator:
              return
              
 
-        
-
-
         def estimateAttitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
 
             # This follows Algorithim 5 from the Estimation handout and the given block diagram for CF Attitude in both lecture and handout
@@ -341,18 +338,20 @@ class VehicleEstimator:
 
         def estimateCourse(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
              
+             # Algorithim 4 from handout
+             
              updateTicks =  self.sensorsModel.updateTicks
 
              gpsTickUpdate = self.sensorsModel.gpsTickUpdate
 
              one_over_COS = 1 / math.cos(estimatedState.pitch) # one over Cos term for X_hat_dot
 
-             X_hat_dot = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll))) # Compute X hat dot
+             b_X_hat_prev = 0.0
+
+             X_hat_dot = (one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll)))) - b_X_hat_prev # Compute X hat dot
 
              
              X_hat = estimatedState.chi # Intialize estimate
-
-               
 
              b_X_hat = 0.0 # intialize course bias 
 
@@ -364,7 +363,7 @@ class VehicleEstimator:
 
              if ((updateTicks % gpsTickUpdate) == 0): # If the GPS is ready for an update
                   
-                  X_error = estimatedState.chi - X_hat # Form the course error
+                  X_error = sensorData.gps_cog - X_hat # Form the course error
 
                   if(X_error >= math.pi):
                        
@@ -396,10 +395,32 @@ class VehicleEstimator:
                   
                   X_hat = -math.pi
 
-
-
-
              return X_hat, b_X_hat
+        
+
+        def Update(self):
+             
+             # Unfinished
+             
+             self.estimateAltitude()
+
+             self.estimateAirspeed()
+
+             self.estimateAltitude()
+
+             self.estimateCourse()
+
+             self.estimatedAltitudeGPSBias = 1
+
+             self.estimatedGyroBias = 1
+
+             self.estimatedPitotBias = 1
+
+             self.estimatedChiBias = 1
+
+             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, )
+
+             return # return nothing
 
  
                
