@@ -69,7 +69,7 @@ class VehicleEstimator:
 
             self.estState = States.vehicleState()
 
-            self.estState.pd = -VPC.InitialDownPosition
+            self.estState.pd = VPC.InitialDownPosition
 
             self.estState.Va = VPC.InitialSpeed
 
@@ -123,8 +123,6 @@ class VehicleEstimator:
 
             self.estPitotBias = estimatedPitotBias
 
-             # Check These? What is Ascent Rate?
-
             self.estAltitudeGPSBias = estimatedAltitudeGPSBias 
 
             self.estChiBias = estimatedChiBias
@@ -157,8 +155,6 @@ class VehicleEstimator:
              self.estState.Va = VPC.InitialSpeed
 
              self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-
-             #self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
              return
              
@@ -260,7 +256,7 @@ class VehicleEstimator:
             exp = VDM.VehicleDynamicsModel().Rexp(dT, state, dot)
             
 
-            R_plus = mm.multiply(exp, self.R_hat)
+            R_plus = mm.multiply(exp, estimatedState.R)
 
 
             self.R_hat = R_plus
