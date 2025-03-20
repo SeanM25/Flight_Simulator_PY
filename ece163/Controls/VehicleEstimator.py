@@ -339,25 +339,30 @@ class VehicleEstimator:
 
         def estimateCourse(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
              
-             X_hat = sensorData.gps_cog # Intialize estimate
+             updateTicks =  self.sensorsModel.updateTicks
 
-             b_X_hat = 0.0 # intialize course bias 
+             gpsTickUpdate = self.sensorsModel.gpsTickUpdate
 
              one_over_COS = 1 / math.cos(estimatedState.pitch) # one over Cos term for X_hat_dot
 
-
              X_hat_dot = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll))) # Compute X hat dot
+
+             if((updateTicks % gpsTickUpdate) == 0):
+             
+               X_hat = estimatedState.chi # Intialize estimate
+
+             else:
+                  
+                  X_hat = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll)))
+               
+
+             b_X_hat = 0.0 # intialize course bias 
 
              Ki_chi = self.gains.Ki_chi
 
              Kp_chi = self.gains.Kp_chi
 
              dT = self.dT
-
-
-             updateTicks =  self.sensorsModel.updateTicks
-
-             gpsTickUpdate = self.sensorsModel.gpsTickUpdate
 
              if ((updateTicks % gpsTickUpdate) == 0): # If the GPS is ready for an update
                   
@@ -392,6 +397,9 @@ class VehicleEstimator:
              elif(X_hat <= -math.pi):
                   
                   X_hat = -math.pi
+
+
+
 
              return X_hat, b_X_hat
 
