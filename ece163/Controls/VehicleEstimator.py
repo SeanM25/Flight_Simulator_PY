@@ -186,7 +186,7 @@ class VehicleEstimator:
 
             magnitude_acc_b = math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z)
 
-            if(magnitude_acc_b < 1.1 * VPC.g0 and magnitude_acc_b > 0.9 * VPC.g):
+            if(magnitude_acc_b < 1.1 * VPC.g0 and magnitude_acc_b > 0.9 * VPC.g0):
                  
                  feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_acc, kp_w_err_mag))
 
