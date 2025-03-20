@@ -317,7 +317,7 @@ class VehicleEstimator:
 
              Va_hat = self.Va_hat
 
-             b_hat_Va = b_hat_Va
+             b_hat_Va = self.b_hat_Va
 
              # Get ax term
 
