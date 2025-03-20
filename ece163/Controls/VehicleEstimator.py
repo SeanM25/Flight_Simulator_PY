@@ -75,6 +75,8 @@ class VehicleEstimator:
 
             #self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
+            self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
             # Intialize Low Pass Filter for Baro
 
             self.BaroLPF = LowPassFilter()
@@ -154,6 +156,8 @@ class VehicleEstimator:
 
              self.estState.Va = VPC.InitialSpeed
 
+             self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
              #self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
              return
@@ -180,7 +184,7 @@ class VehicleEstimator:
 
             # Intialize R_hat and b_hat
 
-            R_hat = self.estState.R # Should be I_3x3 intially
+            #R_hat = self.estState.R # Should be I_3x3 intially
 
             b_hat = [[self.estGyroBias[0][0]], [self.estGyroBias[1][0]], [self.estGyroBias[2][0]]] # Get gyro biases for all axes
 
@@ -204,9 +208,9 @@ class VehicleEstimator:
 
             # Get cross product terms for mag and acc for the two feedback loops
 
-            w_err_mag = mm.crossProduct(mag_Body, mm.multiply(R_hat, mag_Inertial))
+            w_err_mag = mm.crossProduct(mag_Body, mm.multiply(self.R_hat, mag_Inertial))
 
-            w_err_acc = mm.crossProduct(acc_Body, mm.multiply(R_hat, acc_Inertial))
+            w_err_acc = mm.crossProduct(acc_Body, mm.multiply(self.R_hat, acc_Inertial))
 
             # Multiply both errors by Kp to go back into gyro (w hat feedback loop)
 
@@ -256,10 +260,10 @@ class VehicleEstimator:
             exp = VDM.VehicleDynamicsModel().Rexp(dT, state, dot)
             
 
-            R_plus = mm.multiply(exp, R_hat)
+            R_plus = mm.multiply(exp, self.R_hat)
 
 
-            self.estState.R = R_plus
+            self.R_hat = R_plus
 
 
 
