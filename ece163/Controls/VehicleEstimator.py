@@ -83,15 +83,15 @@ class VehicleEstimator:
 
             # Intialize Biases for each filter
 
-            self.estGyroBias = [[0], [0], [0]]
+            self.estimatedGyroBias = [[0], [0], [0]]
 
-            self.estPitotBias = 0
+            self.estimatedPitotBias = 0
 
-            self.estChiBias = 0
+            self.estimatedChiBias = 0
 
-            self.estAscentRate = 0
+            self.estimatedAscentRate = 0
 
-            self.estAltitudeGPSBias = 0
+            self.estimatedAltitudeGPSBias = 0
         
             return # return nothing
         
@@ -119,15 +119,15 @@ class VehicleEstimator:
         
         def setEstimatorBiases(self, estimatedGyroBias = [[0], [0], [0]], estimatedPitotBias = 0, estimatedChiBias = 0, estimatedAscentRate = 0, estimatedAltitudeGPSBias = 0):
              
-            self.estGyroBias = estimatedGyroBias
+            self.estimatedGyroBias = estimatedGyroBias
 
-            self.estPitotBias = estimatedPitotBias
+            self.estimatedPitotBias = estimatedPitotBias
 
-            self.estAltitudeGPSBias = estimatedAltitudeGPSBias 
+            self.estimatedAltitudeGPSBias = estimatedAltitudeGPSBias 
 
-            self.estChiBias = estimatedChiBias
+            self.estimatedChiBias = estimatedChiBias
 
-            self.estAscentRate = estimatedAscentRate
+            self.estimatedAscentRate = estimatedAscentRate
 
 
             return
@@ -138,17 +138,17 @@ class VehicleEstimator:
              
              self.BaroLPF.reset()
 
-             self.estState = States.vehicleState()
+             self.estimatedState = States.vehicleState()
 
-             self.estGyroBias = [[0], [0], [0]]
+             self.estimatedGyroBias = [[0], [0], [0]]
 
-             self.estPitotBias = 0
+             self.estimatedPitotBias = 0
 
-             self.estChiBias = 0
+             self.estimatedChiBias = 0
 
-             self.estAscentRate = 0
+             self.estimatedAscentRate = 0
 
-             self.estAltitudeGPSBias = 0
+             self.estimatedAltitudeGPSBias = 0
 
              self.estState.pd = VPC.InitialDownPosition
 
