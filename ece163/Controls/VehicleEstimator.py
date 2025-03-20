@@ -404,13 +404,13 @@ class VehicleEstimator:
 
              # Call Each Filter
              
-             self.estimateAttitude() # Call Attitude filter
+             self.estimateAltitude()
 
-             self.estimateAirspeed() # Call airspeed filter
+             self.estimateAirspeed()
 
-             self.estimateAltitude() # Call alltitude filter
+             self.estimateAltitude()
 
-             self.estimateCourse() # Call course filter
+             self.estimateCourse()
 
              # Update Biases
 
@@ -428,7 +428,6 @@ class VehicleEstimator:
 
              return # return nothing
 
- 
                
 
                   
