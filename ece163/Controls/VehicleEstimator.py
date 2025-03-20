@@ -67,7 +67,7 @@ class VehicleEstimator:
 
             # Initialize Est States for each of the 4 Filters (Attitude, Airspeed, Altitude, Course)
 
-            self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition, dcm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+            self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = VPC.InitialDownPosition, dcm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 
             # Intialize Low Pass Filter for Baro
 
@@ -111,7 +111,7 @@ class VehicleEstimator:
 
              self.biases.pitot = estimatedPitotBias
 
-             # Check These?
+             # Check These? What is Ascent Rate?
 
              self.biases.gps_alt = estimatedAltitudeGPSBias 
 
@@ -178,7 +178,7 @@ class VehicleEstimator:
 
             gyros_biased = mm.subtract(gyros_actual, b_hat) # Get the biased gyro readings
 
-            # Get cross product terms for mag and acc for the feedback loops
+            # Get cross product terms for mag and acc for the two feedback loops
 
             w_err_mag = mm.crossProduct(mag_Body, mm.multiply(R_hat, mag_Inertial))
 
@@ -200,7 +200,7 @@ class VehicleEstimator:
 
             magnitude_acc_b = math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z)
 
-            if(magnitude_acc_b < 1.1 * VPC.g0 and magnitude_acc_b > 0.9 * VPC.g0):
+            if(magnitude_acc_b <= 1.1 * VPC.g0 and magnitude_acc_b >= 0.9 * VPC.g0):
                  
                  feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_acc, kp_w_err_mag))
 
@@ -216,7 +216,22 @@ class VehicleEstimator:
 
             b_new = mm.add(b_hat, mm.scalarMultiply(dT, b_dot))
 
-            R_plus = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+            # create dummy dot and dummy state
+
+            dummy_dot = States.vehicleState()
+
+            dummy_state = States.vehicleState()
+
+            dummy_state.p = feedback_gyro[0][0]
+
+            dummy_state.q = feedback_gyro[1][0]
+
+            dummy_state.r = feedback_gyro[2][0]
+            
+
+            R_plus = mm.multiply(VDM.VehicleDynamicsModel.Rexp(dT, dummy_state, dummy_dot), R_hat)
+
+            self.estState.R = R_plus
 
 
 
