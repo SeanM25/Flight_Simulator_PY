@@ -282,6 +282,8 @@ class VehicleEstimator:
 
              dT = self.dT
 
+             # This function is unfinished
+
 
              return 1, 1, 1
         
@@ -347,13 +349,9 @@ class VehicleEstimator:
 
              X_hat_dot = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll))) # Compute X hat dot
 
-             if((updateTicks % gpsTickUpdate) == 0):
              
-               X_hat = estimatedState.chi # Intialize estimate
+             X_hat = estimatedState.chi # Intialize estimate
 
-             else:
-                  
-                  X_hat = estimatedState.yaw
                
 
              b_X_hat = 0.0 # intialize course bias 
@@ -366,7 +364,7 @@ class VehicleEstimator:
 
              if ((updateTicks % gpsTickUpdate) == 0): # If the GPS is ready for an update
                   
-                  X_error = sensorData.gps_cog - X_hat # Form the course error
+                  X_error = estimatedState.chi - X_hat # Form the course error
 
                   if(X_error >= math.pi):
                        
