@@ -342,7 +342,7 @@ class VehicleEstimator:
              
              updateTicks =  self.sensorsModel.updateTicks
 
-             gpsTickUpdate = self.sensorsModel.gpsTickUpdate
+             gpsTickUpdate = self.sensorsModel.gpsTickUpdate # Gps update rate
 
              one_over_COS = 1 / math.cos(estimatedState.pitch) # one over Cos term for X_hat_dot
 
@@ -355,17 +355,17 @@ class VehicleEstimator:
 
              b_X_hat = 0.0 # intialize course bias 
 
-             Ki_chi = self.gains.Ki_chi
+             Ki_chi = self.gains.Ki_chi # Integral course gain
 
-             Kp_chi = self.gains.Kp_chi
+             Kp_chi = self.gains.Kp_chi # Proportional course gain
 
-             dT = self.dT
+             dT = self.dT # Given time step
 
              if ((updateTicks % gpsTickUpdate) == 0): # If the GPS is ready for an update
                   
                   X_error = sensorData.gps_cog - X_hat # Form the course error
 
-                  if(X_error >= math.pi):
+                  if(X_error >= math.pi): # Wrap error between +/- pi
                        
                        X_error = math.pi
 
@@ -387,7 +387,7 @@ class VehicleEstimator:
                   X_hat = X_hat + ((X_hat_dot - b_X_hat) * dT) # Integrate course rate
 
 
-             if(X_hat >= math.pi):
+             if(X_hat >= math.pi): # Wrap X_hat between +/- pi
                   
                   X_hat = math.pi
 
@@ -401,6 +401,8 @@ class VehicleEstimator:
         def Update(self):
              
              # Unfinished
+
+             # Call Each Filter
              
              self.estimateAltitude()
 
@@ -410,6 +412,8 @@ class VehicleEstimator:
 
              self.estimateCourse()
 
+             # Update Biases
+
              self.estimatedAltitudeGPSBias = 1
 
              self.estimatedGyroBias = 1
@@ -418,7 +422,9 @@ class VehicleEstimator:
 
              self.estimatedChiBias = 1
 
-             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, )
+             # Update estimated state
+
+             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, None)
 
              return # return nothing
 
