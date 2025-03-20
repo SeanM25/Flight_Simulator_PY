@@ -404,23 +404,23 @@ class VehicleEstimator:
 
              # Call Each Filter
              
-             self.estimateAltitude()
+             self.estimateAttitude() # Call Attitude filter
 
-             self.estimateAirspeed()
+             self.estimateAirspeed() # Call airspeed filter
 
-             self.estimateAltitude()
+             self.estimateAltitude() # Call alltitude filter
 
-             self.estimateCourse()
+             self.estimateCourse() # Call course filter
 
              # Update Biases
 
-             self.estimatedAltitudeGPSBias = 1
+             self.estimatedAltitudeGPSBias = 1 # Update GPS Bias
 
-             self.estimatedGyroBias = 1
+             self.estimatedGyroBias = 1 # Update Gyro Bias
 
-             self.estimatedPitotBias = 1
+             self.estimatedPitotBias = 1 # Update Pitot Bias
 
-             self.estimatedChiBias = 1
+             self.estimatedChiBias = 1 # Update Course Bias
 
              # Update estimated state
 
