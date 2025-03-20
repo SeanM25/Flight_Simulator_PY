@@ -61,19 +61,47 @@ class VehicleEstimator:
 
             self.dT = dT # Time stamp attribute
 
-            self.gains = gains # Get gains for the estimators
+            # Initialize Gains for each of the 4 Filters (Attitude, Airspeed, Airspeed, Altitude, Course)
 
-            self.estState = States.vehicleState() # estimated state instation with default pd and Va
+            self.filterGains = gains # Get gains for each of the filters
 
-            self.estState.pd = VPC.InitialDownPosition
+            # Initialize Est States for each of the 4 Filters (Attitude, Airspeed, Altitude, Course)
 
-            self.estState.Va =  VPC.InitialSpeed
+            self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition)
 
-            self.baro = LowPassFilter() # Initialize low pass filter for the baro
+            # Intialize Low Pass Filter for Baro
 
-            self.filterBiases = Sensors.vehicleSensors() # Initalize biases for comp filters
+            self.BaroLPF = LowPassFilter()
 
+            # Intialize Biases for each filter
+
+            self.filterBiases = States.vehicleState() # Get all biases for each filter
+        
             return # return nothing
+        
+
+        def getEstimatedState(self):
+             
+             return self.estState # Return est state
+        
+        def setEstimatedState(self, estimatedState = States.vehicleState()):
+             
+             self.estState = estimatedState
+             
+             return
+        
+        def getEstimatorGains(self):
+             
+             return self.filterGains
+        
+        def setEstimatorGains(self, gains = Controls.VehicleEstimatorGains()):
+             
+             self.filterGains = gains
+             
+
+             return
+        
+        
         
         def estimateAttitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
 
@@ -108,8 +136,9 @@ class VehicleEstimator:
                 w_error_acc = mm.crossProduct(a_hat_bod, mm.multiply(R_hat, a_hat_i))
 
                 b_hat_dot = b_hat_dot + mm.scalarMultiply(-self.gains.Ki_acc, w_error_acc)
+            else:
 
-            b_hat = b_hat + (b_hat_dot * dT)
+                b_hat = b_hat + (b_hat_dot * dT)
 
             # Get w hat R+ and R hat
 
@@ -117,12 +146,13 @@ class VehicleEstimator:
 
             dummy_dot = States.vehicleState()
 
+            # dummy state
+
             w_hat = w_meas - b_hat
 
 
             return b_hat, w_hat, 1
                 
-
 
 
 
