@@ -158,10 +158,6 @@ class VehicleEstimator:
 
              self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
-             self.Va_hat = 0.0
-
-             self.b_hat_Va = 0.0
-
              return
              
 
@@ -297,52 +293,49 @@ class VehicleEstimator:
 
         def estimateAirspeed(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
              
+             # This follows algorithim 2 of the handout and its asscoiated CF Block Diagram
+             
              # Get timestep
 
-             dT = self.dT
+             dT = self.dT # initialize timestep
              
              # Get necessary gains
 
-             Kp_Va = self.gains.Kp_Va
+             Kp_Va = self.gains.Kp_Va # Proportional gain for airspeed
 
-             Ki_Va = self.gains.Ki_Va
+             Ki_Va = self.gains.Ki_Va # Integral Gain for airspeed
 
              # Get Va Pitot
 
-             Va_pitot = math.sqrt(2 * sensorData.pitot / VPC.rho)
+             Va_pitot = math.sqrt(2 * sensorData.pitot / VPC.rho) # Va pitot equation from handout
 
              # Initialize estimate and Bias
 
-             Va_hat = estimatedState.Va
+             Va_hat = estimatedState.Va # Get estimated Va hat
 
-             b_hat_Va = self.b_hat_Va
+             b_hat_Va = 0.0 # Estimated bias
 
              # Get ax term
 
-             grav_vector = [[0], [0], [VPC.g0]]
+             grav_vector = [[0], [0], [-VPC.g0]] # gravity vector for ax
 
-             acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]]
+             acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]] # body acceleration in each axis from accelerometer
 
-             ax = mm.add(acc_body, mm.multiply(self.R_hat, grav_vector ))
+             ax = mm.add(acc_body, mm.multiply(self.R_hat, grav_vector )) # Get acceleration vector
 
-             ax_extract = ax[0][0] 
+             ax_extract = ax[0][0]  # Extract [1, 1] element from acceleration vector
 
+             # If measurement Update the airspeed
 
-             b_hat_dot = -Ki_Va * (Va_pitot - Va_hat)
+             b_hat_dot = -Ki_Va * (Va_pitot - Va_hat) # b_hat_dot eqaution
 
-             b_hat_Va = b_hat_Va + (b_hat_dot * dT)
+             b_hat_Va = b_hat_Va + (b_hat_dot * dT) # b_hat_Va equation integrate bias
 
-             self.b_hat_Va = b_hat_Va
-
-             term_to_add = -b_hat_Va + (Kp_Va * (Va_pitot - Va_hat))
+             term_to_add = -b_hat_Va + (Kp_Va * (Va_pitot - Va_hat)) # Piece added to get Va dot and incoorporate ax
              
-             Va_dot = ax_extract + term_to_add
+             Va_dot = ax_extract + term_to_add # Incorporate ax
 
-             Va_hat = Va_hat + (Va_dot * dT)
-
-             self.Va_hat = Va_hat
-
-             self.b_hat_Va = b_hat_Va
+             Va_hat = Va_hat + (Va_dot * dT) # Get Va hat
 
              return b_hat_Va, Va_hat
 
