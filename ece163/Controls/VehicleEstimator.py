@@ -229,7 +229,7 @@ class VehicleEstimator:
             state.r = feedback_gyro[2][0]
 
 
-            exp = VDM.VehicleDynamicsModel.Rexp(dT, state, dot)
+            exp = VDM.VehicleDynamicsModel().Rexp(dT, state, dot)
             
 
             R_plus = mm.multiply(exp, R_hat)
