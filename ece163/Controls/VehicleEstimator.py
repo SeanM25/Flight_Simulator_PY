@@ -424,7 +424,7 @@ class VehicleEstimator:
 
              # Update estimated state
 
-             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, None)
+             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
              return # return nothing
 
