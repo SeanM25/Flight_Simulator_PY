@@ -347,13 +347,9 @@ class VehicleEstimator:
 
              X_hat_dot = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll))) # Compute X hat dot
 
-             if((updateTicks % gpsTickUpdate) == 0):
              
-               X_hat = estimatedState.chi # Intialize estimate
+             X_hat = estimatedState.chi # Intialize estimate
 
-             else:
-                  
-                  X_hat = one_over_COS * ((estimatedState.q * math.sin(estimatedState.roll)) + (estimatedState.r * math.cos(estimatedState.roll)))
                
 
              b_X_hat = 0.0 # intialize course bias 
