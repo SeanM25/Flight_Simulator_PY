@@ -103,20 +103,20 @@ class VehicleEstimator:
         
         def setEstimatorBiases(self, estimatedGyroBias = [[0], [0], [0]], estimatedPitotBias = 0, estimatedChiBias = 0, estimatedAscentRate = 0, estimatedAltitudeGPSBias = 0):
              
-             self.filterBiases.p = estimatedGyroBias[0][0]
+             self.biases.gyro_x = estimatedGyroBias[0][0]
 
-             self.filterBiases.q = estimatedGyroBias[1][0]
+             self.biases.gyro_y = estimatedGyroBias[1][0]
 
-             self.filterBiases.r = estimatedGyroBias[2][0]
+             self.biases.gyro_z = estimatedGyroBias[2][0]
 
 
-             self.filterBiases.pitot = estimatedPitotBias
+             self.biases.pitot = estimatedPitotBias
 
-             self.filterBiases.gps_alt = estimatedAltitudeGPSBias 
+             self.biases.gps_alt = estimatedAltitudeGPSBias 
 
-             self.filterBiases.gps_cog = estimatedChiBias
+             self.biases.gps_cog = estimatedChiBias
 
-             self.filterBiases.gps_sog = estimatedAltitudeGPSBias
+             self.biases.gps_sog = estimatedAltitudeGPSBias
 
 
              return
