@@ -216,9 +216,11 @@ class VehicleEstimator:
 
             b_new = mm.add(b_hat, mm.scalarMultiply(dT, b_dot))
 
+            R_plus = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
 
-            return b_new, gyros_biased, 1
+
+            return b_new, gyros_biased, R_plus
 
 
 
