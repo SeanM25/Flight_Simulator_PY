@@ -414,17 +414,17 @@ class VehicleEstimator:
 
              # Update Biases
 
-             self.estimatedAltitudeGPSBias = 1 # Update GPS Bias
+             self.estimatedAltitudeGPSBias = 1
 
-             self.estimatedGyroBias = 1 # Update Gyro Bias
+             self.estimatedGyroBias = 1
 
-             self.estimatedPitotBias = 1 # Update Pitot Bias
+             self.estimatedPitotBias = 1
 
-             self.estimatedChiBias = 1 # Update Course Bias
+             self.estimatedChiBias = 1
 
              # Update estimated state
 
-             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+             self.estimatedState = States.vehicleState(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, None)
 
              return # return nothing
 
