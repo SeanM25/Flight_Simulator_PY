@@ -218,18 +218,21 @@ class VehicleEstimator:
 
             # create dummy dot and dummy state
 
-            dummy_dot = States.vehicleState()
+            dot = States.vehicleState()
 
-            dummy_state = States.vehicleState()
+            state = States.vehicleState()
 
-            dummy_state.p = feedback_gyro[0][0]
+            state.p = feedback_gyro[0][0]
 
-            dummy_state.q = feedback_gyro[1][0]
+            state.q = feedback_gyro[1][0]
 
-            dummy_state.r = feedback_gyro[2][0]
+            state.r = feedback_gyro[2][0]
+
+
+            exp = VDM.VehicleDynamicsModel.Rexp(dT, state, dot)
             
 
-            R_plus = mm.multiply(VDM.VehicleDynamicsModel.Rexp(dT, dummy_state, dummy_dot), R_hat)
+            R_plus = mm.multiply(exp, R_hat)
 
             self.estState.R = R_plus
 
