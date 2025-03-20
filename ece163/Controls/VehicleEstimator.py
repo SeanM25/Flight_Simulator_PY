@@ -73,7 +73,7 @@ class VehicleEstimator:
 
             self.estState.Va = VPC.InitialSpeed
 
-            self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+            #self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
             # Intialize Low Pass Filter for Baro
 
@@ -106,11 +106,11 @@ class VehicleEstimator:
         
         def getEstimatorGains(self):
              
-             return self.filterGains
+             return self.gains
         
         def setEstimatorGains(self, gains = Controls.VehicleEstimatorGains()):
              
-             self.filterGains = gains
+             self.gains = gains
              
 
              return
@@ -154,7 +154,7 @@ class VehicleEstimator:
 
              self.estState.Va = VPC.InitialSpeed
 
-             self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+             #self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
              return
              
@@ -238,7 +238,7 @@ class VehicleEstimator:
 
                  b_dot = ki_w_err_mag
 
-            b_new = mm.add(b_hat, mm.scalarMultiply(dT, b_dot))
+            b_hat = mm.add(b_hat, mm.scalarMultiply(dT, b_dot))
 
             # create dummy dot and dummy state
 
@@ -257,13 +257,13 @@ class VehicleEstimator:
             
 
             R_plus = mm.multiply(exp, R_hat)
-            
+
 
             self.estState.R = R_plus
 
 
 
-            return b_new, gyros_biased, R_plus
+            return b_hat, gyros_biased, R_plus
 
 
 
