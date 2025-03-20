@@ -67,7 +67,7 @@ class VehicleEstimator:
 
             # Initialize Est States for each of the 4 Filters (Attitude, Airspeed, Altitude, Course)
 
-            self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition)
+            self.estState = States.vehicleState(u = 9, v = 12, w = 20, pd = -VPC.InitialDownPosition, dcm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 
             # Intialize Low Pass Filter for Baro
 
@@ -109,75 +109,115 @@ class VehicleEstimator:
 
              self.biases.gyro_z = estimatedGyroBias[2][0]
 
-
              self.biases.pitot = estimatedPitotBias
+
+             # Check These?
 
              self.biases.gps_alt = estimatedAltitudeGPSBias 
 
              self.biases.gps_cog = estimatedChiBias
 
-             self.biases.gps_sog = estimatedAltitudeGPSBias
+             self.biases.gps_sog = estimatedAscentRate
 
 
              return
         
 
 
-
-             
-
-        
-        
-        
         def estimateAttitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
 
-            # This follows Algorithim 5 from the Estimation handout
+            # This follows Algorithim 5 from the Estimation handout and the given block diagram for CF Attitude
 
-            dT = self.dT
+            dT = self.dT # Get dT
 
-            # Intialize IC's and Inertials
+            # Get the necessary gains for this filter
 
-            R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] # Intial DCM for Atitude
+            Kp_acc = self.gains.Kp_acc # Proportional gain for accelerometer
 
-            b_hat = [[0.0], [0.0], [0.0]] # Intial Bias
+            Ki_acc = self.gains.Ki_acc # Integral gain for accelerometer
 
-            a_hat_i = mm.vectorNorm([[0.0], [0.0], [-VPC.g0]]) # Normalize known inertial acceleration
+            Kp_mag = self.gains.Kp_mag # Proportional gain for magnetometer
 
-            h_hat_i = mm.vectorNorm(VSC.magfield) # Normalize known inertial magnetic field
+            Ki_mag = self.gains.Ki_mag # Integral gain for magnetometer
 
-            w_meas = [[sensorData.gyro_x], [sensorData.gyro_y], [sensorData.gyro_z]]
+            # Intialize R_hat and b_hat
 
-            # Get Body Frame readings for magnetometer and accelerometer
+            R_hat = self.estState.R # Should be I_3x3 intially
 
-            h_hat_bod = mm.vectorNorm([[sensorData.mag_x], [sensorData.mag_y], [sensorData.mag_z]]) # Get body mag field readings and normalize
+            b_hat = [[self.biases.gyro_x], [self.biases.gyro_y], [self.biases.gyro_z]] # Get gyro biases for all axes
 
-            a_hat_bod = mm.vectorNorm([[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]])
+            # Normalize Accel and Mag in inertial frame
 
-            w_error_mag = mm.crossProduct(h_hat_bod, mm.multiply(R_hat, h_hat_i)) # Get angular rates error for magnetometer
+            acc_Inertial = mm.vectorNorm([[0], [0], [-VPC.g0]])
 
-            b_hat_dot = mm.scalarMultiply(-self.gains.Ki_mag, w_error_mag) # Get bias estimate rate
+            mag_Inertial = mm.vectorNorm(VSC.magfield) # Normalize magnetic field
 
-            if(0.9*VPC.g0 <= math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z) <= 1.1*VPC.g0 ):
+            # Normalize Accel and Mag in Body frame
 
-                w_error_acc = mm.crossProduct(a_hat_bod, mm.multiply(R_hat, a_hat_i))
+            acc_Body = mm.vectorNorm([sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]) # Normalize acc in body frame
 
-                b_hat_dot = b_hat_dot + mm.scalarMultiply(-self.gains.Ki_acc, w_error_acc)
+            mag_Body = mm.vectorNorm([sensorData.mag_x], [sensorData.mag_y], [sensorData.mag_z]) # Normalize mag in body frame
+
+            # Get actual and biased gyros
+
+            gyros_actual = [[sensorData.gyro_x], [sensorData.gyro_y], [sensorData.gyro_z]] # Get the actual gyro readings from the sensors
+
+            gyros_biased = mm.subtract(gyros_actual, b_hat) # Get the biased gyro readings
+
+            # Get cross product terms for mag and acc for the feedback loops
+
+            w_err_mag = mm.crossProduct(mag_Body, mm.multiply(R_hat, mag_Inertial))
+
+            w_err_acc = mm.crossProduct(acc_Body, mm.multiply(R_hat, acc_Inertial))
+
+            # Multiply both errors by Kp to go back into gyro (w hat feedback loop)
+
+            kp_w_err_mag = mm.scalarMultiply(Kp_mag, w_err_mag)
+
+            kp_w_err_acc = mm.scalarMultiply(Kp_acc, w_err_acc)
+
+            # Multiply both errors by Ki to go back into sensors (b hat feedback loop)
+
+            ki_w_err_mag = mm.scalarMultiply(-Ki_mag, w_err_mag)
+
+            ki_w_err_acc = mm.scalarMultiply(-Ki_acc, w_err_acc)
+
+            # Check condition acc_body
+
+            magnitude_acc_b = math.hypot(sensorData.accel_x, sensorData.accel_y, sensorData.accel_z)
+
+            if(magnitude_acc_b < 1.1 * VPC.g0 and magnitude_acc_b > 0.9 * VPC.g):
+                 
+                 feedback_gyro = mm.add(gyros_biased, mm.add(kp_w_err_acc, kp_w_err_mag))
+
+                 b_dot = mm.add(ki_w_err_acc, ki_w_err_mag)
+
             else:
+                 
+                 # Don't use acc not valid
 
-                b_hat = b_hat + (b_hat_dot * dT)
+                 feedback_gyro = mm.add(gyros_biased, ki_w_err_mag)
 
-            # Get w hat R+ and R hat
+                 b_dot = ki_w_err_mag
 
-            # Create dummy dot state
-
-            dummy_dot = States.vehicleState()
-
-            # dummy state
-
-            w_hat = w_meas - b_hat
+            b_new = mm.add(b_hat, mm.scalarMultiply(dT, b_dot))
 
 
-            return b_hat, w_hat, 1
+
+            return b_new, gyros_biased, 1
+
+
+
+
+
+
+
+
+
+
+
+
+
                 
 
 
