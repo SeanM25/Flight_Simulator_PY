@@ -182,7 +182,7 @@ class VehicleEstimator:
 
             # I made R_hat an internal variable so its not needed here
 
-            b_hat = [[self.estGyroBias[0][0]], [self.estGyroBias[1][0]], [self.estGyroBias[2][0]]] # Get gyro biases for all axes
+            b_hat = [[self.estimatedGyroBias[0][0]], [self.estimatedGyroBias[1][0]], [self.estimatedGyroBias[2][0]]] # Get gyro biases for all axes
 
             # Normalize Accel and Mag in inertial frame
 
@@ -252,13 +252,18 @@ class VehicleEstimator:
 
             dummy_state.r = feedback_gyro[2][0]
 
-            exp = VDM.VehicleDynamicsModel().Rexp(dT, dummy_state, dummy_dot)
+            matrix_exp = VDM.VehicleDynamicsModel().Rexp(dT, dummy_state, dummy_dot)
             
-            R_plus = mm.multiply(exp, estimatedState.R)
+            R_plus = mm.multiply(matrix_exp, estimatedState.R)
 
             self.R_hat = R_plus
 
             return b_hat, gyros_biased, R_plus
+        
+
+        #def estimateAirspeed():
+             
+
 
 
 
