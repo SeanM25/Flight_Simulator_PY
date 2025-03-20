@@ -63,7 +63,7 @@ class VehicleEstimator:
 
             # Initialize Gains for each of the 4 Filters (Attitude, Airspeed, Airspeed, Altitude, Course)
 
-            self.filterGains = gains # Get gains for each of the filters
+            self.gains = gains # Get gains for each of the filters
 
             # Initialize Est States for each of the 4 Filters (Attitude, Airspeed, Altitude, Course)
 
@@ -75,7 +75,7 @@ class VehicleEstimator:
 
             # Intialize Biases for each filter
 
-            self.filterBiases = self.sensorsModel.initializeBiases() # Get all biases for each filter
+            self.biases = Sensors.vehicleSensors() # Get all biases for each filter
         
             return # return nothing
         
@@ -121,7 +121,7 @@ class VehicleEstimator:
 
              return
         
-        
+
 
 
              
