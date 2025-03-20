@@ -73,8 +73,6 @@ class VehicleEstimator:
 
             self.estState.Va = VPC.InitialSpeed
 
-            #self.estState.R = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-
             self.R_hat = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
             # Intialize Low Pass Filter for Baro
@@ -261,7 +259,33 @@ class VehicleEstimator:
             return b_hat, gyros_biased, R_plus
         
 
-        #def estimateAirspeed():
+        def estimateAltitude(self, sensorData = Sensors.vehicleSensors(), estimatedState = States.vehicleState()):
+             
+             # Intialize and run h_baro through LPF
+             
+             h_baro = self.BaroLPF.update(sensorData.baro) # Get h_baro
+
+             # Get a up inertial
+
+             R_hat_transpose = mm.transpose(self.R_hat) # Transpose R_hat
+
+             acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]] # Get body measured accelerations from accelrometer
+
+             R_hat_T_a_body = mm.multiply(R_hat_transpose, acc_body) # Multiply R_hat transpose by body accelerations
+
+             # Extract [3, 1] element
+
+             R_hat_element = R_hat_T_a_body[2][0] # Get [3, 1] element of R_hat transpose
+
+             a_up_inert = R_hat_element + VPC.g0 # get upwards inertial acceleration
+
+             # Get Timestep 
+
+             dT = self.dT
+
+
+             return 1, 1, 1
+
              
 
 
