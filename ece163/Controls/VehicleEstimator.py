@@ -321,7 +321,7 @@ class VehicleEstimator:
 
              acc_body = [[sensorData.accel_x], [sensorData.accel_y], [sensorData.accel_z]] # body acceleration in each axis from accelerometer
 
-             ax = mm.add(acc_body, mm.multiply(self.R_hat, grav_vector )) # Get acceleration vector
+             ax = mm.add(acc_body, mm.multiply(estimatedState.R, grav_vector )) # Get acceleration vector
 
              ax_extract = ax[0][0]  # Extract [1, 1] element from acceleration vector
 
